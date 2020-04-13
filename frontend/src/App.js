@@ -2,9 +2,17 @@ import React, { Component } from 'react';
 import './App.css';
 import Main from './components/Main';
 import {BrowserRouter} from 'react-router-dom';
+import firebase from 'firebase';
+
+firebase.initializeApp({
+  apiKey: 'AIzaSyCJQQyxT7Juillp8CoJ_0ayFUDrYMfm58A',
+  authDomain: 'cartshare-29f90.firebaseapp.com'
+})
 
 //App Component
 class App extends Component {
+
+
   render() {
     return (
       //Use Browser Router to route to different pages

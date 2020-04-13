@@ -1,12 +1,31 @@
 import React, {Component} from 'react';
+import { Redirect } from 'react-router'
+import firebase from 'firebase';
 
 class Home extends Component {
 
+    state = {
+        redirect: false
+    }
+
+    componentDidMount = () =>{
+        var that = this
+        firebase.auth().onAuthStateChanged(function(user) {
+			if (user.emailVerified) {
+				that.setState({redirect: true});
+			} 
+		});
+    }
+
     render(){
+        if (this.state.redirect) {
+            return <Redirect to='/pooler/landing'/>;
+        }
         return(
             <div>
                 <p className="display-1 text-center pt-5 mt-5">Welcome to CartShare</p>
-                <h4 className="text-center mt-5 font-weight-light">Please check your email and verify before we can proceed</h4>
+                <h4 className="text-center mt-5 font-weight-light">A verification email has been sent to you</h4>
+                <h5 className="text-center mt-5 font-weight-light">Please follow the steps in the email to verify your account and then refresh this page</h5>
                 
 
                 {/* Use this if needed for verify by code */}
