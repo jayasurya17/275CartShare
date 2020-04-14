@@ -3,4 +3,5 @@
     position: sticky;
     top: 100px;
     margin-top: 0px !important;
+    z-index: 10;
 }
