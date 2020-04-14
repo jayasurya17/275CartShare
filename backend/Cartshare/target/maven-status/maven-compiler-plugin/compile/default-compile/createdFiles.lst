@@ -1,0 +1,13 @@
+com\cmpe275lab2\controller\PlayerController.class
+com\cmpe275lab2\dao\PlayerDAO.class
+com\cmpe275lab2\repository\PlayerRepository.class
+com\cmpe275lab2\dao\OpponentDAO.class
+com\cmpe275lab2\controller\OpponentController.class
+com\cmpe275lab2\dao\SponsorDAO.class
+com\cmpe275lab2\repository\SponsorRepository.class
+com\cmpe275lab2\model\Address.class
+com\cmpe275lab2\controller\SponsorController.class
+com\cmpe275lab2\model\Sponsor.class
+com\cmpe275lab2\model\Player.class
+com\cmpe275lab2\Cmpe275Lab2Application.class
+com\cmpe275lab2\config\WebConfig.class
