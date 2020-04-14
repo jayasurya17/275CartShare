@@ -38,7 +38,7 @@ class Home extends Component {
 
 
     render(){
-        if(this.state.signInDone == true){
+        if(this.state.signInDone === true){
             return <Redirect to={this.state.redURL}/>;
         }
         return(
