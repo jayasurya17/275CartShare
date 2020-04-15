@@ -2,9 +2,10 @@ import React, {Component} from 'react';
 import { Redirect } from 'react-router'
 import firebase from 'firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+import '../../css/login.css'
 
 class Home extends Component {
-    state = {redURL : "/pooler/landing", signInDone: false};
+    state = {redURL : "/pooler/landing", signInDone: false, transitionClass: 'init', transitionClass1: 'init1'};
     uiConfig = {
         callbacks: {
           signInSuccessWithAuthResult: (authResult, redirectUrl) => {
@@ -35,19 +36,25 @@ class Home extends Component {
         ],
     };
 
-
+    componentDidMount(){
+      this.timeoutId = setTimeout(function () {
+          this.setState({transitionClass: 'final', transitionClass1: 'final1'});
+      }.bind(this), 500);
+    }
 
     render(){
         if(this.state.signInDone === true){
             return <Redirect to={this.state.redURL}/>;
         }
         return(
-            <div>
-                <p className="display-1 text-center pt-5 mt-5">Login to CartShare</p>
-                <StyledFirebaseAuth
-                    uiConfig={this.uiConfig}
-                    firebaseAuth={firebase.auth()}
-                />
+            <div className={this.state.transitionClass1}>
+                {/* <p className="display-1 text-center pt-5 mt-5">Login to CartShare</p> */}
+                <div className={this.state.transitionClass}>
+                  <StyledFirebaseAuth
+                      uiConfig={this.uiConfig}
+                      firebaseAuth={firebase.auth()}
+                  />
+                </div>
             </div>
         )
     }
