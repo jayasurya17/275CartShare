@@ -9,7 +9,7 @@ class Home extends Component {
 
         return (
             <div>
-                <Header />
+                <Header isLanding={true} />
                 <p className="display-4 text-center pt-5">What would you like to do?</p>
                 <div className="row">
                     <div className="col-md-6 border-right pl-5 pr-5">
