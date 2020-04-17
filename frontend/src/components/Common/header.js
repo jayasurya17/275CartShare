@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './header.css';
+import '../../css/header.css';
 
 class Home extends Component {
 
@@ -17,11 +17,11 @@ class Home extends Component {
                 </div>
             </div>
         ]
-        if (this.props.isLanding) {
+        if (this.props.isLanding || this.props.isAdmin) {
             cartButton = [
                 <div className="row pt-3">
                     <div className="col-md-12 text-center">
-                        <p className="text-center">Not Username? <a href="/logout" className="text-decoration-none">Logout</a></p>
+                        <p className="text-center">Not {localStorage.getItem('275NickName')}? <a href="/logout" className="text-decoration-none">Logout</a></p>
                     </div>
                 </div>
             ]

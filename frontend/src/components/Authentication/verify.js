@@ -30,7 +30,7 @@ class Verify extends Component {
             that.setState({message: 'A second verification email has been sent to you'})
         }).catch(function(error) {
             //error
-            that.setState({message: "Please wait for 5 minutes and click on the \'Resend verification\' button again"});
+            that.setState({message: "Please wait for 5 minutes and click on the 'Resend verification' button again"});
         })
     }
 

@@ -22,7 +22,7 @@ class Home extends Component {
                         </div>
                         <div className="form-group">
                             <label>Password</label>
-                            <input type="text" className="form-control" />
+                            <input type="password" className="form-control" />
                         </div>
                         <button className="btn btn-success w-100">Update account</button>
                     </div>
