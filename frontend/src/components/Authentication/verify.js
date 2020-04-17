@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Redirect } from 'react-router'
 import firebase from 'firebase';
 
-class Home extends Component {
+class Verify extends Component {
 
     state = {
         redirect: false,
@@ -61,5 +61,5 @@ class Home extends Component {
         )
     }
 }
-//export Home Component
-export default Home;
+//export Verify Component
+export default Verify;

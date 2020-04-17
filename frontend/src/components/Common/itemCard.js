@@ -23,19 +23,19 @@ class Home extends Component {
         })
     }
 
-    quantityChangeHandler = (e) => {    
+    quantityChangeHandler = (e) => {
         if (e.target.value === "") {
             e.target.value = 0
-        }    
-        if (parseInt(e.target.value, 10) === e.target.value) {
+        }
+        if (isNaN(e.target.value) === false) {
             this.setState({
-                quantity : e.target.value
+                quantity: parseInt(e.target.value)
             })
         }
     }
 
     render() {
-        return(
+        return (
             <div className="shadow row m-3 p-3 rounded border">
                 <div className="col-md-8">
                     <h1 className="font-weight-lighter">Item Name</h1>

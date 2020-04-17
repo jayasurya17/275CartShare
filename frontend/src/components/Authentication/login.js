@@ -4,7 +4,7 @@ import firebase from 'firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import '../../css/login.css'
 
-class Home extends Component {
+class Login extends Component {
     state = {redURL : "/pooler/landing", signInDone: false, transitionClass: 'init', transitionClass1: 'init1'};
     uiConfig = {
         callbacks: {
@@ -59,5 +59,5 @@ class Home extends Component {
         )
     }
 }
-//export Home Component
-export default Home;
+//export Login Component
+export default Login;
