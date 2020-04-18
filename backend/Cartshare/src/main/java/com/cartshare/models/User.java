@@ -67,25 +67,25 @@ public class User {
 	@Column(name = "isprofilecomplete")
 	private boolean isProfileComplete;
 	
-	@OneToMany(mappedBy="user", fetch = FetchType.EAGER)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<Store> stores = new HashSet<Store>();
+	// @OneToMany(mappedBy="user", fetch = FetchType.EAGER)
+	// @LazyCollection(LazyCollectionOption.FALSE)
+	// private Set<Store> stores = new HashSet<Store>();
 	
-	@OneToMany(mappedBy="user", fetch = FetchType.EAGER)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<Pool> pools = new HashSet<Pool>();
+	// @OneToMany(mappedBy="user", fetch = FetchType.EAGER)
+	// @LazyCollection(LazyCollectionOption.FALSE)
+	// private Set<Pool> pools = new HashSet<Pool>();
 	
-	@OneToMany(mappedBy="leader", fetch = FetchType.EAGER)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<Pool> leaders = new HashSet<Pool>();
+	// @OneToMany(mappedBy="leader", fetch = FetchType.EAGER)
+	// @LazyCollection(LazyCollectionOption.FALSE)
+	// private Set<Pool> leaders = new HashSet<Pool>();
 	
-	@OneToMany(mappedBy="member", fetch = FetchType.EAGER)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<PoolMembers> poolMembers = new HashSet<PoolMembers>();
+	// @OneToMany(mappedBy="member", fetch = FetchType.EAGER)
+	// @LazyCollection(LazyCollectionOption.FALSE)
+	// private Set<PoolMembers> poolMembers = new HashSet<PoolMembers>();
 	
-	@OneToMany(mappedBy="reference", fetch = FetchType.EAGER)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<PoolMembers> refernces = new HashSet<PoolMembers>();
+	// @OneToMany(mappedBy="reference", fetch = FetchType.EAGER)
+	// @LazyCollection(LazyCollectionOption.FALSE)
+	// private Set<PoolMembers> refernces = new HashSet<PoolMembers>();
 	
 	
 	public User(@NotBlank String uid, @NotBlank String email, @NotBlank String nickName, @NotBlank String screenName,
@@ -101,11 +101,14 @@ public class User {
 		this.isVerified = isVerified;
 		this.isActive = isActive;
 		this.isProfileComplete = isProfileComplete;
-		this.stores = stores;
-		this.pools = pools;
-		this.leaders = leaders;
-		this.poolMembers = poolMembers;
-		this.refernces = refernces;
+		// this.stores = stores;
+		// this.pools = pools;
+		// this.leaders = leaders;
+		// this.poolMembers = poolMembers;
+		// this.refernces = refernces;
+	}
+	public User(){
+
 	}
 	public long getId() {
 		return id;
@@ -155,35 +158,35 @@ public class User {
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
-	public Set<Store> getStores() {
-		return stores;
-	}
-	public void setStores(Set<Store> stores) {
-		this.stores = stores;
-	}
-	public Set<Pool> getPools() {
-		return pools;
-	}
-	public void setPools(Set<Pool> pools) {
-		this.pools = pools;
-	}
-	public Set<Pool> getLeaders() {
-		return leaders;
-	}
-	public void setLeaders(Set<Pool> leaders) {
-		this.leaders = leaders;
-	}
-	public Set<PoolMembers> getPoolMembers() {
-		return poolMembers;
-	}
-	public void setPoolMembers(Set<PoolMembers> poolMembers) {
-		this.poolMembers = poolMembers;
-	}
-	public Set<PoolMembers> getRefernces() {
-		return refernces;
-	}
-	public void setRefernces(Set<PoolMembers> refernces) {
-		this.refernces = refernces;
-	}
+	// public Set<Store> getStores() {
+	// 	return stores;
+	// }
+	// public void setStores(Set<Store> stores) {
+	// 	this.stores = stores;
+	// }
+	// public Set<Pool> getPools() {
+	// 	return pools;
+	// }
+	// public void setPools(Set<Pool> pools) {
+	// 	this.pools = pools;
+	// }
+	// public Set<Pool> getLeaders() {
+	// 	return leaders;
+	// }
+	// public void setLeaders(Set<Pool> leaders) {
+	// 	this.leaders = leaders;
+	// }
+	// public Set<PoolMembers> getPoolMembers() {
+	// 	return poolMembers;
+	// }
+	// public void setPoolMembers(Set<PoolMembers> poolMembers) {
+	// 	this.poolMembers = poolMembers;
+	// }
+	// public Set<PoolMembers> getRefernces() {
+	// 	return refernces;
+	// }
+	// public void setRefernces(Set<PoolMembers> refernces) {
+	// 	this.refernces = refernces;
+	// }
 	
 }
