@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import Landing from './Authentication/landing';
 import Login from './Authentication/login';
 import VerifyUser from './Authentication/verify';
+import UserDetails from './Authentication/userDetails';
 
 import PoolerCheck from './Pooler/poolerCheck';
 import PoolerLanding from './Pooler/Landing/landing';
@@ -27,6 +28,7 @@ class Main extends Component {
                 <Route path="/" component={Landing} />
                 <Route path="/login" component={Login} />
                 <Route path="/verify" component={VerifyUser} />
+                <Route path="/user-information" component={UserDetails} />
 
                 <Route path="/pooler" component={PoolerCheck} />
                 <Route path="/pooler/landing" component={PoolerLanding} />

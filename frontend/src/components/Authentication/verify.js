@@ -6,7 +6,7 @@ class Verify extends Component {
 
     state = {
         redirect: false,
-        redUrl: '/pooler/landing',
+        redUrl: '/user-information',
         message: 'A verification email has been sent to you'
     }
 
