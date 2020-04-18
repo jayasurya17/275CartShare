@@ -13,7 +13,19 @@ public class UserDAO {
     UserRepository userRepository;
 
     public User save(User player) {
-		return userRepository.save(player);
+		  return userRepository.save(player);
+    }
+
+    public boolean nickNameExists(String nickName) {
+      return userRepository.existsByNickName(nickName);
+    }
+
+    public boolean screenNameExists(String screenName){
+      return userRepository.existsByScreenName(screenName);
+    }
+
+    public User findById(Long id){
+      return userRepository.findById(id).orElse(null);
     }
     
 }

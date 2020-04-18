@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import firebase from 'firebase';
+import { Redirect } from 'react-router';
 
 class UserDetails extends Component {
 
@@ -6,9 +9,12 @@ class UserDetails extends Component {
         super()
         this.state = {
             nickName: "",
-            screenName: ""
+            screenName: "",
+            redURL: "",
+            redirect: false
         }
     }
+
 
     nickNameChangeHandler = (e) => {
         this.setState({
@@ -22,7 +28,61 @@ class UserDetails extends Component {
         })
     }
 
+    updateInformation = () => {
+        if(this.state.nickName.length == 0 || this.state.screenName.length == 0){
+            alert("Nickname and Screenname can't be empty");
+            return;
+        }
+        var user = firebase.auth().currentUser;
+        var isadmin = user.email.includes("@sjsu.edu");
+        axios.post('/user', null, { // create user in backend
+            params: {
+                uid: user.uid,
+                email: user.email,
+                nickName: this.state.nickName,
+                screenName: this.state.screenName,
+                isAdmin: isadmin,
+                isVerified: true,
+                isActive: true,
+                isProfileComplete: true
+            }
+        })
+        .then((response) => {
+            localStorage.setItem('275UserId', response.data.id)
+            localStorage.setItem('275UserName', response.data.screenName)
+            if (response.data.isAdmin) {
+                localStorage.setItem('275UserType', "Admin")
+            } else {
+                localStorage.setItem('275UserType', "Pooler")
+            }
+            if(response.status == 200){
+                // route to landing
+                alert("user created in backend");
+                this.setState({
+                    redURL: "/pooler/landing",
+                    redirect: true
+                })
+                return;
+            }
+        })
+        .catch((error) => {
+            alert(error.response.data);
+        });
+
+        // route to 
+
+
+        // console.log("current email", firebase.auth().currentUser.email);
+        
+
+    }
+
     render() {
+
+        if(this.state.redirect === true){
+            return <Redirect to={this.state.redURL}/>;
+        }
+
         return (
             <div>
                 <p className="display-1 text-center pt-5 mt-5">Your account has been verified</p>

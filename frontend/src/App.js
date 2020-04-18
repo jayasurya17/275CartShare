@@ -3,11 +3,14 @@ import './App.css';
 import Main from './components/Main';
 import {BrowserRouter} from 'react-router-dom';
 import firebase from 'firebase';
+import axios from 'axios';
 
 firebase.initializeApp({
   apiKey: 'AIzaSyCJQQyxT7Juillp8CoJ_0ayFUDrYMfm58A',
   authDomain: 'cartshare-29f90.firebaseapp.com'
 })
+
+axios.defaults.baseURL = 'http://localhost:5000';
 
 //App Component
 class App extends Component {
