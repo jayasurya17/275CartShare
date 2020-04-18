@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-CartShareApplication<CMPE275Lab2>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.cartshare.CartShareApplication",
+            "projectName": "CMPE275Lab2",
+            "args": ""
+        }
+    ]
+}

@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.annotations.LazyCollection;
@@ -33,6 +34,10 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private long id;
+
+	@NotBlank
+	@Column(name = "uid")
+	private String uid;
 	
 	@NotBlank
 	@Column(name = "email")
@@ -46,19 +51,19 @@ public class User {
 	@Column(name = "screen_name")
 	private String screenName;
 	
-	@NotBlank
+	@NotNull
 	@Column(name = "isadmin")
 	private boolean isAdmin;
 	
-	@NotBlank
+	@NotNull
 	@Column(name = "isverified")
 	private boolean isVerified;
 	
-	@NotBlank
+	@NotNull
 	@Column(name = "isactive")
 	private boolean isActive;
 	
-	@NotBlank
+	@NotNull
 	@Column(name = "isprofilecomplete")
 	private boolean isProfileComplete;
 	
@@ -83,12 +88,12 @@ public class User {
 	private Set<PoolMembers> refernces = new HashSet<PoolMembers>();
 	
 	
-	public User(long id, @NotBlank String email, @NotBlank String nickName, @NotBlank String screenName,
+	public User(@NotBlank String uid, @NotBlank String email, @NotBlank String nickName, @NotBlank String screenName,
 			@NotBlank boolean isAdmin, @NotBlank boolean isVerified, @NotBlank boolean isActive,
 			@NotBlank boolean isProfileComplete, Set<Store> stores, Set<Pool> pools, Set<Pool> leaders,
 			Set<PoolMembers> poolMembers, Set<PoolMembers> refernces) {
 		super();
-		this.id = id;
+		this.uid = uid;
 		this.email = email;
 		this.nickName = nickName;
 		this.screenName = screenName;
