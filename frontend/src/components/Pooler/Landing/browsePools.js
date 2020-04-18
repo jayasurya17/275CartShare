@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './browsePool.css';
+import '../../../css/browsePool.css';
 import PoolCard from './poolCard';
 
 class Home extends Component {

@@ -48,7 +48,7 @@ class Login extends Component {
         }
         return(
             <div className={this.state.transitionClass1}>
-                {/* <p className="display-1 text-center pt-5 mt-5">Login to CartShare</p> */}
+                <p className="display-1 text-center pt-5 mt-5">Login to CartShare</p>
                 <div className={this.state.transitionClass}>
                   <StyledFirebaseAuth
                       uiConfig={this.uiConfig}
