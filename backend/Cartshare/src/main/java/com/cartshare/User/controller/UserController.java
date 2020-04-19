@@ -30,7 +30,7 @@ public class UserController {
     @Autowired
     UserDAO userDAO;
 
-    @PostMapping(value = "/create", produces = { "application/json", "application/xml" })
+    @PostMapping(produces = { "application/json", "application/xml" })
     public ResponseEntity createUser(@Valid
                                     @RequestParam(name = "uid") String uid,
                                     @RequestParam(name = "email") String email,
