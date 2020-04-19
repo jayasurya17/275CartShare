@@ -66,7 +66,7 @@ class UserDetails extends Component {
             }
         })
         .catch((error) => {
-            alert(error.response.data);
+            alert(error);
         });
 
         // route to 

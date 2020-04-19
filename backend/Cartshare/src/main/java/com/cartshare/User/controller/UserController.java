@@ -77,4 +77,52 @@ public class UserController {
 
     }
 
+
+    @PutMapping(value="/{id}", produces = { "application/json", "application/xml" })
+    public ResponseEntity editUser(@Valid
+                                    @PathVariable(name = "id") String id,
+                                    @RequestParam(name = "email") String email,
+                                    @RequestParam(name = "nickName") String nickName,
+                                    @RequestParam(name = "screenName") String screenName,
+                                    @RequestParam(name = "isAdmin") String isAdmin,
+                                    @RequestParam(name = "isVerified") String isVerified,
+                                    @RequestParam(name = "isActive") String isActive,
+                                    @RequestParam(name = "isProfileComplete") String isProfileComplete){
+
+        try {
+            Long l ;
+            try{
+                l = Long.parseLong(id);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid player ID");
+            }
+            User user = userDAO.findById(l);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User ID doesn't exist");
+            }
+            if(userDAO.isDuplicateNickName(nickName, l)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nick Name already exists. Please chose a unique Nick Name");
+            }
+            if(userDAO.isDuplicateScreenName(screenName, l)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Screen Name already exists. Please chose a unique Screen Name");
+            }
+            boolean isadmin = (isAdmin.compareTo("true") == 0) ? true : false;
+            boolean isverified = (isVerified.compareTo("true") == 0) ? true : false;
+            boolean isactive = (isActive.compareTo("true") == 0) ? true : false;
+            boolean isprofilecomplete = (isProfileComplete.compareTo("true") == 0) ? true : false;
+            user.setEmail(email);
+            user.setNickName(nickName);
+            user.setScreenName(screenName);
+            user.setAdmin(isadmin);
+            user.setVerified(isverified);
+            user.setActive(isactive);
+            user.setProfileComplete(isprofilecomplete);
+            return ResponseEntity.status(HttpStatus.OK).body(userDAO.save(user));
+
+
+        } catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+    }
+
 }
