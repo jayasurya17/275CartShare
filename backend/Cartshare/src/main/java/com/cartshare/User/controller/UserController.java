@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import antlr.ASdebug.ASDebugStream;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -121,6 +122,27 @@ public class UserController {
 
 
         } catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+    }
+
+
+    @DeleteMapping(value="/{id}", produces = { "application/json", "application/xml" })
+    public ResponseEntity deleteUser(@Valid @PathVariable(name = "id") String id){
+        try{
+            Long l;
+            try{
+	            l = Long.parseLong(id);
+	        } catch (NumberFormatException e) {
+	        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid player ID");
+            }
+            User user = userDAO.findById(l);
+            if (user == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with the given ID does not exist");
+            }
+            userDAO.deleteUser(l);
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        } catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
     }

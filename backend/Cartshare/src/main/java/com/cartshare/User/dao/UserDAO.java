@@ -50,4 +50,8 @@ public class UserDAO {
       return false;
     }
 
+    public void deleteUser(Long id){
+      userRepository.deleteById(id);
+    }
+
 }
