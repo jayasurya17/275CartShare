@@ -35,7 +35,7 @@ class UserDetails extends Component {
         }
         var user = firebase.auth().currentUser;
         var isadmin = user.email.includes("@sjsu.edu");
-        axios.post('/user', null, { // create user in backend
+        axios.post('/user/create', null, { // create user in backend
             params: {
                 uid: user.uid,
                 email: user.email,
@@ -66,7 +66,7 @@ class UserDetails extends Component {
             }
         })
         .catch((error) => {
-            alert(error.response.data);
+            alert(error.message);
         });
 
         // route to 

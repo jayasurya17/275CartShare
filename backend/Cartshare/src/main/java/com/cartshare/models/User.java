@@ -1,23 +1,10 @@
 package com.cartshare.models;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import java.util.*;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -67,9 +54,9 @@ public class User {
 	@Column(name = "isprofilecomplete")
 	private boolean isProfileComplete;
 	
-	// @OneToMany(mappedBy="user", fetch = FetchType.EAGER)
-	// @LazyCollection(LazyCollectionOption.FALSE)
-	// private Set<Store> stores = new HashSet<Store>();
+	@OneToMany(mappedBy="user", fetch = FetchType.EAGER)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Set<Store> stores = new HashSet<Store>();
 	
 	// @OneToMany(mappedBy="user", fetch = FetchType.EAGER)
 	// @LazyCollection(LazyCollectionOption.FALSE)
@@ -85,13 +72,12 @@ public class User {
 	
 	// @OneToMany(mappedBy="reference", fetch = FetchType.EAGER)
 	// @LazyCollection(LazyCollectionOption.FALSE)
-	// private Set<PoolMembers> refernces = new HashSet<PoolMembers>();
-	
+	// private Set<PoolMembers> references = new HashSet<PoolMembers>();
 	
 	public User(@NotBlank String uid, @NotBlank String email, @NotBlank String nickName, @NotBlank String screenName,
 			@NotBlank boolean isAdmin, @NotBlank boolean isVerified, @NotBlank boolean isActive,
 			@NotBlank boolean isProfileComplete, Set<Store> stores, Set<Pool> pools, Set<Pool> leaders,
-			Set<PoolMembers> poolMembers, Set<PoolMembers> refernces) {
+			Set<PoolMembers> poolMembers, Set<PoolMembers> references) {
 		super();
 		this.uid = uid;
 		this.email = email;
@@ -105,7 +91,7 @@ public class User {
 		// this.pools = pools;
 		// this.leaders = leaders;
 		// this.poolMembers = poolMembers;
-		// this.refernces = refernces;
+		// this.references = references;
 	}
 	public User(){
 
@@ -161,7 +147,7 @@ public class User {
 	// public Set<Store> getStores() {
 	// 	return stores;
 	// }
-	// public void setStores(Set<Store> stores) {
+	// public void setStores(ArrayList<Store> stores) {
 	// 	this.stores = stores;
 	// }
 	// public Set<Pool> getPools() {
@@ -182,11 +168,11 @@ public class User {
 	// public void setPoolMembers(Set<PoolMembers> poolMembers) {
 	// 	this.poolMembers = poolMembers;
 	// }
-	// public Set<PoolMembers> getRefernces() {
-	// 	return refernces;
+	// public Set<PoolMembers> getReferences() {
+	// 	return references;
 	// }
-	// public void setRefernces(Set<PoolMembers> refernces) {
-	// 	this.refernces = refernces;
+	// public void setReferences(Set<PoolMembers> References) {
+	// 	this.references = References;
 	// }
 	
 }
