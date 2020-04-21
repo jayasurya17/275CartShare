@@ -95,8 +95,29 @@ class Verify extends Component {
     }
 
     handleChange = (event) => {
-        if(this.state.code.localeCompare(event.target.value) == 0){
-            this.setState({redirect: true});
+        var c = this.state.code;
+        if(c.localeCompare(event.target.value) == 0){
+            var uri = '/user/'.concat(localStorage.getItem('275UserId'));
+            var isadmin = localStorage.getItem('275UserType').localeCompare("Admin") == 0 ? true : false;
+            axios.put(uri, null, {
+                params: {
+                    email: localStorage.getItem('275UserEmail'),
+                    nickName: 'notSet',
+                    screenName: 'notSet',
+                    isAdmin: isadmin,
+                    isVerified: true,
+                    isActive: true,
+                    isProfileComplete: false
+                }
+            })
+            .then((response) => {
+                if(response.status === 200){
+                    this.setState({redirect: true});
+                }
+            })
+            .catch((error) => {
+                alert("There was a problem while verifying the user");
+            })
         }
     }
 

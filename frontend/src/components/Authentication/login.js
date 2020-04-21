@@ -74,7 +74,12 @@ class Login extends Component {
                     localStorage.setItem('275UserType', "Pooler")
                   }
                   if(response.data.verified){
-                    this.setState({redURL : "/pooler/landing", signInDone: true});
+                    if(response.data.profileComplete){
+                      this.setState({redURL : "/pooler/landing", signInDone: true});
+                    }
+                    else{
+                      this.setState({redURL : "/user-information", signInDone: true});
+                    }
                   }
                   else{
                     this.setState({redURL : "/verify", signInDone: true});

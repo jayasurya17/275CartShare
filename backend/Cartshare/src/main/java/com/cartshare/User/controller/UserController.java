@@ -43,10 +43,10 @@ public class UserController {
                                     @RequestParam(name = "isActive") String isActive,
                                     @RequestParam(name = "isProfileComplete") String isProfileComplete){
 
-        if(userDAO.nickNameExists(nickName)){
+        if(userDAO.nickNameExists(nickName) && nickName.compareTo("notSet") != 0){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nick Name already exists");
         }
-        if(userDAO.screenNameExists(screenName)){
+        if(userDAO.screenNameExists(screenName) && screenName.compareTo("notSet") != 0){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Screen Name already exists");
         }
         boolean isadmin = (isAdmin.compareTo("true") == 0) ? true : false;
