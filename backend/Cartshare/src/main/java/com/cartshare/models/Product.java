@@ -8,6 +8,8 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "product")
 @EntityListeners(AuditingEntityListener.class)
@@ -24,10 +26,6 @@ public class Product {
 	private String productName;
 	
 	@NotBlank
-	@Column(name = "category")
-	private String category;
-	
-	@NotBlank
 	@Column(name = "description")
 	private String description;
 	
@@ -42,7 +40,6 @@ public class Product {
 	@NotBlank
 	@Column(name = "sku", unique = true)
 	private String sku;
-	
 
 	@Column(name = "unit")
 	private String unit;
@@ -51,25 +48,25 @@ public class Product {
 	@Column(name = "price")
 	private Double price;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy="product", fetch = FetchType.EAGER)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<StoreItems> storeItems = new HashSet<StoreItems>();
+	private List<OrderItems> orderItems = new ArrayList<OrderItems>();
 	
 	
-	public Product(long id, @NotBlank String productName, @NotBlank String category, @NotBlank String description,
+	public Product(long id, @NotBlank String productName, @NotBlank String description,
 			@NotBlank String imageURL, @NotBlank String brand, @NotBlank String sku, String unit,
-			@NotBlank Double price, Set<StoreItems> storeItems) {
+			@NotBlank Double price, List<OrderItems> orderItems) {
 		super();
 		this.id = id;
 		this.productName = productName;
-		this.category = category;
 		this.description = description;
 		this.imageURL = imageURL;
 		this.brand = brand;
 		this.sku = sku;
 		this.unit = unit;
 		this.price = price;
-		this.storeItems = storeItems;
+		this.orderItems = orderItems;
 	}
 	
 	public long getId() {
@@ -83,12 +80,6 @@ public class Product {
 	}
 	public void setProductName(String productName) {
 		this.productName = productName;
-	}
-	public String getCategory() {
-		return category;
-	}
-	public void setCategory(String category) {
-		this.category = category;
 	}
 	public String getDescription() {
 		return description;
@@ -127,12 +118,12 @@ public class Product {
 		this.price = price;
 	}
 
-	public Set<StoreItems> getStoreItems() {
-		return storeItems;
+	public List<OrderItems> getOrderItems() {
+		return orderItems;
 	}
 
-	public void setStoreItems(Set<StoreItems> storeItems) {
-		this.storeItems = storeItems;
+	public void setOrderItems(List<OrderItems> orderItems) {
+		this.orderItems = orderItems;
 	}
 	
 }

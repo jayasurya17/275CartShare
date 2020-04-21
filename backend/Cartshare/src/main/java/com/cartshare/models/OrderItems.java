@@ -19,37 +19,46 @@ public class OrderItems {
 	
 	@ManyToOne
 	@JoinColumn(name = "order_id")
-	private Order order;
+	private Orders orders;
 	
 	@ManyToOne
-	@JoinColumn(name = "item_id")
-	private StoreItems item;
+	@JoinColumn(name = "product_id")
+	private Product product;
 	
 	@NotBlank
 	@Column(name = "quantity")
 	private long quantity;
 
-	public OrderItems(Order order, StoreItems item, @NotBlank long quantity) {
+	public OrderItems(Orders orders, Product product, @NotBlank long quantity) {
 		super();
-		this.order = order;
-		this.item = item;
+		this.orders = orders;
+		this.product = product;
 		this.quantity = quantity;
 	}
 
-	public Order getOrder() {
-		return order;
+	public Orders getOrders() {
+		return orders;
 	}
 
-	public void setOrder(Order order) {
-		this.order = order;
+	public void setOrders(Orders orders) {
+		this.orders = orders;
 	}
 
-	public StoreItems getItem() {
-		return item;
+	
+	public long getId() {
+		return id;
 	}
 
-	public void setItem(StoreItems item) {
-		this.item = item;
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 
 	public long getQuantity() {

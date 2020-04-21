@@ -28,7 +28,7 @@ public class UserController {
     @Autowired
     UserDAO userDAO;
 
-    @PostMapping(value = "/create", produces = { "application/json", "application/xml" })
+    @PostMapping(produces = { "application/json", "application/xml" })
     public ResponseEntity createUser(@Valid
                                     @RequestParam(name = "uid") String uid,
                                     @RequestParam(name = "email") String email,
@@ -49,7 +49,7 @@ public class UserController {
         boolean isverified = (isVerified.compareTo("true") == 0) ? true : false;
         boolean isactive = (isActive.compareTo("true") == 0) ? true : false;
         boolean isprofilecomplete = (isProfileComplete.compareTo("true") == 0) ? true : false;
-        User user = new User(uid, email, nickName, screenName, isadmin, isverified, isactive, isprofilecomplete, null, null, null, null, null);
+        User user = new User(uid, email, nickName, screenName, isadmin, isverified, isactive, isprofilecomplete, null, null, null, null);
         
         return ResponseEntity.status(HttpStatus.OK).body(userDAO.save(user));
 
