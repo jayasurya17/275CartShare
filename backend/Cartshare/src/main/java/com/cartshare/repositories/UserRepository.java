@@ -18,5 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
 
 	public boolean existsByScreenName(String screenName);
 
+	public List<User> findByUid(String uid);
+
 	
 }

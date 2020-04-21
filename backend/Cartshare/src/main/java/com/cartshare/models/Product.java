@@ -1,25 +1,16 @@
 package com.cartshare.models;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import java.util.*;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "product")
@@ -32,13 +23,17 @@ public class Product {
 	@Column(name = "id")
 	private long id;
 	
+	@ManyToOne
+	@JoinColumn(name = "store_id")
+	private Store store;
+	
+	@NotBlank
+	@Column(name = "sku")
+	private String sku;
+	
 	@NotBlank
 	@Column(name = "product_name")
 	private String productName;
-	
-	@NotBlank
-	@Column(name = "category")
-	private String category;
 	
 	@NotBlank
 	@Column(name = "description")
@@ -51,38 +46,37 @@ public class Product {
 	@NotBlank
 	@Column(name = "brand")
 	private String brand;
-	
-	@NotBlank
-	@Column(name = "sku", unique = true)
-	private String sku;
-	
 
 	@Column(name = "unit")
 	private String unit;
 	
-	@NotBlank
+	@NotNull
 	@Column(name = "price")
 	private Double price;
 	
-	@OneToMany(mappedBy="product", fetch = FetchType.EAGER)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<StoreItems> storeItems = new HashSet<StoreItems>();
+	// @JsonIgnore
+	// @OneToMany(mappedBy="product", fetch = FetchType.EAGER)
+	// @LazyCollection(LazyCollectionOption.FALSE)
+	// private List<OrderItems> orderItems = new ArrayList<OrderItems>();
 	
-	
-	public Product(long id, @NotBlank String productName, @NotBlank String category, @NotBlank String description,
+	public Product(long id, @NotBlank String productName, @NotBlank String description,
 			@NotBlank String imageURL, @NotBlank String brand, @NotBlank String sku, String unit,
-			@NotBlank Double price, Set<StoreItems> storeItems) {
+			@NotBlank Double price, List<OrderItems> orderItems, Store store) {
 		super();
 		this.id = id;
 		this.productName = productName;
-		this.category = category;
 		this.description = description;
 		this.imageURL = imageURL;
 		this.brand = brand;
 		this.sku = sku;
 		this.unit = unit;
 		this.price = price;
-		this.storeItems = storeItems;
+		// this.orderItems = orderItems;
+		this.store = store;
+	}
+
+	public Product() {
+
 	}
 	
 	public long getId() {
@@ -96,12 +90,6 @@ public class Product {
 	}
 	public void setProductName(String productName) {
 		this.productName = productName;
-	}
-	public String getCategory() {
-		return category;
-	}
-	public void setCategory(String category) {
-		this.category = category;
 	}
 	public String getDescription() {
 		return description;
@@ -140,12 +128,20 @@ public class Product {
 		this.price = price;
 	}
 
-	public Set<StoreItems> getStoreItems() {
-		return storeItems;
+	// public List<OrderItems> getOrderItems() {
+	// 	return orderItems;
+	// }
+
+	// public void setOrderItems(List<OrderItems> orderItems) {
+	// 	this.orderItems = orderItems;
+	// }
+
+	public Store getStore() {
+		return store;
 	}
 
-	public void setStoreItems(Set<StoreItems> storeItems) {
-		this.storeItems = storeItems;
+	public void setStore(Store store) {
+		this.store = store;
 	}
 	
 }

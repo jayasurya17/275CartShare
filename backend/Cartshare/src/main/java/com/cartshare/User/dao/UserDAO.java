@@ -11,12 +11,12 @@ import com.cartshare.repositories.UserRepository;
 @Service
 public class UserDAO {
 
-    @Autowired
-    UserRepository userRepository;
+	@Autowired
+	UserRepository userRepository;
 
-    public User save(User player) {
-		  return userRepository.save(player);
-    }
+	public User save(User player) {
+		return userRepository.save(player);
+	}
 
     public boolean nickNameExists(String nickName) {
       List<User> l = userRepository.findByNickName(nickName);
@@ -54,4 +54,9 @@ public class UserDAO {
       userRepository.deleteById(id);
     }
 
+    public User findByUid(String uid){
+      List<User> l = userRepository.findByUid(uid);
+      if(l.size() == 0) return null;
+      return l.get(0);
+    }
 }

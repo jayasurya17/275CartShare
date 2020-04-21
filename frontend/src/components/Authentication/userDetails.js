@@ -29,45 +29,83 @@ class UserDetails extends Component {
     }
 
     updateInformation = () => {
-        if(this.state.nickName.length == 0 || this.state.screenName.length == 0){
+        if(this.state.nickName.length === 0 || this.state.screenName.length === 0){
             alert("Nickname and Screenname can't be empty");
             return;
         }
-        var user = firebase.auth().currentUser;
-        var isadmin = user.email.includes("@sjsu.edu");
-        axios.post('/user', null, { // create user in backend
+        var id = localStorage.getItem('275UserId');
+        var uri = '/user/'.concat(id);
+        var email = localStorage.getItem('275UserEmail');
+        var isadmin = email.includes("@sjsu.edu");
+        axios.put(uri, null, {
             params: {
-                uid: user.uid,
-                email: user.email,
+                email: email,
                 nickName: this.state.nickName,
                 screenName: this.state.screenName,
                 isAdmin: isadmin,
                 isVerified: true,
-                isActive: true,
-                isProfileComplete: true
+                isActive: localStorage.getItem('275UserIsActive'),
+                isProfileComplete: false
             }
         })
-        .then((response) => {
-            localStorage.setItem('275UserId', response.data.id)
-            localStorage.setItem('275UserName', response.data.screenName)
-            if (response.data.isAdmin) {
-                localStorage.setItem('275UserType', "Admin")
-            } else {
-                localStorage.setItem('275UserType', "Pooler")
-            }
-            if(response.status == 200){
-                // route to landing
-                alert("user created in backend");
-                this.setState({
-                    redURL: "/pooler/landing",
-                    redirect: true
+        .then((res) => {
+            if(res.status === 200){
+                axios.put(uri, null, {
+                    params: {
+                        email: email,
+                        nickName: this.state.nickName,
+                        screenName: this.state.screenName,
+                        isAdmin: isadmin,
+                        isVerified: true,
+                        isActive: localStorage.getItem('275UserIsActive'),
+                        isProfileComplete: true
+                    }
                 })
-                return;
+                .then((res1) => {
+                    if(res1.status === 200){
+                        this.setState({redirect: true, redURL: "/pooler/landing"});
+                    }
+                })
             }
         })
         .catch((error) => {
-            alert(error);
-        });
+            alert("screen name or nick name is not unique");
+        })
+        // var user = firebase.auth().currentUser;
+        // var isadmin = user.email.includes("@sjsu.edu");
+        // axios.post('/user', null, { // create user in backend
+        //     params: {
+        //         uid: user.uid,
+        //         email: user.email,
+        //         nickName: this.state.nickName,
+        //         screenName: this.state.screenName,
+        //         isAdmin: isadmin,
+        //         isVerified: true,
+        //         isActive: true,
+        //         isProfileComplete: true
+        //     }
+        // })
+        // .then((response) => {
+        //     localStorage.setItem('275UserId', response.data.id)
+        //     localStorage.setItem('275UserName', response.data.screenName)
+        //     if (response.data.isAdmin) {
+        //         localStorage.setItem('275UserType', "Admin")
+        //     } else {
+        //         localStorage.setItem('275UserType', "Pooler")
+        //     }
+        //     if(response.status === 200){
+        //         // route to landing
+        //         alert("user created in backend");
+        //         this.setState({
+        //             redURL: "/pooler/landing",
+        //             redirect: true
+        //         })
+        //         return;
+        //     }
+        // })
+        // .catch((error) => {
+        //     alert(error);
+        // });
 
         // route to 
 

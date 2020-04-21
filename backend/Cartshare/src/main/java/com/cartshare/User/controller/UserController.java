@@ -1,16 +1,17 @@
 package com.cartshare.User.controller;
 
+import java.util.Random;
+
 import javax.validation.Valid;
 
 import com.cartshare.User.dao.UserDAO;
 import com.cartshare.models.User;
 import com.cartshare.repositories.UserRepository;
+import com.cartshare.utils.MailController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-
-import antlr.ASdebug.ASDebugStream;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,9 +53,55 @@ public class UserController {
         boolean isverified = (isVerified.compareTo("true") == 0) ? true : false;
         boolean isactive = (isActive.compareTo("true") == 0) ? true : false;
         boolean isprofilecomplete = (isProfileComplete.compareTo("true") == 0) ? true : false;
-        User user = new User(uid, email, nickName, screenName, isadmin, isverified, isactive, isprofilecomplete, null, null, null, null, null);
+        User user = new User(uid, email, nickName, screenName, isadmin, isverified, isactive, isprofilecomplete, "0000", null, null, null, null);
         
+        MailController mc = new MailController();
+
+        Random random = new Random();
+        String code = String.format("%04d", random.nextInt(10000));
+        String message = "Your 4-digit verification code is: " + code + "\n";
+        boolean s = mc.send(email, "CartShare Verification Email", message);
+        if(s){
+            user.setVerificationCode(code);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was a problem while sending the verification email");
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(userDAO.save(user));
+
+    }
+
+    @PostMapping(value="/{id}/sendVerification", produces = { "application/json", "application/xml" })
+    public ResponseEntity sendVerificationEmail(@Valid
+                                    @PathVariable(name = "id") String id){
+                                    // @RequestParam(name = "email") String email){
+        
+        Long l;
+        try{
+            l = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid player ID");
+        }
+        User user = userDAO.findById(l);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid user ID");
+        }
+        MailController mc = new MailController();
+
+        Random random = new Random();
+        String code = String.format("%04d", random.nextInt(10000));
+        String email = user.getEmail();
+        String message = "Your 4-digit verification code is: " + code + "\n";
+        boolean s = mc.send(email, "CartShare Verification Email", message);
+        if(s){
+            user.setVerificationCode(code);
+            userDAO.save(user);
+            return ResponseEntity.status(HttpStatus.OK).body(code);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There was a problem while sending the email");
+        }
 
     }
 
@@ -78,6 +125,18 @@ public class UserController {
 
     }
 
+    @GetMapping(value="/uid/{uid}", produces = { "application/json", "application/xml" })
+    public ResponseEntity getUID(@Valid @PathVariable(name = "uid") String uid){
+        try{
+            User user = userDAO.findByUid(uid);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid user UID");
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        } catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+    }
 
     @PutMapping(value="/{id}", produces = { "application/json", "application/xml" })
     public ResponseEntity editUser(@Valid
