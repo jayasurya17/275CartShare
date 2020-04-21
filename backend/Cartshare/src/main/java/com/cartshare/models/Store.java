@@ -5,6 +5,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
@@ -47,6 +50,10 @@ public class Store {
 	// @LazyCollection(LazyCollectionOption.FALSE)
 	// private Set<Orders> orders = new HashSet<Orders>();
 	
+	@JsonIgnore
+	@OneToMany(mappedBy="store", fetch = FetchType.EAGER)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Set<Product> products = new HashSet<Product>();
 	
 	public Store(@NotBlank String storeName, @NotBlank boolean isActive, Address address, User user) {
 		super();
@@ -107,5 +114,14 @@ public class Store {
 	// public void setOrders(Set<Orders> orders) {
 	// 	this.orders = orders;
 	// }
+
+	public Set<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(Set<Product> products) {
+		this.products = products;
+	}
+	
 	
 }

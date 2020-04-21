@@ -29,13 +29,13 @@ class UserDetails extends Component {
     }
 
     updateInformation = () => {
-        if(this.state.nickName.length == 0 || this.state.screenName.length == 0){
+        if(this.state.nickName.length === 0 || this.state.screenName.length === 0){
             alert("Nickname and Screenname can't be empty");
             return;
         }
         var user = firebase.auth().currentUser;
         var isadmin = user.email.includes("@sjsu.edu");
-        axios.post('/user/create', null, { // create user in backend
+        axios.post('/user', null, { // create user in backend
             params: {
                 uid: user.uid,
                 email: user.email,
@@ -55,7 +55,7 @@ class UserDetails extends Component {
             } else {
                 localStorage.setItem('275UserType', "Pooler")
             }
-            if(response.status == 200){
+            if(response.status === 200){
                 // route to landing
                 alert("user created in backend");
                 this.setState({

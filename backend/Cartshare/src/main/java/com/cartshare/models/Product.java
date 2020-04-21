@@ -3,6 +3,8 @@ package com.cartshare.models;
 import java.util.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -21,6 +23,14 @@ public class Product {
 	@Column(name = "id")
 	private long id;
 	
+	@ManyToOne
+	@JoinColumn(name = "store_id")
+	private Store store;
+	
+	@NotBlank
+	@Column(name = "sku")
+	private String sku;
+	
 	@NotBlank
 	@Column(name = "product_name")
 	private String productName;
@@ -36,27 +46,22 @@ public class Product {
 	@NotBlank
 	@Column(name = "brand")
 	private String brand;
-	
-	@NotBlank
-	@Column(name = "sku", unique = true)
-	private String sku;
 
 	@Column(name = "unit")
 	private String unit;
 	
-	@NotBlank
+	@NotNull
 	@Column(name = "price")
 	private Double price;
 	
-	@JsonIgnore
-	@OneToMany(mappedBy="product", fetch = FetchType.EAGER)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<OrderItems> orderItems = new ArrayList<OrderItems>();
-	
+	// @JsonIgnore
+	// @OneToMany(mappedBy="product", fetch = FetchType.EAGER)
+	// @LazyCollection(LazyCollectionOption.FALSE)
+	// private List<OrderItems> orderItems = new ArrayList<OrderItems>();
 	
 	public Product(long id, @NotBlank String productName, @NotBlank String description,
 			@NotBlank String imageURL, @NotBlank String brand, @NotBlank String sku, String unit,
-			@NotBlank Double price, List<OrderItems> orderItems) {
+			@NotBlank Double price, List<OrderItems> orderItems, Store store) {
 		super();
 		this.id = id;
 		this.productName = productName;
@@ -66,7 +71,12 @@ public class Product {
 		this.sku = sku;
 		this.unit = unit;
 		this.price = price;
-		this.orderItems = orderItems;
+		// this.orderItems = orderItems;
+		this.store = store;
+	}
+
+	public Product() {
+
 	}
 	
 	public long getId() {
@@ -118,12 +128,20 @@ public class Product {
 		this.price = price;
 	}
 
-	public List<OrderItems> getOrderItems() {
-		return orderItems;
+	// public List<OrderItems> getOrderItems() {
+	// 	return orderItems;
+	// }
+
+	// public void setOrderItems(List<OrderItems> orderItems) {
+	// 	this.orderItems = orderItems;
+	// }
+
+	public Store getStore() {
+		return store;
 	}
 
-	public void setOrderItems(List<OrderItems> orderItems) {
-		this.orderItems = orderItems;
+	public void setStore(Store store) {
+		this.store = store;
 	}
 	
 }

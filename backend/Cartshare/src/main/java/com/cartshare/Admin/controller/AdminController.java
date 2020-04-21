@@ -1,13 +1,11 @@
 package com.cartshare.Admin.controller;
 
 import javax.validation.Valid;
-
+import java.util.*;
 import com.cartshare.Store.dao.StoreDAO;
 import com.cartshare.User.dao.UserDAO;
-import com.cartshare.models.Address;
-import com.cartshare.models.Store;
-import com.cartshare.models.User;
-
+import com.cartshare.Product.dao.ProductDAO;
+import com.cartshare.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,13 +27,13 @@ public class AdminController {
     @Autowired
     UserDAO userDAO;
 
+    @Autowired
+    ProductDAO productDAO;
+
     @PostMapping(value = "/create/store", produces = { "application/json", "application/xml" })
-    public ResponseEntity createStore(
-            @RequestParam(name = "userId") String userId,
-            @RequestParam(name = "storeName") String storeName, 
-            @RequestParam(name = "street") String street,
-            @RequestParam(name = "city") String city, 
-            @RequestParam(name = "state") String state,
+    public ResponseEntity createStore(@RequestParam(name = "userId") String userId,
+            @RequestParam(name = "storeName") String storeName, @RequestParam(name = "street") String street,
+            @RequestParam(name = "city") String city, @RequestParam(name = "state") String state,
             @RequestParam(name = "zipcode") String zipcode) {
 
         try {
@@ -45,6 +43,9 @@ public class AdminController {
             address.setState(state);
             address.setZipcode(zipcode);
             User user = userDAO.findById(userId);
+            if (user == null || user.isAdmin() == false) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
+            }
             Store store = new Store();
             store.setStoreName(storeName);
             store.setActive(true);
@@ -58,34 +59,153 @@ public class AdminController {
     }
 
     @PutMapping(value = "/modify/store", produces = { "application/json", "application/xml" })
-    public ResponseEntity modifyStore(
-                @RequestParam(name = "userId") String userId,
-                @RequestParam(name = "storeId") String storeId,
-                @RequestParam(name = "storeName") String storeName, 
-                @RequestParam(name = "street") String street,
-                @RequestParam(name = "city") String city, 
-                @RequestParam(name = "state") String state,
-                @RequestParam(name = "zipcode") String zipcode) {
-            
-            try {
-                Store store = storeDAO.findById(storeId);
+    public ResponseEntity modifyStore(@RequestParam(name = "userId") String userId,
+            @RequestParam(name = "storeId") String storeId, @RequestParam(name = "storeName") String storeName,
+            @RequestParam(name = "street") String street, @RequestParam(name = "city") String city,
+            @RequestParam(name = "state") String state, @RequestParam(name = "zipcode") String zipcode) {
+
+        try {
+            Store store = storeDAO.findById(storeId);
+            if (store == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
+            }
+            if (store.getUser().getId() != Long.parseLong(userId)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Admin does not own the store");
+            }
+            store.setStoreName(storeName);
+            Address address = new Address();
+            address.setStreet(street);
+            address.setCity(city);
+            address.setState(state);
+            address.setZipcode(zipcode);
+            store.setAddress(address);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(storeDAO.save(store));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
+    }
+
+    @PostMapping(value = "/add/products", produces = { "application/json", "application/xml" })
+    public ResponseEntity addProducts(@RequestParam(name = "userId") String userId,
+            @RequestParam(name = "storeIDs") ArrayList<String> storeIDs, @RequestParam(name = "productSKU") String productSKU,
+            @RequestParam(name = "productName") String productName,
+            @RequestParam(name = "productImage") String productImage,
+            @RequestParam(name = "productDescription") String productDescription,
+            @RequestParam(name = "productBrand") String productBrand,
+            @RequestParam(name = "productUnit") String productUnit,
+            @RequestParam(name = "productPrice") String productPrice) {
+
+        try {
+
+            User user = userDAO.findById(userId);
+            if (user == null || user.isAdmin() == false) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
+            }
+
+            for(String id: storeIDs) {
+                Store store = storeDAO.findById(id);
                 if (store == null) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
                 }
-                if (store.getUser().getId() != Long.parseLong(userId)) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Admin does not own the store");
+                for (Product product: store.getProducts()) {
+                    if (product.getSku().equalsIgnoreCase(productSKU)) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate SKU");
+                    }
                 }
-                store.setStoreName(storeName);
-                Address address = new Address();
-                address.setStreet(street);
-                address.setCity(city);
-                address.setState(state);
-                address.setZipcode(zipcode);
-                store.setAddress(address);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(storeDAO.save(store));
-            } catch(Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
             }
 
+            Double price;
+            try {
+                price = Double.parseDouble(productPrice);
+            } catch(Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid price");
+            }
+
+            List<Product> createdProducts = new ArrayList<>();
+            for(String id: storeIDs) {
+                Product product = new Product();
+                Product createdProduct;
+                product.setStore(storeDAO.findById(id));
+                product.setSku(productSKU.toUpperCase());
+                product.setProductName(productName);
+                product.setDescription(productDescription);
+                product.setImageURL(productImage);
+                product.setBrand(productBrand);
+                product.setUnit(productUnit);
+                product.setPrice(price);
+                // return ResponseEntity.status(HttpStatus.OK).body(product);
+                createdProduct = productDAO.save(product);
+                createdProducts.add(createdProduct);
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(createdProducts);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+
+    
+
+    @PostMapping(value = "/update/products", produces = { "application/json", "application/xml" })
+    public ResponseEntity updateProducts(@RequestParam(name = "userId") String userId,
+            @RequestParam(name = "storeIDs") ArrayList<String> storeIDs, @RequestParam(name = "productSKU") String productSKU,
+            @RequestParam(name = "productName") String productName,
+            @RequestParam(name = "productImage") String productImage,
+            @RequestParam(name = "productDescription") String productDescription,
+            @RequestParam(name = "productBrand") String productBrand,
+            @RequestParam(name = "productUnit") String productUnit,
+            @RequestParam(name = "productPrice") String productPrice) {
+
+        try {
+
+            User user = userDAO.findById(userId);
+            if (user == null || user.isAdmin() == false) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
+            }
+
+            for(String id: storeIDs) {
+                Store store = storeDAO.findById(id);
+                if (store == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
+                }
+                for (Product product: store.getProducts()) {
+                    if (product.getSku().equalsIgnoreCase(productSKU)) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate SKU");
+                    }
+                }
+            }
+
+            Double price;
+            try {
+                price = Double.parseDouble(productPrice);
+            } catch(Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid price");
+            }
+
+            List<Product> createdProducts = new ArrayList<>();
+            for(String id: storeIDs) {
+                Product product = new Product();
+                Product createdProduct;
+                product.setStore(storeDAO.findById(id));
+                product.setSku(productSKU.toUpperCase());
+                product.setProductName(productName);
+                product.setDescription(productDescription);
+                product.setImageURL(productImage);
+                product.setBrand(productBrand);
+                product.setUnit(productUnit);
+                product.setPrice(price);
+                // return ResponseEntity.status(HttpStatus.OK).body(product);
+                createdProduct = productDAO.save(product);
+                createdProducts.add(createdProduct);
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(createdProducts);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
