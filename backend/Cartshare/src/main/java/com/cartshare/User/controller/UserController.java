@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import antlr.ASdebug.ASDebugStream;
-
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -66,7 +64,7 @@ public class UserController {
             } catch (NumberFormatException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
-            User user = userDAO.findById(l);
+            User user = userDAO.findById(id);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid user ID");
             }

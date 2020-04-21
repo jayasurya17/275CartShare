@@ -1,33 +1,15 @@
 package com.cartshare.models;
 
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import java.util.*;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "store")
@@ -44,7 +26,7 @@ public class Store {
 	@Column(name = "store_name")
 	private String storeName;
 	
-	@NotBlank
+	@NotNull
 	@Column(name = "isactive")
 	private boolean isActive;
 	
@@ -54,7 +36,7 @@ public class Store {
 					@AttributeOverride(name = "street", column = @Column(name = "street")),
 					@AttributeOverride(name = "city", column = @Column(name = "city")),
 					@AttributeOverride(name = "state", column = @Column(name = "state")),
-					@AttributeOverride(name = "zip", column = @Column(name = "zipcode"))
+					@AttributeOverride(name = "zipcode", column = @Column(name = "zipcode"))
 			}
 	)
 	private Address address;
@@ -63,26 +45,26 @@ public class Store {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
-	@JsonIgnore
-	@OneToMany(mappedBy="store", fetch = FetchType.EAGER)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<Orders> orders = new HashSet<Orders>();
+	// @JsonIgnore
+	// @OneToMany(mappedBy="store", fetch = FetchType.EAGER)
+	// @LazyCollection(LazyCollectionOption.FALSE)
+	// private Set<Orders> orders = new HashSet<Orders>();
 	
 	@JsonIgnore
 	@OneToMany(mappedBy="store", fetch = FetchType.EAGER)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<Product> products = new HashSet<Product>();
 	
-	
-	public Store(long id, @NotBlank String storeName, @NotBlank boolean isActive, Address address, User user, Set<Orders> orders, Set<Product> products) {
+	public Store(@NotBlank String storeName, @NotBlank boolean isActive, Address address, User user) {
 		super();
-		this.id = id;
 		this.storeName = storeName;
 		this.isActive = isActive;
 		this.address = address;
 		this.user = user;
-		this.orders = orders;
-		this.products = products;
+	}
+
+	public Store() {
+		this.isActive = true;
 	}
 
 	public long getId() {
@@ -125,13 +107,13 @@ public class Store {
 		this.user = user;
 	}
 
-	public Set<Orders> getOrders() {
-		return orders;
-	}
+	// public Set<Orders> getOrders() {
+	// 	return orders;
+	// }
 
-	public void setOrders(Set<Orders> orders) {
-		this.orders = orders;
-	}
+	// public void setOrders(Set<Orders> orders) {
+	// 	this.orders = orders;
+	// }
 
 	public Set<Product> getProducts() {
 		return products;
