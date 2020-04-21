@@ -116,7 +116,7 @@ class Verify extends Component {
                 }
             })
             .catch((error) => {
-                alert("There was a problem while verifying the user");
+                alert(error.response.data);
             })
         }
     }

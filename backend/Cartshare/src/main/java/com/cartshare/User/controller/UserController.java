@@ -160,10 +160,10 @@ public class UserController {
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User ID doesn't exist");
             }
-            if(userDAO.isDuplicateNickName(nickName, l)){
+            if(userDAO.isDuplicateNickName(nickName, l) && nickName.compareTo("notSet") != 0){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nick Name already exists. Please chose a unique Nick Name");
             }
-            if(userDAO.isDuplicateScreenName(screenName, l)){
+            if(userDAO.isDuplicateScreenName(screenName, l) && screenName.compareTo("notSet") != 0){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Screen Name already exists. Please chose a unique Screen Name");
             }
             boolean isadmin = (isAdmin.compareTo("true") == 0) ? true : false;

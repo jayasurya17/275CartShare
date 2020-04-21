@@ -33,6 +33,14 @@ class UserDetails extends Component {
             alert("Nickname and Screenname can't be empty");
             return;
         }
+        if(this.state.nickName.localeCompare('notSet') == 0){
+            alert("NickName is already taken");
+            return;
+        }
+        if(this.state.screenName.localeCompare('notSet') == 0){
+            alert("ScreenName is already taken");
+            return;
+        }
         var id = localStorage.getItem('275UserId');
         var uri = '/user/'.concat(id);
         var email = localStorage.getItem('275UserEmail');
