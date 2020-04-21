@@ -10,7 +10,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -49,7 +52,7 @@ public class Product {
 	private String brand;
 	
 	@NotBlank
-	@Column(name = "sku", unique = true)
+	@Column(name = "sku")
 	private String sku;
 	
 
@@ -65,10 +68,13 @@ public class Product {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<OrderItems> orderItems = new ArrayList<OrderItems>();
 	
+	@ManyToOne
+	@JoinColumn(name = "store_id")
+	private Store store;
 	
 	public Product(long id, @NotBlank String productName, @NotBlank String description,
 			@NotBlank String imageURL, @NotBlank String brand, @NotBlank String sku, String unit,
-			@NotBlank Double price, List<OrderItems> orderItems) {
+			@NotBlank Double price, List<OrderItems> orderItems, Store store) {
 		super();
 		this.id = id;
 		this.productName = productName;
@@ -79,6 +85,7 @@ public class Product {
 		this.unit = unit;
 		this.price = price;
 		this.orderItems = orderItems;
+		this.store = store;
 	}
 	
 	public long getId() {
