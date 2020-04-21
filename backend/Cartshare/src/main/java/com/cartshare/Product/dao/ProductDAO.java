@@ -23,4 +23,12 @@ public class ProductDAO {
 		return productRepository.findByStore(store);
 	}
 
+	public List<Product> findBySKU(String SKU) {
+		return productRepository.findBySku(SKU);
+	}
+
+	public List<Product> findAll() {
+		return productRepository.findAll();
+	}
+
 }
