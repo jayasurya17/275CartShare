@@ -68,8 +68,13 @@ public class Store {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<Orders> orders = new HashSet<Orders>();
 	
+	@JsonIgnore
+	@OneToMany(mappedBy="store", fetch = FetchType.EAGER)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Set<Product> products = new HashSet<Product>();
 	
-	public Store(long id, @NotBlank String storeName, @NotBlank boolean isActive, Address address, User user, Set<Orders> orders) {
+	
+	public Store(long id, @NotBlank String storeName, @NotBlank boolean isActive, Address address, User user, Set<Orders> orders, Set<Product> products) {
 		super();
 		this.id = id;
 		this.storeName = storeName;
@@ -77,6 +82,7 @@ public class Store {
 		this.address = address;
 		this.user = user;
 		this.orders = orders;
+		this.products = products;
 	}
 
 	public long getId() {
@@ -126,5 +132,14 @@ public class Store {
 	public void setOrders(Set<Orders> orders) {
 		this.orders = orders;
 	}
+
+	public Set<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(Set<Product> products) {
+		this.products = products;
+	}
+	
 	
 }
