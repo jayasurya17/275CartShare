@@ -29,7 +29,7 @@ class UserDetails extends Component {
     }
 
     updateInformation = () => {
-        if(this.state.nickName.length == 0 || this.state.screenName.length == 0){
+        if(this.state.nickName.length === 0 || this.state.screenName.length === 0){
             alert("Nickname and Screenname can't be empty");
             return;
         }
@@ -55,7 +55,7 @@ class UserDetails extends Component {
             } else {
                 localStorage.setItem('275UserType', "Pooler")
             }
-            if(response.status == 200){
+            if(response.status === 200){
                 // route to landing
                 alert("user created in backend");
                 this.setState({
@@ -66,7 +66,7 @@ class UserDetails extends Component {
             }
         })
         .catch((error) => {
-            alert(error.response.data);
+            alert(error.message);
         });
 
         // route to 

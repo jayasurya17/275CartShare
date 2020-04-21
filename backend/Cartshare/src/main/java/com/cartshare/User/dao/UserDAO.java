@@ -9,23 +9,24 @@ import com.cartshare.repositories.UserRepository;
 @Service
 public class UserDAO {
 
-    @Autowired
-    UserRepository userRepository;
+	@Autowired
+	UserRepository userRepository;
 
-    public User save(User player) {
-		  return userRepository.save(player);
-    }
+	public User save(User player) {
+		return userRepository.save(player);
+	}
 
-    public boolean nickNameExists(String nickName) {
-      return userRepository.existsByNickName(nickName);
-    }
+	public boolean nickNameExists(String nickName) {
+		return userRepository.existsByNickName(nickName);
+	}
 
-    public boolean screenNameExists(String screenName){
-      return userRepository.existsByScreenName(screenName);
-    }
+	public boolean screenNameExists(String screenName) {
+		return userRepository.existsByScreenName(screenName);
+	}
 
-    public User findById(Long id){
-      return userRepository.findById(id).orElse(null);
-    }
-    
+	public User findById(String id) {
+		Long userId = Long.parseLong(id);
+		return userRepository.findById(userId).orElse(null);
+	}
+
 }
