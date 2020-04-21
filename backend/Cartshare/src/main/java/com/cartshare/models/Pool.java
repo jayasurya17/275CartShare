@@ -23,6 +23,8 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "pool")
 @EntityListeners(AuditingEntityListener.class)
@@ -52,18 +54,16 @@ public class Pool {
 	@Column(name = "zipcode")
 	private String zipcode;
 	
-	@ManyToOne
-	@JoinColumn(name = "leader_id")
-	private User leader;
 	
 	
+	@JsonIgnore
 	@OneToMany(mappedBy="pool", fetch = FetchType.EAGER)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<PoolMembers> poolMembers = new HashSet<PoolMembers>();
 
 
 	public Pool(long id, User user, @NotBlank String poolName, @NotBlank String neighborhoodName, String description,
-			String zipcode, User leader, Set<PoolMembers> poolMembers) {
+			String zipcode, Set<PoolMembers> poolMembers) {
 		super();
 		this.id = id;
 		this.user = user;
@@ -71,7 +71,6 @@ public class Pool {
 		this.neighborhoodName = neighborhoodName;
 		this.description = description;
 		this.zipcode = zipcode;
-		this.leader = leader;
 		this.poolMembers = poolMembers;
 	}
 
@@ -133,16 +132,6 @@ public class Pool {
 
 	public void setZipcode(String zipcode) {
 		this.zipcode = zipcode;
-	}
-
-
-	public User getLeader() {
-		return leader;
-	}
-
-
-	public void setLeader(User leader) {
-		this.leader = leader;
 	}
 
 

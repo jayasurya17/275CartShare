@@ -27,6 +27,8 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "store")
 @EntityListeners(AuditingEntityListener.class)
@@ -61,24 +63,19 @@ public class Store {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy="store", fetch = FetchType.EAGER)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<StoreItems> storeItems = new HashSet<StoreItems>();
-	
-	@OneToMany(mappedBy="store", fetch = FetchType.EAGER)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<Order> orders = new HashSet<Order>();
+	private Set<Orders> orders = new HashSet<Orders>();
 	
 	
-	public Store(long id, @NotBlank String storeName, @NotBlank boolean isActive, Address address, User user,
-			Set<StoreItems> storeItems, Set<Order> orders) {
+	public Store(long id, @NotBlank String storeName, @NotBlank boolean isActive, Address address, User user, Set<Orders> orders) {
 		super();
 		this.id = id;
 		this.storeName = storeName;
 		this.isActive = isActive;
 		this.address = address;
 		this.user = user;
-		this.storeItems = storeItems;
 		this.orders = orders;
 	}
 
@@ -122,19 +119,11 @@ public class Store {
 		this.user = user;
 	}
 
-	public Set<StoreItems> getStoreItems() {
-		return storeItems;
-	}
-
-	public void setStoreItems(Set<StoreItems> storeItems) {
-		this.storeItems = storeItems;
-	}
-
-	public Set<Order> getOrders() {
+	public Set<Orders> getOrders() {
 		return orders;
 	}
 
-	public void setOrders(Set<Order> orders) {
+	public void setOrders(Set<Orders> orders) {
 		this.orders = orders;
 	}
 	
