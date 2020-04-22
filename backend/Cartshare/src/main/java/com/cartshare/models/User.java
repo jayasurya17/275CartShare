@@ -62,6 +62,17 @@ public class User {
 	@NotBlank
 	@Column(name = "contributioncredit")
 	private Long contributionCredit;
+	
+	@Embedded 
+	@AttributeOverrides(
+			value = {
+					@AttributeOverride(name = "street", column = @Column(name = "street")),
+					@AttributeOverride(name = "city", column = @Column(name = "city")),
+					@AttributeOverride(name = "state", column = @Column(name = "state")),
+					@AttributeOverride(name = "zipcode", column = @Column(name = "zipcode"))
+			}
+	)
+	private Address address;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
@@ -227,6 +238,14 @@ public class User {
 
 	public void setContributionCredit(Long contributionCredit) {
 		this.contributionCredit = contributionCredit;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
 	public Set<Orders> getOrders() {
