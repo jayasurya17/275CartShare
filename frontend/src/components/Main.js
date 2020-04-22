@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import Landing from './Authentication/landing';
 import Login from './Authentication/login';
+import Logout from './Authentication/logout';
 import VerifyUser from './Authentication/verify';
 import UserDetails from './Authentication/userDetails';
 
@@ -29,6 +30,7 @@ class Main extends Component {
                 {/*Render Different Component based on Route*/}
                 <Route path="/" component={Landing} />
                 <Route path="/login" component={Login} />
+                <Route path="/logout" component={Logout} />
                 <Route path="/verify" component={VerifyUser} />
                 <Route path="/user-information" component={UserDetails} />
 
