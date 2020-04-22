@@ -42,7 +42,13 @@ public class AdminController {
             address.setCity(city);
             address.setState(state);
             address.setZipcode(zipcode);
-            User user = userDAO.findById(userId);
+            Long l ;
+            try{
+                l = Long.parseLong(userId);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid player ID");
+            }
+            User user = userDAO.findById(l);
             if (user == null || user.isAdmin() == false) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
             }
@@ -97,8 +103,13 @@ public class AdminController {
             @RequestParam(name = "productPrice") String productPrice) {
 
         try {
-
-            User user = userDAO.findById(userId);
+            Long l ;
+            try{
+                l = Long.parseLong(userId);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid player ID");
+            }
+            User user = userDAO.findById(l);
             if (user == null || user.isAdmin() == false) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
             }
@@ -160,8 +171,13 @@ public class AdminController {
             @RequestParam(name = "productPrice") String productPrice) {
 
         try {
-
-            User user = userDAO.findById(userId);
+            Long l ;
+            try{
+                l = Long.parseLong(userId);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid player ID");
+            }
+            User user = userDAO.findById(l);
             if (user == null || user.isAdmin() == false) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
             }

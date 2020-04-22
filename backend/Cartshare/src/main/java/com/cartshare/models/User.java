@@ -46,7 +46,19 @@ public class User {
 	@NotNull
 	@Column(name = "isactive")
 	private boolean isActive;
+
+	@NotNull
+	@Column(name = "isverified")
+	private boolean isVerified;
+
+	@NotNull
+	@Column(name = "isprofilecomplete")
+	private boolean isProfileComplete;
 	
+	@NotBlank
+	@Column(name = "verification_code")
+	private String verificationCode;
+
 	@JsonIgnore
 	@OneToMany(mappedBy="user", fetch = FetchType.EAGER)
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -71,7 +83,7 @@ public class User {
 	
 	public User(@NotBlank String uid, @NotBlank String email, @NotBlank String nickName, @NotBlank String screenName,
 			@NotBlank boolean isAdmin, @NotBlank boolean isVerified, @NotBlank boolean isActive,
-			@NotBlank boolean isProfileComplete, Set<Store> stores, Set<Pool> pools,
+			@NotBlank boolean isProfileComplete, @NotBlank String verificationCode ,Set<Store> stores, Set<Pool> pools,
 			Set<PoolMembers> poolMembers, Set<PoolMembers> refernces) {
 		super();
 		this.uid = uid;
@@ -80,10 +92,13 @@ public class User {
 		this.screenName = screenName;
 		this.isAdmin = isAdmin;
 		this.isActive = isActive;
+		this.isVerified = isVerified;
 		this.stores = stores;
 		this.pools = pools;
 		this.poolMembers = poolMembers;
 		this.refernces = refernces;
+		this.isProfileComplete = isProfileComplete;
+		this.verificationCode = verificationCode;
 	}
 	public User(){
 
@@ -112,6 +127,12 @@ public class User {
 	public void setScreenName(String screenName) {
 		this.screenName = screenName;
 	}
+	public String getVerificationCode(){
+		return this.verificationCode;
+	}
+	public void setVerificationCode(String code){
+		this.verificationCode = code;
+	}
 	public boolean isAdmin() {
 		return isAdmin;
 	}
@@ -124,6 +145,19 @@ public class User {
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+	public boolean isVerified(){
+		return this.isVerified;
+	}
+	public void setVerified(boolean isVerified){
+		this.isVerified = isVerified;
+	}
+	public boolean isProfileComplete(){
+		return this.isProfileComplete;
+	}
+	public void setProfileComplete(boolean isProfileComplete){
+		this.isProfileComplete = isProfileComplete;
+	}
+
 	 public Set<Store> getStores() {
 	 	return stores;
 	 }
@@ -148,5 +182,7 @@ public class User {
 	 public void setRefernces(Set<PoolMembers> refernces) {
 	 	this.refernces = refernces;
 	 }
+
+
 	
 }

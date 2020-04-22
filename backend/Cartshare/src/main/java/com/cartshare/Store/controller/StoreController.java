@@ -34,9 +34,14 @@ public class StoreController {
         @RequestParam(name = "adminId", required = false) String adminId
     ) {
         try{
-
+            Long l;
+            try{
+                l = Long.parseLong(adminId);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid player ID");
+            }
             if (adminId != null) {
-                User admin = userDAO.findById(adminId);
+                User admin = userDAO.findById(l);
                 return ResponseEntity.status(HttpStatus.OK).body(storeDAO.findByAdmin(admin));
             }
 

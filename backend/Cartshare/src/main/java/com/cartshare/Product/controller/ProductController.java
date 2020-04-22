@@ -36,8 +36,13 @@ public class ProductController {
             if (store == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
             }
-
-            User user = userDAO.findById(userId);
+            Long l ;
+            try{
+                l = Long.parseLong(userId);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid player ID");
+            }
+            User user = userDAO.findById(l);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             } else if (user.isAdmin() && store.getUser().getId() != user.getId()) {
