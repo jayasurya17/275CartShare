@@ -36,12 +36,18 @@ public class AdminController {
     public ResponseEntity createStore(@RequestBody StoreRequest storeRequest) {
 
         try {
+            Long userId = null;
+            try {
+                userId = Long.parseLong(storeRequest.getUserId());
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");                
+            }
             Address address = new Address();
             address.setStreet(storeRequest.getStreet());
             address.setCity(storeRequest.getCity());
             address.setState(storeRequest.getState());
             address.setZipcode(storeRequest.getZipcode());
-            User user = userDAO.findById(storeRequest.getUserId());
+            User user = userDAO.findById(userId);
             if (user == null || user.isAdmin() == false) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
             }
@@ -84,7 +90,8 @@ public class AdminController {
 
     @PostMapping(value = "/add/products", produces = { "application/json", "application/xml" })
     public ResponseEntity addProducts(@RequestParam(name = "userId") String userId,
-            @RequestParam(name = "storeIDs") ArrayList<String> storeIDs, @RequestParam(name = "productSKU") String productSKU,
+            @RequestParam(name = "storeIDs") ArrayList<String> storeIDs,
+            @RequestParam(name = "productSKU") String productSKU,
             @RequestParam(name = "productName") String productName,
             @RequestParam(name = "productImage") String productImage,
             @RequestParam(name = "productDescription") String productDescription,
@@ -94,17 +101,17 @@ public class AdminController {
 
         try {
 
-            User user = userDAO.findById(userId);
+            User user = userDAO.findById(Long.parseLong(userId));
             if (user == null || user.isAdmin() == false) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
             }
 
-            for(String id: storeIDs) {
+            for (String id : storeIDs) {
                 Store store = storeDAO.findById(id);
                 if (store == null) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
                 }
-                for (Product product: store.getProducts()) {
+                for (Product product : store.getProducts()) {
                     if (product.getSku().equalsIgnoreCase(productSKU)) {
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate SKU");
                     }
@@ -114,12 +121,12 @@ public class AdminController {
             Double price;
             try {
                 price = Double.parseDouble(productPrice);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid price");
             }
 
             List<Product> createdProducts = new ArrayList<>();
-            for(String id: storeIDs) {
+            for (String id : storeIDs) {
                 Product product = new Product();
                 Product createdProduct;
                 product.setStore(storeDAO.findById(id));
@@ -142,12 +149,10 @@ public class AdminController {
         }
     }
 
-
-    
-
     @PostMapping(value = "/update/products", produces = { "application/json", "application/xml" })
     public ResponseEntity updateProducts(@RequestParam(name = "userId") String userId,
-            @RequestParam(name = "storeIDs") ArrayList<String> storeIDs, @RequestParam(name = "productSKU") String productSKU,
+            @RequestParam(name = "storeIDs") ArrayList<String> storeIDs,
+            @RequestParam(name = "productSKU") String productSKU,
             @RequestParam(name = "productName") String productName,
             @RequestParam(name = "productImage") String productImage,
             @RequestParam(name = "productDescription") String productDescription,
@@ -157,17 +162,17 @@ public class AdminController {
 
         try {
 
-            User user = userDAO.findById(userId);
+            User user = userDAO.findById(Long.parseLong(userId));
             if (user == null || user.isAdmin() == false) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
             }
 
-            for(String id: storeIDs) {
+            for (String id : storeIDs) {
                 Store store = storeDAO.findById(id);
                 if (store == null) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
                 }
-                for (Product product: store.getProducts()) {
+                for (Product product : store.getProducts()) {
                     if (product.getSku().equalsIgnoreCase(productSKU)) {
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate SKU");
                     }
@@ -177,12 +182,12 @@ public class AdminController {
             Double price;
             try {
                 price = Double.parseDouble(productPrice);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid price");
             }
 
             List<Product> createdProducts = new ArrayList<>();
-            for(String id: storeIDs) {
+            for (String id : storeIDs) {
                 Product product = new Product();
                 Product createdProduct;
                 product.setStore(storeDAO.findById(id));

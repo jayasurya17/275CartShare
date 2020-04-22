@@ -3,6 +3,7 @@ import { Redirect } from 'react-router'
 import firebase from 'firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import '../../css/login.css'
+import axios from 'axios';
 
 class Login extends Component {
     state = {redURL : "/pooler/landing", signInDone: false, transitionClass: 'init', transitionClass1: 'init1'};
@@ -12,15 +13,83 @@ class Login extends Component {
             // User successfully signed in.
             // Return type determines whether we continue the redirect automatically
             // or whether we leave that to developer to handle.
+            localStorage.clear();
+            console.log("authres", authResult);
+            var user = authResult.user;
             if(authResult.additionalUserInfo.isNewUser){
-                this.setState({redURL : "/verify", signInDone: true});
-                authResult.user.sendEmailVerification().then(function() {
-                    // Email sent.
-                  }).catch(function(error) {
-                    // An error happened.
-                  });
+              var isadmin = user.email.includes("@sjsu.edu");
+              axios.post('/user', null, { // create user in backend
+                  params: {
+                      uid: user.uid,
+                      email: user.email,
+                      nickName: 'notSet',
+                      screenName: 'notSet',
+                      isAdmin: isadmin,
+                      isVerified: false,
+                      isActive: true,
+                      isProfileComplete: false
+                  }
+              })
+              .then((response) => {
+                  if(response.status === 200){
+                      localStorage.setItem('275UserId', response.data.id);
+                      localStorage.setItem('275UserEmail', response.data.email);
+                      localStorage.setItem('275UserIsActive', response.data.active);
+                      // localStorage.setItem('275UserName', response.data.screenName)
+                      if (response.data.isAdmin) {
+                          localStorage.setItem('275UserType', "Admin")
+                      } else {
+                          localStorage.setItem('275UserType', "Pooler")
+                      }
+
+                      this.setState({redURL : "/verify", signInDone: true});
+
+                      // // var id = response.data.id;
+                      // // var uri = '/user/'.concat(id).concat('/sendVerification');
+                      // axios.post(uri, null, null)
+                      // .then((response1) => {
+                      //     if(response1.status === 200){
+                      //         // this.setState({code: response1.data});
+                      //         // localStorage.setItem('verifCode', response1.data);
+                      //         this.setState({redURL : "/verify", signInDone: true});
+                      //     }
+                      // })
+                  }
+              })
+              .catch((error) => {
+                  alert(error.response.data);
+              });
             }
-            this.setState({signInDone: true});
+            else{
+              var uri = '/user/uid/'.concat(user.uid);
+              axios.get(uri)
+              .then((response) => {
+                if(response.status === 200){
+                  localStorage.setItem('275UserId', response.data.id);
+                  localStorage.setItem('275UserEmail', response.data.email);
+                  localStorage.setItem('275UserIsActive', response.data.active);
+                  if (response.data.isAdmin) {
+                    localStorage.setItem('275UserType', "Admin")
+                  } else {
+                    localStorage.setItem('275UserType', "Pooler")
+                  }
+                  if(response.data.verified){
+                    if(response.data.profileComplete){
+                      this.setState({redURL : "/pooler/landing", signInDone: true});
+                    }
+                    else{
+                      this.setState({redURL : "/user-information", signInDone: true});
+                    }
+                  }
+                  else{
+                    this.setState({redURL : "/verify", signInDone: true});
+                  }
+                }
+              })
+              .catch((error) => {
+                alert(error.response.data);
+              });
+            }
 
             return false;
           }
