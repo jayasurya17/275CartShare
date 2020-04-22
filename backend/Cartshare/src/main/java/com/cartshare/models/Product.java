@@ -54,10 +54,14 @@ public class Product {
 	@Column(name = "price")
 	private Double price;
 	
-	// @JsonIgnore
-	// @OneToMany(mappedBy="product", fetch = FetchType.EAGER)
-	// @LazyCollection(LazyCollectionOption.FALSE)
-	// private List<OrderItems> orderItems = new ArrayList<OrderItems>();
+	@NotNull
+	@Column(name = "isactive")
+	private Boolean isActive;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy="product", fetch = FetchType.EAGER)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<OrderItems> orderItems = new ArrayList<OrderItems>();
 	
 	public Product(long id, @NotBlank String productName, @NotBlank String description,
 			@NotBlank String imageURL, @NotBlank String brand, @NotBlank String sku, String unit,
@@ -71,7 +75,7 @@ public class Product {
 		this.sku = sku;
 		this.unit = unit;
 		this.price = price;
-		// this.orderItems = orderItems;
+		this.orderItems = orderItems;
 		this.store = store;
 	}
 
@@ -124,17 +128,23 @@ public class Product {
 	public Double getPrice() {
 		return price;
 	}
+	public boolean isActive() {
+		return isActive;
+	}
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
 	public void setPrice(Double price) {
 		this.price = price;
 	}
 
-	// public List<OrderItems> getOrderItems() {
-	// 	return orderItems;
-	// }
+	public List<OrderItems> getOrderItems() {
+		return orderItems;
+	}
 
-	// public void setOrderItems(List<OrderItems> orderItems) {
-	// 	this.orderItems = orderItems;
-	// }
+	public void setOrderItems(List<OrderItems> orderItems) {
+		this.orderItems = orderItems;
+	}
 
 	public Store getStore() {
 		return store;
