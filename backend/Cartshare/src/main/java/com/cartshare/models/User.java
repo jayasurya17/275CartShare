@@ -68,6 +68,11 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<PoolMembers> refernces = new HashSet<PoolMembers>();
 	
+	// @JsonIgnore
+	// @OneToMany(mappedBy="orders", fetch = FetchType.EAGER)
+	// @LazyCollection(LazyCollectionOption.FALSE)
+	// private Set<Orders> orders = new HashSet<Orders>();
+	
 	
 	public User(@NotBlank String uid, @NotBlank String email, @NotBlank String nickName, @NotBlank String screenName,
 			@NotBlank boolean isAdmin, @NotBlank boolean isVerified, @NotBlank boolean isActive,
@@ -148,5 +153,11 @@ public class User {
 	 public void setRefernces(Set<PoolMembers> refernces) {
 	 	this.refernces = refernces;
 	 }
+	//  public Set<Orders> getOrders() {
+	//  	return orders;
+	//  }
+	//  public void setOrders(Set<Orders> orders) {
+	//  	this.orders = orders;
+	//  }
 	
 }

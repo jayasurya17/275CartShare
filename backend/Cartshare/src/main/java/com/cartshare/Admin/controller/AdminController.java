@@ -6,6 +6,7 @@ import com.cartshare.Store.dao.StoreDAO;
 import com.cartshare.User.dao.UserDAO;
 import com.cartshare.Product.dao.ProductDAO;
 import com.cartshare.models.*;
+import com.cartshare.RequestBody.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.HttpStatus;
@@ -31,23 +33,20 @@ public class AdminController {
     ProductDAO productDAO;
 
     @PostMapping(value = "/create/store", produces = { "application/json", "application/xml" })
-    public ResponseEntity createStore(@RequestParam(name = "userId") String userId,
-            @RequestParam(name = "storeName") String storeName, @RequestParam(name = "street") String street,
-            @RequestParam(name = "city") String city, @RequestParam(name = "state") String state,
-            @RequestParam(name = "zipcode") String zipcode) {
+    public ResponseEntity createStore(@RequestBody StoreRequest storeRequest) {
 
         try {
             Address address = new Address();
-            address.setStreet(street);
-            address.setCity(city);
-            address.setState(state);
-            address.setZipcode(zipcode);
-            User user = userDAO.findById(userId);
+            address.setStreet(storeRequest.getStreet());
+            address.setCity(storeRequest.getCity());
+            address.setState(storeRequest.getState());
+            address.setZipcode(storeRequest.getZipcode());
+            User user = userDAO.findById(storeRequest.getUserId());
             if (user == null || user.isAdmin() == false) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
             }
             Store store = new Store();
-            store.setStoreName(storeName);
+            store.setStoreName(storeRequest.getStoreName());
             store.setActive(true);
             store.setAddress(address);
             store.setUser(user);
@@ -59,25 +58,22 @@ public class AdminController {
     }
 
     @PutMapping(value = "/modify/store", produces = { "application/json", "application/xml" })
-    public ResponseEntity modifyStore(@RequestParam(name = "userId") String userId,
-            @RequestParam(name = "storeId") String storeId, @RequestParam(name = "storeName") String storeName,
-            @RequestParam(name = "street") String street, @RequestParam(name = "city") String city,
-            @RequestParam(name = "state") String state, @RequestParam(name = "zipcode") String zipcode) {
+    public ResponseEntity modifyStore(@RequestBody StoreRequest storeRequest) {
 
         try {
-            Store store = storeDAO.findById(storeId);
+            Store store = storeDAO.findById(storeRequest.getStoreId());
             if (store == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
             }
-            if (store.getUser().getId() != Long.parseLong(userId)) {
+            if (store.getUser().getId() != Long.parseLong(storeRequest.getUserId())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Admin does not own the store");
             }
-            store.setStoreName(storeName);
+            store.setStoreName(storeRequest.getStoreName());
             Address address = new Address();
-            address.setStreet(street);
-            address.setCity(city);
-            address.setState(state);
-            address.setZipcode(zipcode);
+            address.setStreet(storeRequest.getStreet());
+            address.setCity(storeRequest.getCity());
+            address.setState(storeRequest.getState());
+            address.setZipcode(storeRequest.getZipcode());
             store.setAddress(address);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(storeDAO.save(store));
         } catch (Exception e) {
