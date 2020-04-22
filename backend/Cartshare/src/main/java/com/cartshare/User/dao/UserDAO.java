@@ -14,9 +14,13 @@ public class UserDAO {
 	@Autowired
 	UserRepository userRepository;
 
-	public User save(User player) {
-		return userRepository.save(player);
-	}
+    public User save(User player) {
+      return userRepository.save(player);
+    }
+
+    public boolean userExists(Long id){
+      return userRepository.existsById(id);
+    }
 
     public boolean nickNameExists(String nickName) {
       List<User> l = userRepository.findByNickName(nickName);
@@ -26,6 +30,11 @@ public class UserDAO {
     public boolean screenNameExists(String screenName){
       List<User> l = userRepository.findByScreenName(screenName);
       return (l.size() == 0) ? false : true;
+    }
+
+    public User findByScreenName(String screenName){
+      List<User> l = userRepository.findByScreenName(screenName);
+      return (l.size() == 0) ? null : l.get(0);
     }
 
     public User findById(Long id){
