@@ -19,6 +19,10 @@ public class ProductDAO {
 		return productRepository.save(product);
 	}
 
+	public Product findById(Long id) {
+		return productRepository.findById(id).orElse(null);
+	}
+
 	public List<Product> findByStore(Store store) {
 		return productRepository.findByStore(store);
 	}

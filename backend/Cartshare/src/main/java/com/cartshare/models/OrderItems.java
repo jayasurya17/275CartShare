@@ -36,6 +36,10 @@ public class OrderItems {
 		this.quantity = quantity;
 	}
 
+	public OrderItems() {
+		
+	}
+
 	public Orders getOrders() {
 		return orders;
 	}

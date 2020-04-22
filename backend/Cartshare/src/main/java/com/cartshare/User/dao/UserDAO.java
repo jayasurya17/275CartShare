@@ -14,8 +14,8 @@ public class UserDAO {
 	@Autowired
 	UserRepository userRepository;
 
-	public User save(User player) {
-		return userRepository.save(player);
+	public User save(User user) {
+		return userRepository.save(user);
 	}
 
     public boolean nickNameExists(String nickName) {
