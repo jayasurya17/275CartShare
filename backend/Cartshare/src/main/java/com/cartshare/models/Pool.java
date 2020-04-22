@@ -60,6 +60,10 @@ public class Pool {
 		this.poolMembers = poolMembers;
 	}
 
+	public Pool() {
+		
+	}
+
 
 	public long getId() {
 		return id;

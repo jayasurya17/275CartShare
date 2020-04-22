@@ -21,9 +21,8 @@ public class StoreDAO {
 	}
 
 
-	public Store findById(String id) {
-		Long storeId = Long.parseLong(id);
-		return storeRepository.findById(storeId).orElse(null);
+	public Store findById(Long id) {
+		return storeRepository.findById(id).orElse(null);
 	}
 
 	public List<Store> findAll() {
