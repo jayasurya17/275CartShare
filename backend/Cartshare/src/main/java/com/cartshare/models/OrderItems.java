@@ -1,7 +1,7 @@
 package com.cartshare.models;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -25,9 +25,15 @@ public class OrderItems {
 	@JoinColumn(name = "product_id")
 	private Product product;
 	
-	@NotBlank
+	@NotNull
 	@Column(name = "quantity")
 	private long quantity;
+	
+	@Column(name = "product_name")
+	private String productName;
+	
+	@Column(name = "product_price")
+	private Double productPrice;
 
 	public OrderItems(Orders orders, Product product, @NotBlank long quantity) {
 		super();
@@ -71,6 +77,22 @@ public class OrderItems {
 
 	public void setQuantity(long quantity) {
 		this.quantity = quantity;
+	}
+
+	public Double getProductPrice() {
+		return this.productPrice;
+	}
+
+	public void setProductPrice(Double productPrice) {
+		this.productPrice = productPrice;
+	}
+
+	public String getProductName() {
+		return this.productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
 	
 	

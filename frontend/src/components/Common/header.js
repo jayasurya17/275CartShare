@@ -8,7 +8,9 @@ class Home extends Component {
         let cartButton = [
             <div className="row">
                 <div className="col-md-12 text-center">
-                    <button className="btn btn-outline-success w-50">View Cart</button>
+                    <a href="/pooler/view/cart">
+                        <button className="btn btn-outline-success w-50">View Cart</button>
+                    </a>
                 </div>
             </div>,
             <div className="row">

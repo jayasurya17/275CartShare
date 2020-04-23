@@ -11,6 +11,7 @@ import PoolerLanding from './Pooler/Landing/landing';
 import PoolerBrowseStores from './Pooler/browseStores';
 import PoolerSearch from './Pooler/search';
 import PoolerUpdateAccount from './Pooler/updateAccount';
+import PoolerViewCart from './Pooler/ConfirmOrder/viewCart';
 
 import AdminCheck from './Admin/adminCheck';
 import AdminStores from './Admin/Stores/browseStores';
@@ -39,6 +40,7 @@ class Main extends Component {
                 <Route path="/pooler/browse" component={PoolerBrowseStores} />
                 <Route path="/pooler/search" component={PoolerSearch} />
                 <Route path="/pooler/update/account" component={PoolerUpdateAccount} />
+                <Route path="/pooler/view/cart" component={PoolerViewCart} />
 
                 <Route path="/admin" component={AdminCheck} />
                 <Route path="/admin/browse" component={AdminStores} />

@@ -75,22 +75,22 @@ public class User {
 	private Address address;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="user", fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<Store> stores = new HashSet<Store>();
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="pooler", fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<Pool> pools = new HashSet<Pool>();
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="member", fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<PoolMembers> poolMembers = new HashSet<PoolMembers>();
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "reference", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="reference", fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<PoolMembers> refernces = new HashSet<PoolMembers>();
 

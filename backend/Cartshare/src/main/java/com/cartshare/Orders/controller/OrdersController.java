@@ -4,7 +4,9 @@ import com.cartshare.User.dao.UserDAO;
 import com.cartshare.models.*;
 import java.util.*;
 import com.cartshare.RequestBody.*;
+import com.cartshare.Store.dao.StoreDAO;
 import com.cartshare.Orders.dao.OrdersDAO;
+import com.cartshare.Pool.dao.PoolDAO;
 import com.cartshare.Product.dao.ProductDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,12 @@ public class OrdersController {
 
     @Autowired
     ProductDAO productDAO;
+
+    @Autowired
+    StoreDAO storeDAO;
+
+    @Autowired
+    PoolDAO poolDAO;
 
     @PostMapping(value = "/add/cart", produces = { "application/json", "application/xml" })
     public ResponseEntity<?> addProductToCart(@RequestBody OrderRequest orderRequest) {
@@ -74,7 +82,11 @@ public class OrdersController {
             }
 
             if (order == null) {
-                // Create new orderObj with pool
+                order = new Orders();
+                order.setUser(user);
+                // order.setPool(user.getPools());
+                order.setStore(storeDAO.findById(storeId));
+                order.setStatus("Cart");
 
             }
 

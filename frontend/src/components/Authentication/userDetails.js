@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import firebase from 'firebase';
 import { Redirect } from 'react-router';
 
 class UserDetails extends Component {
@@ -33,11 +32,11 @@ class UserDetails extends Component {
             alert("Nickname and Screenname can't be empty");
             return;
         }
-        if(this.state.nickName.localeCompare('notSet') == 0){
+        if(this.state.nickName.localeCompare('notSet') === 0){
             alert("NickName is already taken");
             return;
         }
-        if(this.state.screenName.localeCompare('notSet') == 0){
+        if(this.state.screenName.localeCompare('notSet') === 0){
             alert("ScreenName is already taken");
             return;
         }

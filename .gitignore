@@ -1,6 +1,5 @@
 /frontend/node_modules/
 /backend/.metadata
-<<<<<<< HEAD
 /backend/Cartshare/target/classes
 /.vscode
 /backend/.vscode
@@ -19,4 +18,3 @@ bin/
 .settings
 .springBeans
 *.class
->>>>>>> 99b8e5f3e5238c732da51c74f46956d8f97458a3
