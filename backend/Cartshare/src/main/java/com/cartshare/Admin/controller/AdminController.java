@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
@@ -87,7 +88,7 @@ public class AdminController {
             address.setState(storeRequest.getState());
             address.setZipcode(storeRequest.getZipcode());
             store.setAddress(address);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(storeDAO.save(store));
+            return ResponseEntity.status(HttpStatus.OK).body(storeDAO.save(store));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

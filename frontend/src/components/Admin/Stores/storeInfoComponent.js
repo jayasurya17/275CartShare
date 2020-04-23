@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import constants from '../../../utils/constants';
 
 class StoreInfoComponent extends Component {
 
@@ -19,13 +21,17 @@ class StoreInfoComponent extends Component {
 
     componentDidMount() {
         if (this.props.storeId) {
-            this.setState({
-                name: "Store Name",
-                street: "100",
-                city: "San Jose",
-                state: "CA",
-                zipcode: "95126",
-            })
+            axios.get(`${constants.BACKEND_SERVER.URL}/store/details/${this.props.storeId}`)
+                .then((response) => {
+                    this.setState({
+                        name: response.data.storeName,
+                        street: response.data.address.street,
+                        city: response.data.address.city,
+                        state: response.data.address.state,
+                        zipcode: response.data.address.zipcode,
+                    })
+
+                })
         }
     }
 
@@ -66,18 +72,126 @@ class StoreInfoComponent extends Component {
         });
     }
 
-    createStore = () => {
+    isEmpty = (value) => {
+        if (value.trim().localeCompare("") === 0) {
+            return true
+        }
+        return false
+    }
 
+    isValidZipCode = (zipcode) => {
+        if (zipcode.length !== 5) {
+            return false
+        }
+        for (var value of zipcode) {
+            if (isNaN(parseInt(value, 10))) {
+                return false
+            }
+        }
+        return true
+    }
+
+    areValidValues = () => {
+        if (this.isEmpty(this.state.name))
+            return false
+        if (this.isEmpty(this.state.street))
+            return false
+        if (this.isEmpty(this.state.city))
+            return false
+        if (this.isEmpty(this.state.state))
+            return false
+        if (this.isEmpty(this.state.zipcode))
+            return false
+        return true
+
+    }
+
+    createStore = () => {
+        if (this.isValidZipCode(this.state.zipcode) === false) {
+            this.setState({
+                successMsg: "",
+                errMsg: "Invalid zipcode"
+            })
+        } else if (this.areValidValues()) {
+            const reqBody = {
+                userId: localStorage.getItem('275UserId'),
+                storeName: this.state.name,
+                street: this.state.street,
+                city: this.state.city,
+                state: this.state.state,
+                zipcode: this.state.zipcode
+            }
+            axios.post(`${constants.BACKEND_SERVER.URL}/admin/create/store`, reqBody)
+                .then(() => {
+                    this.setState({
+                        errMsg: "",
+                        successMsg: "Created",
+                        name: "",
+                        street: "",
+                        city: "",
+                        state: "",
+                        zipcode: "",
+                        selectedFile: "",
+                        filename: "",
+                    })
+                })
+                .catch(() => {
+                    this.setState({
+                        errMsg: "Error occured",
+                        successMsg: ""
+                    })
+                })
+
+        } else {
+            this.setState({
+                successMsg: "",
+                errMsg: "Fields cannot be empty"
+            })
+        }
     }
 
     updateStore = () => {
+        if (this.isValidZipCode(this.state.zipcode) === false) {
+            this.setState({
+                successMsg: "",
+                errMsg: "Invalid zipcode"
+            })
+        } else if (this.areValidValues()) {
+            const reqBody = {
+                storeId: this.props.storeId,
+                userId: localStorage.getItem('275UserId'),
+                storeName: this.state.name,
+                street: this.state.street,
+                city: this.state.city,
+                state: this.state.state,
+                zipcode: this.state.zipcode
+            }
+            axios.put(`${constants.BACKEND_SERVER.URL}/admin/modify/store`, reqBody)
+                .then(() => {
+                    this.setState({
+                        errMsg: "",
+                        successMsg: "Updated"
+                    })
+                })
+                .catch(() => {
+                    this.setState({
+                        errMsg: "Error occured",
+                        successMsg: ""
+                    })
+                })
 
+        } else {
+            this.setState({
+                successMsg: "",
+                errMsg: "Fields cannot be empty"
+            })
+        }
     }
 
     render() {
-        let action = <button className="btn btn-success w-100" onClick={this.createStore}>Create store</button>
+        let action = <button className="btn btn-success w-100 mb-5" onClick={this.createStore}>Create store</button>
         if (this.props.storeId) {
-            action = <button className="btn btn-warning w-100" onClick={this.updateStore}>Update store details</button>
+            action = <button className="btn btn-warning w-100 mb-5" onClick={this.updateStore}>Update store details</button>
         }
 
         return (

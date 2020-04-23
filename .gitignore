@@ -1,5 +1,4 @@
 /frontend/node_modules/
-/backend/.metadata
 /backend/Cartshare/target/classes
 /.vscode
 /backend/.vscode

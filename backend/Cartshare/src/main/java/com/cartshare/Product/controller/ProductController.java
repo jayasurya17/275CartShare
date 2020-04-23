@@ -26,7 +26,7 @@ public class ProductController {
     StoreDAO storeDAO;
 
     @GetMapping(value = "/get/all", produces = { "application/json", "application/xml" })
-    public ResponseEntity<?> createProduct(@Valid @RequestParam(name = "storeId") String storeId) {
+    public ResponseEntity<?> getAllProducts(@Valid @RequestParam(name = "storeId") String storeId) {
 
         try {
             Long reqStoreId = null;
@@ -41,6 +41,24 @@ public class ProductController {
             }
 
             return ResponseEntity.status(HttpStatus.OK).body(productDAO.findByStore(store));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
+    }
+
+    @GetMapping(value = "/get/details", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> getProductDetails(@Valid @RequestParam(name = "productId") String productId) {
+
+        try {
+            Long reqProductId = null;
+            try{
+                reqProductId = Long.parseLong(productId);
+            } catch(Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(productDAO.findById(reqProductId));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

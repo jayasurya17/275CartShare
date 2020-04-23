@@ -48,7 +48,7 @@ class Home extends Component {
             itemFunction = [
                 <div className="row">
                     <div className="col-md-6">
-                        <a href={`/admin/product/update/${this.props.storeId}/12039`}>
+                        <a href={`/admin/product/update/${this.props.productObj.id}`}>
                             <button className="btn btn-warning w-100">Update this product</button>
                         </a>
                     </div>
@@ -57,7 +57,7 @@ class Home extends Component {
                     </div>
                 </div>
             ]
-        } else {
+        } else if (this.props.showQuantity) {
             itemFunction = [
                 <div className="row">
                     <div className="col-md-1 p-0">
@@ -78,15 +78,15 @@ class Home extends Component {
         return (
             <div className="shadow row m-3 p-3 rounded border">
                 <div className="col-md-8">
-                    <h1 className="font-weight-lighter">Item Name</h1>
-                    <h6 className="font-weight-lighter">This is description for the item</h6>
-                    <h6>Brand: <span className="font-weight-lighter">Name of the brand</span></h6>
-                    <h6>$12 / unit</h6>
+                    <h1 className="font-weight-lighter">{this.props.productObj.productName}</h1>
+                    <h6 className="font-weight-lighter">{this.props.productObj.description}</h6>
+                    <h6>Brand: <span className="font-weight-lighter">{this.props.productObj.brand}</span></h6>
+                    <h6>${this.props.productObj.price} / {this.props.productObj.unit}</h6>
                     <p className="text-danger">{this.state.errMsg}</p>
                     {itemFunction}
                 </div>
                 <div className="col-md-4">
-                    <img src="https://www.okea.org/wp-content/uploads/2019/10/placeholder.png" alt="..." class="img-thumbnail" />
+                    <img src={this.props.productObj.imageURL} alt="..." class="img-thumbnail" />
                 </div>
             </div>
         )

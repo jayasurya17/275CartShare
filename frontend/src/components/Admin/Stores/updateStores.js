@@ -12,7 +12,7 @@ class AddStores extends Component {
                 <Header isAdmin={true} />
                 <Navigation isAdmin={true} />
                 
-                <StoreInfoComponent storeId={10}/>
+                <StoreInfoComponent storeId={this.props.match.params.storeId}/>
             </div>
         )
     }
