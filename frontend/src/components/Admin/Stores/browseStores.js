@@ -3,14 +3,25 @@ import Header from '../../Common/header';
 import Navigation from '../../Common/navbar';
 import StoreCard from '../../Common/storeCard';
 import AddStoreComponent from './storeInfoComponent';
+import axios from 'axios';
+import constants from '../../../utils/constants'
 
 class BrowseStores extends Component {
 
     constructor() {
         super()
         this.state = {
-            allStores: ["Asd"]
+            allStores: []
         }
+    }
+
+    componentDidMount() {
+        axios.get(`${constants.BACKEND_SERVER.URL}/store/all?adminId=${localStorage.getItem('275UserId')}`)
+        .then((response) => {
+            this.setState({
+                allStores: response.data
+            })
+        })
     }
 
     render() {
@@ -27,10 +38,10 @@ class BrowseStores extends Component {
             )
         } else {
             let tempContainer = []
-            for (var index = 0; index < 9; index++) {
+            for (var index in this.state.allStores) {
                 tempContainer.push(
                     <div className="col-md-6">
-                        <StoreCard isAdmin={true} />
+                        <StoreCard isAdmin={true} storeObj={this.state.allStores[index]} />
                     </div>
                 )
                 if ((index + 1) % 2 === 0) {

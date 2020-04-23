@@ -10,10 +10,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.cartshare.Pool.dao.PoolDAO;
 import com.cartshare.models.Pool;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping(value = "/pool")
 public class PoolController {
