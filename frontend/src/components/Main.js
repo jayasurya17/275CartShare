@@ -50,7 +50,7 @@ class Main extends Component {
                 <Route path="/admin/store/view/:storeId" component={AdminViewStoreProducts} />
                 <Route path="/admin/store/update/:storeId" component={AdminUpdateStore} />
                 <Route path="/admin/product/add" component={AdminAddProduct} />
-                <Route path="/admin/product/update/:storeId/:SKU" component={AdminUpdateProduct} />
+                <Route path="/admin/product/update/:productId" component={AdminUpdateProduct} />
             </div>
         )
     }

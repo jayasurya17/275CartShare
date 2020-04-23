@@ -11,31 +11,40 @@ class BrowseStores extends Component {
     constructor() {
         super()
         this.state = {
-            allStores: []
+            allStores: [],
+            isFetched: false
         }
     }
 
     componentDidMount() {
         axios.get(`${constants.BACKEND_SERVER.URL}/store/all?adminId=${localStorage.getItem('275UserId')}`)
-        .then((response) => {
-            this.setState({
-                allStores: response.data
+            .then((response) => {
+                this.setState({
+                    allStores: response.data,
+                    isFetched: true
+                })
             })
-        })
+            .catch(() => {
+                this.setState({
+                    isFetched: true
+                })
+            })
     }
 
     render() {
 
         let allStores = []
         if (this.state.allStores.length === 0) {
-            allStores.push(
-                <h2 className="font-weight-light text-center mt-5">Oops! Looks like you do not have any stores at the moment</h2>
-            )
-            allStores.push(
-                <div className="mb-5">
-                    <AddStoreComponent />
-                </div>
-            )
+            if (this.state.isFetched === true) {
+                allStores.push(
+                    <h2 className="font-weight-light text-center mt-5">Oops! Looks like you do not have any stores at the moment</h2>
+                )
+                allStores.push(
+                    <div className="mb-5">
+                        <AddStoreComponent />
+                    </div>
+                )
+            }
         } else {
             let tempContainer = []
             for (var index in this.state.allStores) {

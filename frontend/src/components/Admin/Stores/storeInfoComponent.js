@@ -125,7 +125,14 @@ class StoreInfoComponent extends Component {
                 .then(() => {
                     this.setState({
                         errMsg: "",
-                        successMsg: "Created"
+                        successMsg: "Created",
+                        name: "",
+                        street: "",
+                        city: "",
+                        state: "",
+                        zipcode: "",
+                        selectedFile: "",
+                        filename: "",
                     })
                 })
                 .catch(() => {
