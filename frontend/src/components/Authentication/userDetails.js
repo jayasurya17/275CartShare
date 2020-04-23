@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import firebase from 'firebase';
+// import firebase from 'firebase';
 import { Redirect } from 'react-router';
 
 class UserDetails extends Component {
-
+    
     constructor() {
         super()
         this.state = {
@@ -15,6 +15,27 @@ class UserDetails extends Component {
         }
     }
 
+    componentWillMount = () => {
+
+        var id = localStorage.getItem('275UserId');
+        var screenName = localStorage.getItem('275NickName');
+        console.log("id", id);
+        
+        console.log('nickname', screenName);
+        if(id === null && screenName == null){
+            console.log("user not there");
+            this.setState({redUrl: '/login', redirect: true});
+        }
+        if(screenName != null){
+            this.setState({redUrl: '/pooler/landing', redirect: true});
+        }
+        // else{
+        // console.log("user there!");
+        
+        // var uri = '/user/'.concat();
+            // axios.get();
+        // }
+    }
 
     nickNameChangeHandler = (e) => {
         this.setState({
@@ -33,11 +54,11 @@ class UserDetails extends Component {
             alert("Nickname and Screenname can't be empty");
             return;
         }
-        if(this.state.nickName.localeCompare('notSet') == 0){
+        if(this.state.nickName.localeCompare('notSet') === 0){
             alert("NickName is already taken");
             return;
         }
-        if(this.state.screenName.localeCompare('notSet') == 0){
+        if(this.state.screenName.localeCompare('notSet') === 0){
             alert("ScreenName is already taken");
             return;
         }
@@ -53,27 +74,13 @@ class UserDetails extends Component {
                 isAdmin: isadmin,
                 isVerified: true,
                 isActive: localStorage.getItem('275UserIsActive'),
-                isProfileComplete: false
+                isProfileComplete: true
             }
         })
         .then((res) => {
             if(res.status === 200){
-                axios.put(uri, null, {
-                    params: {
-                        email: email,
-                        nickName: this.state.nickName,
-                        screenName: this.state.screenName,
-                        isAdmin: isadmin,
-                        isVerified: true,
-                        isActive: localStorage.getItem('275UserIsActive'),
-                        isProfileComplete: true
-                    }
-                })
-                .then((res1) => {
-                    if(res1.status === 200){
-                        this.setState({redirect: true, redURL: "/pooler/landing"});
-                    }
-                })
+                localStorage.setItem('275NickName', res.data.nickName);
+                this.setState({redirect: true, redURL: "/pooler/landing"});
             }
         })
         .catch((error) => {
