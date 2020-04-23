@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import Landing from './Authentication/landing';
 import Login from './Authentication/login';
+import Logout from './Authentication/logout';
 import VerifyUser from './Authentication/verify';
 import UserDetails from './Authentication/userDetails';
 
@@ -10,6 +11,8 @@ import PoolerLanding from './Pooler/Landing/landing';
 import PoolerBrowseStores from './Pooler/browseStores';
 import PoolerSearch from './Pooler/search';
 import PoolerUpdateAccount from './Pooler/updateAccount';
+import PoolerViewCart from './Pooler/ConfirmOrder/viewCart';
+import PoolerViewPool from './Pooler/Pool/viewDetails';
 
 import AdminCheck from './Admin/adminCheck';
 import AdminStores from './Admin/Stores/browseStores';
@@ -29,6 +32,7 @@ class Main extends Component {
                 {/*Render Different Component based on Route*/}
                 <Route path="/" component={Landing} />
                 <Route path="/login" component={Login} />
+                <Route path="/logout" component={Logout} />
                 <Route path="/verify" component={VerifyUser} />
                 <Route path="/user-information" component={UserDetails} />
 
@@ -37,6 +41,8 @@ class Main extends Component {
                 <Route path="/pooler/browse" component={PoolerBrowseStores} />
                 <Route path="/pooler/search" component={PoolerSearch} />
                 <Route path="/pooler/update/account" component={PoolerUpdateAccount} />
+                <Route path="/pooler/view/cart" component={PoolerViewCart} />
+                <Route path="/pooler/view/pool" component={PoolerViewPool} />
 
                 <Route path="/admin" component={AdminCheck} />
                 <Route path="/admin/browse" component={AdminStores} />

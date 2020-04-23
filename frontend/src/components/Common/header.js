@@ -8,12 +8,14 @@ class Home extends Component {
         let cartButton = [
             <div className="row">
                 <div className="col-md-12 text-center">
-                    <button className="btn btn-outline-success w-50">View Cart</button>
+                    <a href="/pooler/view/cart">
+                        <button className="btn btn-outline-success w-50">View Cart</button>
+                    </a>
                 </div>
             </div>,
             <div className="row">
                 <div className="col-md-12 text-center">
-                    <p className="text-center">Not Username? <a href="/logout" className="text-decoration-none">Logout</a></p>
+                    <p className="text-center">Not {localStorage.getItem('275NickName')}? <a href="/logout" className="text-decoration-none">Logout</a></p>
                 </div>
             </div>
         ]

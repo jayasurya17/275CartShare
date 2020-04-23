@@ -44,10 +44,10 @@ public class Store {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
-	// @JsonIgnore
-	// @OneToMany(mappedBy="store", fetch = FetchType.EAGER)
-	// @LazyCollection(LazyCollectionOption.FALSE)
-	// private Set<Orders> orders = new HashSet<Orders>();
+	@JsonIgnore
+	@OneToMany(mappedBy="store", fetch = FetchType.EAGER)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Set<Orders> orders = new HashSet<Orders>();
 	
 	@JsonIgnore
 	@OneToMany(mappedBy="store", fetch = FetchType.EAGER)
@@ -106,13 +106,13 @@ public class Store {
 		this.user = user;
 	}
 
-	// public Set<Orders> getOrders() {
-	// 	return orders;
-	// }
+	public Set<Orders> getOrders() {
+		return orders;
+	}
 
-	// public void setOrders(Set<Orders> orders) {
-	// 	this.orders = orders;
-	// }
+	public void setOrders(Set<Orders> orders) {
+		this.orders = orders;
+	}
 
 	public Set<Product> getProducts() {
 		return products;

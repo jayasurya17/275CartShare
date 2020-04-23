@@ -6,23 +6,11 @@ import javax.validation.Valid;
 
 import com.cartshare.User.dao.UserDAO;
 import com.cartshare.models.User;
-import com.cartshare.repositories.UserRepository;
 import com.cartshare.utils.MailController;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.*;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -33,7 +21,7 @@ public class UserController {
     UserDAO userDAO;
 
     @PostMapping(produces = { "application/json", "application/xml" })
-    public ResponseEntity createUser(@Valid
+    public ResponseEntity<?> createUser(@Valid
                                     @RequestParam(name = "uid") String uid,
                                     @RequestParam(name = "email") String email,
                                     @RequestParam(name = "nickName") String nickName,
@@ -73,7 +61,7 @@ public class UserController {
     }
 
     @PostMapping(value="/{id}/sendVerification", produces = { "application/json", "application/xml" })
-    public ResponseEntity sendVerificationEmail(@Valid
+    public ResponseEntity<?> sendVerificationEmail(@Valid
                                     @PathVariable(name = "id") String id){
                                     // @RequestParam(name = "email") String email){
         
@@ -81,7 +69,7 @@ public class UserController {
         try{
             l = Long.parseLong(id);
         } catch (NumberFormatException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid player ID");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
         }
         User user = userDAO.findById(l);
         if (user == null) {
@@ -106,7 +94,7 @@ public class UserController {
     }
 
     @GetMapping(value="/{id}", produces = { "application/json", "application/xml" })
-	public ResponseEntity findUser(@Valid @PathVariable(name = "id") String id) {
+	public ResponseEntity<?> findUser(@Valid @PathVariable(name = "id") String id) {
         try{
             Long l ;
             try{
@@ -126,7 +114,7 @@ public class UserController {
     }
 
     @GetMapping(value="/uid/{uid}", produces = { "application/json", "application/xml" })
-    public ResponseEntity getUID(@Valid @PathVariable(name = "uid") String uid){
+    public ResponseEntity<?> getUID(@Valid @PathVariable(name = "uid") String uid){
         try{
             User user = userDAO.findByUid(uid);
             if (user == null) {
@@ -139,7 +127,7 @@ public class UserController {
     }
 
     @PutMapping(value="/{id}", produces = { "application/json", "application/xml" })
-    public ResponseEntity editUser(@Valid
+    public ResponseEntity<?> editUser(@Valid
                                     @PathVariable(name = "id") String id,
                                     @RequestParam(name = "email") String email,
                                     @RequestParam(name = "nickName") String nickName,
@@ -154,7 +142,7 @@ public class UserController {
             try{
                 l = Long.parseLong(id);
             } catch (NumberFormatException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid player ID");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
             User user = userDAO.findById(l);
             if (user == null) {
@@ -187,13 +175,13 @@ public class UserController {
 
 
     @DeleteMapping(value="/{id}", produces = { "application/json", "application/xml" })
-    public ResponseEntity deleteUser(@Valid @PathVariable(name = "id") String id){
+    public ResponseEntity<?> deleteUser(@Valid @PathVariable(name = "id") String id){
         try{
             Long l;
             try{
 	            l = Long.parseLong(id);
 	        } catch (NumberFormatException e) {
-	        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid player ID");
+	        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
             User user = userDAO.findById(l);
             if (user == null) {

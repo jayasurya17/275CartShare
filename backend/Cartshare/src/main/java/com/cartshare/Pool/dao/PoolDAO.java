@@ -1,22 +1,13 @@
 package com.cartshare.Pool.dao;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.persistence.EntityManager;
-
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import com.cartshare.models.Pool;
-import com.cartshare.models.User;
-import com.cartshare.repositories.PoolRepository;
-import com.cartshare.repositories.UserRepository;
+import com.cartshare.models.*;
+import com.cartshare.repositories.*;
 
 @Repository
 public class PoolDAO {
-	@Autowired
-    private EntityManager entityManager;
 	
 	@Autowired
     UserRepository userRepository;
