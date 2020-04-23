@@ -32,6 +32,10 @@ public class PoolMembers {
 	@NotBlank
 	@Column(name = "status")
 	private String status;
+	
+	public PoolMembers() {
+		
+	}
 
 	public PoolMembers(Pool pool, User member, User reference, @NotBlank String status) {
 		super();
