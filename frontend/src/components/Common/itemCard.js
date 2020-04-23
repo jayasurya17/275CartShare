@@ -57,7 +57,7 @@ class Home extends Component {
                     </div>
                 </div>
             ]
-        } else {
+        } else if (this.props.showQuantity) {
             itemFunction = [
                 <div className="row">
                     <div className="col-md-1 p-0">

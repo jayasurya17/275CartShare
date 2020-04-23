@@ -8,7 +8,8 @@ import UserDetails from './Authentication/userDetails';
 
 import PoolerCheck from './Pooler/poolerCheck';
 import PoolerLanding from './Pooler/Landing/landing';
-import PoolerBrowseStores from './Pooler/browseStores';
+import PoolerBrowseStores from './Pooler/Store/browseStores';
+import PoolerViewStoreProducts from './Pooler/Store/viewProducts';
 import PoolerSearch from './Pooler/search';
 import PoolerUpdateAccount from './Pooler/updateAccount';
 import PoolerViewCart from './Pooler/ConfirmOrder/viewCart';
@@ -39,6 +40,7 @@ class Main extends Component {
                 <Route path="/pooler" component={PoolerCheck} />
                 <Route path="/pooler/landing" component={PoolerLanding} />
                 <Route path="/pooler/browse" component={PoolerBrowseStores} />
+                <Route path="/pooler/store/:storeId" component={PoolerViewStoreProducts} />
                 <Route path="/pooler/search" component={PoolerSearch} />
                 <Route path="/pooler/update/account" component={PoolerUpdateAccount} />
                 <Route path="/pooler/view/cart" component={PoolerViewCart} />
