@@ -15,7 +15,7 @@ class Home extends Component {
             </div>,
             <div className="row">
                 <div className="col-md-12 text-center">
-                    <p className="text-center">Not Username? <a href="/logout" className="text-decoration-none">Logout</a></p>
+                    <p className="text-center">Not {localStorage.getItem('275NickName')}? <a href="/logout" className="text-decoration-none">Logout</a></p>
                 </div>
             </div>
         ]

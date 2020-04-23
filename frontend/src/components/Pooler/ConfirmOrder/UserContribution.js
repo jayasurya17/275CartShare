@@ -35,10 +35,10 @@ class UserContribution extends Component {
     render() {
 
         let background = "bg-success"
-        if (this.state.contributionCredit <= -4 ) {
-            background = "bg-warning"
-        } else if (this.state.contributionCredit <= -6) {
+        if (this.state.contributionCredit <= -6 ) {
             background = "bg-danger"
+        } else if (this.state.contributionCredit <= -4) {
+            background = "bg-warning"
         }
         return (
             <div>

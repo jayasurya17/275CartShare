@@ -4,7 +4,24 @@ import Navigation from '../Common/navbar';
 
 class Home extends Component {
 
+    constructor() {
+        super()
+        this.state = {
+            user: {
+                contributionCredit: -10
+            }
+        }
+    }
+
     render() {
+        
+
+        let background = "bg-success"
+        if (this.state.user.contributionCredit <= -6 ) {
+            background = "bg-danger"
+        } else if (this.state.user.contributionCredit <= -4) {
+            background = "bg-warning"
+        }
 
         return (
             <div>
@@ -25,6 +42,14 @@ class Home extends Component {
                             <input type="password" className="form-control" />
                         </div>
                         <button className="btn btn-success w-100">Update account</button>
+                        <div className="pt-5 row text-center">
+                            <div className="col-md-8">Your contribution credit</div>
+                            <div className="col-md-2 font-weight-bold">{this.state.user.contributionCredit}</div>
+                        </div>
+                        <div className="pt-2 row text-center">
+                            <div className="col-md-8">Your contribution status</div>
+                            <div className={`col-md-2 ${background}`}></div>
+                        </div>
                     </div>
                 </div>
             </div>
