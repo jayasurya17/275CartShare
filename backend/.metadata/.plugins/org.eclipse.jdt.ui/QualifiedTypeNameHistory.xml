@@ -45,4 +45,5 @@
     <fullyQualifiedTypeName name="com.cartshare.Pool.dao.PoolDAO"/>
     <fullyQualifiedTypeName name="com.cartshare.models.User"/>
     <fullyQualifiedTypeName name="org.springframework.beans.factory.annotation.Autowired"/>
+    <fullyQualifiedTypeName name="com.cartshare.models.PoolMembers"/>
 </qualifiedTypeNameHistroy>
