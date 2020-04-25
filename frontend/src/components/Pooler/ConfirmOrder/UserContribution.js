@@ -12,14 +12,12 @@ class UserContribution extends Component {
     }
 
     pickupTypeChangeHandler = (e) => {
-        console.log(e.target.value)
         this.setState({
             selfPickup: e.target.value
         })
     }
 
     submitOrder = () => {
-        console.log(this.state.selfPickup)
         if (this.state.selfPickup === true) {
             this.setState({
                 showOtherOrders: true

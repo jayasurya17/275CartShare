@@ -20,21 +20,8 @@ public class StoreController {
     UserDAO userDAO;
 
     @GetMapping(value = "/all",  produces = { "application/json", "application/xml" })
-    public ResponseEntity<?> getAllStores(
-        @RequestParam(name = "adminId", required = false) String adminId
-    ) {
+    public ResponseEntity<?> getAllStores() {
         try{
-            if (adminId != null) {
-                Long l;
-                try{
-                    l = Long.parseLong(adminId);
-                } catch (NumberFormatException e) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid admin ID");
-                }
-                User admin = userDAO.findById(l);
-                return ResponseEntity.status(HttpStatus.OK).body(storeDAO.findByAdmin(admin));
-            }
-
             return ResponseEntity.status(HttpStatus.OK).body(storeDAO.findAll());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

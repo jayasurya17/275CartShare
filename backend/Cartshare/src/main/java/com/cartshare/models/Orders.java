@@ -3,8 +3,10 @@ package com.cartshare.models;
 import java.util.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -34,7 +36,7 @@ public class Orders {
 	@JoinColumn(name = "store_id")
 	private Store store;
 	
-	@NotBlank
+	@NotNull
 	@Column(name = "isfulfilled")
 	private boolean isFulfilled;
 	
@@ -42,7 +44,7 @@ public class Orders {
 	@Column(name = "status")
 	private String status;
 	
-	@NotBlank
+	@CreationTimestamp
 	@Column(name = "timestamp")
 	private Date timestamp;
 	

@@ -81,6 +81,7 @@ class Home extends Component {
                     <h1 className="font-weight-lighter">{this.props.productObj.productName}</h1>
                     <h6 className="font-weight-lighter">{this.props.productObj.description}</h6>
                     <h6>Brand: <span className="font-weight-lighter">{this.props.productObj.brand}</span></h6>
+                    <h6>SKU: <span className="font-weight-lighter">{this.props.productObj.sku}</span></h6>
                     <h6>${this.props.productObj.price} / {this.props.productObj.unit}</h6>
                     <p className="text-danger">{this.state.errMsg}</p>
                     {itemFunction}

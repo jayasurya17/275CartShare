@@ -7,5 +7,6 @@ import com.cartshare.models.*;
 public interface ProductRepository extends JpaRepository<Product, Long>{
 	
     public List<Product> findByStore(Store store);
-    public List<Product> findBySku(String SKU);
+    public List<Product> findBySku(Long SKU);
+    public Product findProductByStoreAndSku(Store store, Long SKU);
 }

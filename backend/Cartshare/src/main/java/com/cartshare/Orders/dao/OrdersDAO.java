@@ -39,4 +39,16 @@ public class OrdersDAO {
 		ordersRepository.deleteById(orderId);
 	}
 
+	public Orders findOrdersByUserAndStatus(User user, String status) {
+		return ordersRepository.findOrdersByUserAndStatus(user, status);
+	}
+
+	public OrderItems findOrderItemsByOrdersAndProduct(Orders order, Product product) {
+		return orderItemsRepository.findOrderItemsByOrdersAndProduct(order, product);
+	}
+
+	public OrderItems findOrderItemsById(Long id) {
+		return orderItemsRepository.findById(id).orElse(null);
+	}
+
 }

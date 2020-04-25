@@ -12,8 +12,10 @@ import PoolerBrowseStores from './Pooler/Store/browseStores';
 import PoolerViewStoreProducts from './Pooler/Store/viewProducts';
 import PoolerSearch from './Pooler/search';
 import PoolerUpdateAccount from './Pooler/updateAccount';
+import PoolerAddCart from './Pooler/AddToCart/addToCart';
 import PoolerViewCart from './Pooler/ConfirmOrder/viewCart';
 import PoolerViewPool from './Pooler/Pool/viewDetails';
+import PoolerSupportReferrals from './Pooler/Pool/supportReferrals';
 
 import AdminCheck from './Admin/adminCheck';
 import AdminStores from './Admin/Stores/browseStores';
@@ -43,8 +45,10 @@ class Main extends Component {
                 <Route path="/pooler/store/:storeId" component={PoolerViewStoreProducts} />
                 <Route path="/pooler/search" component={PoolerSearch} />
                 <Route path="/pooler/update/account" component={PoolerUpdateAccount} />
+                <Route path="/pooler/add/cart" component={PoolerAddCart} />
                 <Route path="/pooler/view/cart" component={PoolerViewCart} />
                 <Route path="/pooler/view/pool" component={PoolerViewPool} />
+                <Route path="/pooler/support/referrals" component={PoolerSupportReferrals} />
 
                 <Route path="/admin" component={AdminCheck} />
                 <Route path="/admin/browse" component={AdminStores} />

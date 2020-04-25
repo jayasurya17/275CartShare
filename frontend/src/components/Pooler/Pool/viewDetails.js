@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Header from '../../Common/header';
 import Navigation from '../../Common/navbar';
-import SupportReferrals from './supportReferrals';
 import AcceptRequests from './acceptRequests';
 
 class UserInfo extends Component {
@@ -63,16 +62,15 @@ class ViewDetails extends Component {
         for (var i = 0; i < 10; i++) {
             allUsers.push(<UserInfo slNo={i + 1} userObj={userObj} />)
         }
-        let viewRequests,
-            updateInfo
-        if (localStorage.getItem('275UserId') === this.state.pool.coordinator.id) {
-            viewRequests = <AcceptRequests />
-            updateInfo =
-                <div className="text-center pt-3">
+        let adminActions = []
+        // if (localStorage.getItem('275UserId') === this.state.pool.coordinator.id) {
+            if(true) {
+            adminActions.push(
+                <div className="text-center pt-5">
                     <button className="w-50 btn btn-warning">Update pool information</button>
                 </div>
-        } else if (this.state.pool.coordinator.id != null) {
-            viewRequests = <SupportReferrals />
+            )
+            adminActions.push(<AcceptRequests />)
         }
 
         return (
@@ -87,7 +85,7 @@ class ViewDetails extends Component {
                             <h1>Description: <span className="font-weight-light">A pool description</span></h1>
                             <h1>Zipcode: <span className="font-weight-light">95126</span></h1>
                             <h1>Coordinator: <span className="font-weight-light">Name of Coordinator</span></h1>
-                            {updateInfo}
+                            {/* {updateInfo} */}
                         </div>
                         <div className="col-md-6">
                             <p className="display-4 text-center">Current members</p>
@@ -100,7 +98,8 @@ class ViewDetails extends Component {
                             {allUsers}
                         </div>
                     </div>
-                    {viewRequests}
+                    {adminActions}
+                    
                 </div>
             </div>
         )

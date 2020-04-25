@@ -46,7 +46,7 @@ public class OrdersController {
             try {
                 storeId = Long.parseLong(orderRequest.getStoreId());
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
             }
             Long productId = null;
             try {
@@ -55,7 +55,7 @@ public class OrdersController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid product ID");
             }
             Product product = productDAO.findById(productId);
-            if (product.getStore().getId() != storeId) {
+            if (product == null || product.getStore().getId() != storeId) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product does not belong to the store");
             }
             Long quantity = null;
@@ -69,39 +69,29 @@ public class OrdersController {
             }
 
             User user = userDAO.findById(userId);
-            List<Orders> allOrdersByUser = ordersDAO.findOrdersByUser(user);
-            Orders order = null;
-            for (Orders orderObj : allOrdersByUser) {
-                if (orderObj.getStatus().equals("Cart")) {
-                    if (orderObj.getStore().getId() != storeId) {
-                        return ResponseEntity.status(HttpStatus.CONFLICT)
-                                .body("Cart cannot have products from multiple stores");
-                    }
-                    order = orderObj;
-                }
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
-
+            Orders order = ordersDAO.findOrdersByUserAndStatus(user, "Cart");
             if (order == null) {
                 order = new Orders();
                 order.setUser(user);
-                // order.setPool(user.getPools());
+
+                // Update with pool the pooler is part of
+                order.setPool(poolDAO.getPool(Long.parseLong("34")));
                 order.setStore(storeDAO.findById(storeId));
                 order.setStatus("Cart");
-
+                order = ordersDAO.saveOrderDetails(order);
+            } else if (order.getStore().getId() != storeId) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Cart cannot have products from multiple stores");
             }
-
-            List<OrderItems> itemsPresentInOrder = ordersDAO.findProductsInAOrder(order);
-            Product productObjInOrder;
-            for (OrderItems orderItems : itemsPresentInOrder) {
-                productObjInOrder = orderItems.getProduct();
-                if (productObjInOrder.getId() == product.getId()) {
-                    orderItems.setQuantity(orderItems.getQuantity() + quantity);
-                    ordersDAO.saveOrderItem(orderItems);
-                    return ResponseEntity.status(HttpStatus.OK).body(ordersDAO.saveOrderItem(orderItems));
-                }
+            
+            OrderItems orderItem = ordersDAO.findOrderItemsByOrdersAndProduct(order, product); 
+            if (orderItem == null) {
+                orderItem = new OrderItems(order, product, quantity);
+            } else {
+                orderItem.setQuantity(orderItem.getQuantity() + quantity);
             }
-
-            OrderItems orderItem = new OrderItems(order, product, quantity);
             return ResponseEntity.status(HttpStatus.OK).body(ordersDAO.saveOrderItem(orderItem));
 
         } catch (Exception e) {
@@ -111,7 +101,7 @@ public class OrdersController {
     }
 
     @GetMapping(value = "/activeStoreInCart", produces = { "application/json", "application/xml" })
-    public ResponseEntity<?> getactiveStoreInCart(@RequestParam(value = "UserId") String reqUserId) {
+    public ResponseEntity<?> getactiveStoreInCart(@RequestParam(value = "userId") String reqUserId) {
         try {
             Long userId = null;
             try {
@@ -121,15 +111,12 @@ public class OrdersController {
             }
 
             User user = userDAO.findById(userId);
-            List<Orders> allOrdersByUser = ordersDAO.findOrdersByUser(user);
-            Orders order = null;
-            for (Orders orderObj : allOrdersByUser) {
-                if (orderObj.getStatus().equals("Cart")) {
-                    order = orderObj;
-                }
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
+            Orders order = ordersDAO.findOrdersByUserAndStatus(user, "Cart");
             if (order == null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("User does not have an active order");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User does not have an active order in cart");
             }
 
             return ResponseEntity.status(HttpStatus.OK).body(order.getStore());
@@ -148,13 +135,6 @@ public class OrdersController {
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
-            Long productId = null;
-            try {
-                productId = Long.parseLong(orderRequest.getProductId());
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid product ID");
-            }
-            Product product = productDAO.findById(productId);
             Long quantity = null;
             try {
                 quantity = Long.parseLong(orderRequest.getQuantity());
@@ -164,31 +144,28 @@ public class OrdersController {
             if (quantity < 1) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid quantity");
             }
+            Long orderItemId = null;
+            try {
+                orderItemId = Long.parseLong(orderRequest.getOrderItemId());
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid order item ID");
+            }
 
             User user = userDAO.findById(userId);
-            List<Orders> allOrdersByUser = ordersDAO.findOrdersByUser(user);
-            Orders order = null;
-            for (Orders orderObj : allOrdersByUser) {
-                if (orderObj.getStatus().equals("Cart")) {
-                    order = orderObj;
-                }
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
+            Orders order = ordersDAO.findOrdersByUserAndStatus(user, "Cart");
             if (order == null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("User does not have an active order");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User does not have an active order in cart");
             }
 
-            List<OrderItems> itemsPresentInOrder = ordersDAO.findProductsInAOrder(order);
-            Product productObjInOrder;
-            for (OrderItems orderItems : itemsPresentInOrder) {
-                productObjInOrder = orderItems.getProduct();
-                if (productObjInOrder.getId() == product.getId()) {
-                    orderItems.setQuantity(quantity);
-                    ordersDAO.saveOrderItem(orderItems);
-                    return ResponseEntity.status(HttpStatus.OK).body(ordersDAO.saveOrderItem(orderItems));
-                }
+            OrderItems orderItem = ordersDAO.findOrderItemsById(orderItemId);
+            if (orderItem == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product does not exist in order");
             }
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product does not exist in order");
+            orderItem.setQuantity(quantity);
+            return ResponseEntity.status(HttpStatus.OK).body(ordersDAO.saveOrderItem(orderItem));            
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -198,7 +175,7 @@ public class OrdersController {
 
     @DeleteMapping(value = "/removeProductFromCart", produces = { "application/json", "application/xml" })
     public ResponseEntity<?> removeProductFromCart(@RequestParam(value = "userId") String reqUserId,
-            @RequestParam(value = "productId") String reqProductId) {
+            @RequestParam(value = "orderItemId") String reqOrderItemId) {
         try {
             Long userId = null;
             try {
@@ -206,43 +183,34 @@ public class OrdersController {
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
-            Long productId = null;
+            
+            Long orderItemId = null;
             try {
-                productId = Long.parseLong(reqProductId);
+                orderItemId = Long.parseLong(reqOrderItemId);
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid product ID");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid order item ID");
             }
-            Product product = productDAO.findById(productId);
 
             User user = userDAO.findById(userId);
-            List<Orders> allOrdersByUser = ordersDAO.findOrdersByUser(user);
-            Orders order = null;
-            for (Orders orderObj : allOrdersByUser) {
-                if (orderObj.getStatus().equals("Cart")) {
-                    order = orderObj;
-                }
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
+            Orders order = ordersDAO.findOrdersByUserAndStatus(user, "Cart");
             if (order == null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("User does not have an active order");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User does not have an active order in cart");
             }
 
+            OrderItems orderItem = ordersDAO.findOrderItemsById(orderItemId);
+            if (orderItem == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product does not exist in order");
+            }
+            ordersDAO.removeProductFromCart(orderItemId);
             List<OrderItems> itemsPresentInOrder = ordersDAO.findProductsInAOrder(order);
-            Product productObjInOrder;
-            for (OrderItems orderItems : itemsPresentInOrder) {
-                productObjInOrder = orderItems.getProduct();
-                if (productObjInOrder.getId() == product.getId()) {
-                    ordersDAO.removeProductFromCart(productObjInOrder.getId());
-
-                    itemsPresentInOrder = ordersDAO.findProductsInAOrder(order);
-                    if (itemsPresentInOrder.size() == 0) {
-                        ordersDAO.removeOrderFromCart(order.getId());
-                    }
-
-                    return ResponseEntity.status(HttpStatus.OK).body("Product removed from cart");
-                }
+            if (itemsPresentInOrder.size() == 0) {
+                ordersDAO.removeOrderFromCart(order.getId());
             }
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product does not exist in order");
+            return ResponseEntity.status(HttpStatus.OK).body("Product removed from cart");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -261,21 +229,23 @@ public class OrdersController {
             }
 
             User user = userDAO.findById(userId);
-            List<Orders> allOrdersByUser = ordersDAO.findOrdersByUser(user);
-            Orders order = null;
-            for (Orders orderObj : allOrdersByUser) {
-                if (orderObj.getStatus().equals("Cart")) {
-                    order = orderObj;
-                }
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
+            Orders order = ordersDAO.findOrdersByUserAndStatus(user, "Cart");
             if (order == null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("User does not have an active order");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User does not have an active order in cart");
+            }
+
+            for (OrderItems orderItem: order.getOrderItems()) {
+                orderItem.setProductName(orderItem.getProduct().getProductName());
+                orderItem.setProductPrice(orderItem.getProduct().getPrice());
+                orderItem.setProductImage(orderItem.getProduct().getImageURL());
+                ordersDAO.saveOrderItem(orderItem);
             }
             
-            if (orderRequest.getSelfPickup()) {
+            if (orderRequest.getSelfPickup() == true) {
                 order.setPickupPooler(user);
-                user.setContributionCredit(user.getContributionCredit() + 1);
-                userDAO.save(user);
             }
             order.setStatus("Confirmed");
             order = ordersDAO.saveOrderDetails(order);

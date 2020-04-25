@@ -34,6 +34,9 @@ public class OrderItems {
 	
 	@Column(name = "product_price")
 	private Double productPrice;
+	
+	@Column(name = "product_image")
+	private String productImage;
 
 	public OrderItems(Orders orders, Product product, @NotBlank long quantity) {
 		super();
@@ -93,6 +96,14 @@ public class OrderItems {
 
 	public void setProductName(String productName) {
 		this.productName = productName;
+	}
+
+	public String getProductImage() {
+		return this.productImage;
+	}
+
+	public void setProductImage(String productImage) {
+		this.productImage = productImage;
 	}
 	
 	
