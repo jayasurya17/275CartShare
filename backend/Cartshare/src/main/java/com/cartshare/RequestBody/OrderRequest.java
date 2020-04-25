@@ -7,6 +7,15 @@ public class OrderRequest {
     private String productId;
     private String quantity;
     private Boolean selfPickup;
+    private String orderItemId;
+
+    public String getOrderItemId() {
+        return this.orderItemId;
+    }
+
+    public void setOrderItemId(String orderItemId) {
+        this.orderItemId = orderItemId;
+    }
 
     public Boolean getSelfPickup() {
         return this.selfPickup;

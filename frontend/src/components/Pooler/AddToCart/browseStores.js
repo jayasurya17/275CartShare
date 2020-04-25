@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import Header from '../../Common/header';
-import Navigation from '../../Common/navbar';
 import StoreCard from '../../Common/storeCard';
-import AddStoreComponent from './storeInfoComponent';
 import axios from 'axios';
-import constants from '../../../utils/constants'
+import constants from '../../../utils/constants';
 
 class BrowseStores extends Component {
 
@@ -37,12 +34,7 @@ class BrowseStores extends Component {
         if (this.state.allStores.length === 0) {
             if (this.state.isFetched === true) {
                 allStores.push(
-                    <h2 className="font-weight-light text-center mt-5">Oops! Looks like you do not have any stores at the moment</h2>
-                )
-                allStores.push(
-                    <div className="mb-5">
-                        <AddStoreComponent />
-                    </div>
+                    <h2 className="font-weight-light text-center mt-5">Oops! Looks like there are not any stores at the moment</h2>
                 )
             }
         } else {
@@ -50,7 +42,7 @@ class BrowseStores extends Component {
             for (var index in this.state.allStores) {
                 tempContainer.push(
                     <div className="col-md-6">
-                        <StoreCard isAdmin={true} storeObj={this.state.allStores[index]} />
+                        <StoreCard storeObj={this.state.allStores[index]} setAsShopping={true} updateStore={this.props.updateStore} refresh={this.props.refresh} />
                     </div>
                 )
                 if ((index + 1) % 2 === 0) {
@@ -69,16 +61,11 @@ class BrowseStores extends Component {
             )
         }
 
-
         return (
-            <div>
-                <Header isAdmin={true} />
-                <Navigation isAdmin={true} />
-                <div className="pl-5 pr-5">
+            <div className="pl-5 pr-5">
 
-                    {allStores}
+                {allStores}
 
-                </div>
             </div>
         )
     }

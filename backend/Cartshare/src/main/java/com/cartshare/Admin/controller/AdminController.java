@@ -67,6 +67,10 @@ public class AdminController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
             
+            User user = userDAO.findById(userId);
+            if (user == null || user.isAdmin() == false) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not an admin ID");
+            }
             Long reqStoreId = null;
             try{
                 reqStoreId = Long.parseLong(storeRequest.getStoreId());
@@ -77,9 +81,6 @@ public class AdminController {
             Store store = storeDAO.findById(reqStoreId);
             if (store == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
-            }
-            if (store.getUser().getId() != userId) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Admin does not own the store");
             }
             store.setStoreName(storeRequest.getStoreName());
             Address address = new Address();
@@ -108,6 +109,10 @@ public class AdminController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
 
+            User user = userDAO.findById(userId);
+            if (user == null || user.isAdmin() == false) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not an admin ID");
+            }
             Double price = null;
             try {
                 price = Double.parseDouble(productRequest.getProductPrice());
@@ -122,11 +127,6 @@ public class AdminController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid product SKU");
             }
 
-            User user = userDAO.findById(userId);
-            if (user == null || user.isAdmin() == false) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
-            }
-
             for (String id : productRequest.getStoreIDs()) {
                 Long reqStoreId = null;
                 try{
@@ -138,17 +138,16 @@ public class AdminController {
                 if (store == null) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
                 }
-                for (Product product : store.getProducts()) {
-                    if (product.getSku() == SKU) {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate SKU");
-                    }
+                Product product = productDAO.findByStoreIdAndSKU(store, SKU);
+                if (product != null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate SKU");
                 }
             }
 
             List<Product> createdProducts = new ArrayList<>();
             for (String id : productRequest.getStoreIDs()) {
                 Product product = new Product();
-                Product createdProduct;
+                // Product createdProduct;
                 Long reqStoreId = null;
                 try{
                     reqStoreId = Long.parseLong(id);
@@ -163,10 +162,7 @@ public class AdminController {
                 product.setBrand(productRequest.getProductBrand());
                 product.setUnit(productRequest.getProductUnit());
                 product.setPrice(price);
-                // return ResponseEntity.status(HttpStatus.OK).body(product);
-                createdProduct = productDAO.save(product);
-                createdProducts.add(createdProduct);
-                // createdProducts.add(product);
+                createdProducts.add(productDAO.save(product));
             }
 
             return ResponseEntity.status(HttpStatus.OK).body(createdProducts);

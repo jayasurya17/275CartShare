@@ -7,4 +7,5 @@ import com.cartshare.models.*;
 public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     public List<Orders> findByUser(User user);
+    public Orders findOrdersByUserAndStatus(User user, String status);
 }

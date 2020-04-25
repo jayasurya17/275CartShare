@@ -16,6 +16,12 @@ class Home extends Component {
         })
     }
 
+    setAsCurrentStore = (e) => {
+        e.preventDefault();
+        this.props.updateStore(this.props.storeObj.id);
+        this.props.refresh(this.props.storeObj.id);
+    }
+
     render() {
 
         let redirectTo = `/pooler/store/${this.props.storeObj.id}`
@@ -32,6 +38,15 @@ class Home extends Component {
                     </div>
                 </div>
             ]
+        } else if (this.props.setAsShopping) {
+            adminFunctions = [
+                <div className="row mt-4">
+                    <div className="col-md-6 text-center">
+                        <button className="btn btn-warning" onClick={this.setAsCurrentStore}>Shop from this store</button>
+                    </div>
+                </div>
+            ]
+
         }
 
         let address = this.props.storeObj.address.street + ", " + this.props.storeObj.address.city + ", " + this.props.storeObj.address.state + " - " + this.props.storeObj.address.zipcode

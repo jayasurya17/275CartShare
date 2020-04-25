@@ -59,7 +59,7 @@ public class User {
 	@Column(name = "verification_code")
 	private String verificationCode;
 
-	@NotBlank
+	@NotNull
 	@Column(name = "contributioncredit")
 	private Long contributionCredit;
 	

@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Header from '../../Common/header';
+import Navigation from '../../Common/navbar';
 
 class UserInfo extends Component {
 
@@ -37,14 +39,18 @@ class SupportReferral extends Component {
 
         return (
             <div>
-                <p className="display-4 text-center">Active requests</p>
-                <div className="row p-2 bg-secondary text-white font-weight-bold">
-                    <div className="col-md-1">Sl No</div>
-                    <div className="col-md-2">ScreenName</div>
-                    <div className="col-md-2">Nickname</div>
-                    <div className="col-md-5">Address</div>
+                <Header />
+                <Navigation />
+                <div className="p-5">
+                    <p className="display-4 text-center">Active requests</p>
+                    <div className="row p-2 bg-secondary text-white font-weight-bold">
+                        <div className="col-md-1">Sl No</div>
+                        <div className="col-md-2">ScreenName</div>
+                        <div className="col-md-2">Nickname</div>
+                        <div className="col-md-5">Address</div>
+                    </div>
+                    {allUsers}
                 </div>
-                {allUsers}
             </div>
         )
     }

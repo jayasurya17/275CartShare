@@ -86,8 +86,29 @@ public class ProductController {
                     return ResponseEntity.status(HttpStatus.OK).body(filteredProducts);
                 }
                 allProducts = productDAO.findByStore(store);
+                if (SKU != null) {
+                    Long reqSku;
+                    try {
+                        reqSku = Long.parseLong(SKU);
+                    } catch(Exception e) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid SKU");
+                    }
+                    List<Product> tempList = new ArrayList<>();
+                    for (Product temp: allProducts) {
+                        if (temp.getSku() == reqSku) {
+                            tempList.add(temp);
+                        }
+                    }
+                    allProducts = tempList;
+                }
             } else if (SKU != null) {
-                allProducts = productDAO.findBySKU(SKU);
+                Long reqSku;
+                try {
+                    reqSku = Long.parseLong(SKU);
+                } catch(Exception e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid SKU");
+                }
+                allProducts = productDAO.findBySKU(reqSku);
             } else {
                 allProducts = productDAO.findAll();
             }
@@ -141,7 +162,13 @@ public class ProductController {
                 }
                 allProducts = productDAO.findByStore(store);
             } else if (SKU != null) {
-                allProducts = productDAO.findBySKU(SKU);
+                Long reqSku;
+                try {
+                    reqSku = Long.parseLong(SKU);
+                } catch(Exception e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid SKU");
+                }
+                allProducts = productDAO.findBySKU(reqSku);
             } else {
                 allProducts = productDAO.findAll();
             }
