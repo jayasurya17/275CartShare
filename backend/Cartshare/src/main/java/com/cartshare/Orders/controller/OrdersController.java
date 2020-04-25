@@ -126,6 +126,32 @@ public class OrdersController {
         }
     }
 
+    @GetMapping(value = "/productsInCart", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> getProductsInCart(@RequestParam(value = "userId") String reqUserId) {
+        try {
+            Long userId = null;
+            try {
+                userId = Long.parseLong(reqUserId);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
+            }
+
+            User user = userDAO.findById(userId);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
+            }
+            Orders order = ordersDAO.findOrdersByUserAndStatus(user, "Cart");
+            if (order == null) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User does not have an active order in cart");
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(order.getOrderItems());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @PostMapping(value = "/update/cart", produces = { "application/json", "application/xml" })
     public ResponseEntity<?> updateQuantityOfProductInCart(@RequestBody OrderRequest orderRequest) {
         try {
