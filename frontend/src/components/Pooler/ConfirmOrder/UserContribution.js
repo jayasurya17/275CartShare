@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import constants from '../../../utils/constants';
+
 
 class UserContribution extends Component {
 
@@ -7,8 +10,19 @@ class UserContribution extends Component {
         this.state = {
             selfPickup: true,
             showOtherOrders: false,
-            contributionCredit: -5
+            contributionCredit: null,
+            warningMsg: ""
         }
+    }
+
+    componentDidMount() {
+        axios.get(`${constants.BACKEND_SERVER.URL}/user/${localStorage.getItem('275UserId')}`)
+            .then((response) => {
+                this.setState({
+                    contributionCredit: response.data.contributionCredit,
+                    warningMsg: ""
+                })
+            })
     }
 
     pickupTypeChangeHandler = (e) => {
@@ -18,25 +32,37 @@ class UserContribution extends Component {
     }
 
     submitOrder = () => {
-        if (this.state.selfPickup === true) {
+        if (this.state.contributionCredit === null) {
             this.setState({
-                showOtherOrders: true
+                warningMsg: "Please wait while we are fetching your contribution credit"
             })
         } else {
-            if (this.state.contributionCredit <= -4) {
-                window.confirm("Are you sure?")
+            if (this.state.selfPickup === true) {
+                this.setState({
+                    showOtherOrders: true
+                })
+            } else {
+                if (this.state.contributionCredit <= -4) {
+                    window.confirm("Are you sure?")
+                }
             }
-            this.props.submitOrder();
+            const reqBody = {
+                userId: localStorage.getItem('275UserId'),
+                selfPickup: this.state.selfPickup
+            }
+            axios.post(`${constants.BACKEND_SERVER.URL}/orders/confirmOrder`, reqBody)
         }
     }
 
     render() {
 
-        let background = "bg-success"
-        if (this.state.contributionCredit <= -6 ) {
+        let background = ""
+        if (this.state.contributionCredit <= -6) {
             background = "bg-danger"
         } else if (this.state.contributionCredit <= -4) {
             background = "bg-warning"
+        } else if (this.state.contributionCredit !== null) {
+            background = "bg-success"
         }
         return (
             <div>
@@ -57,6 +83,7 @@ class UserContribution extends Component {
                     <div className={`col-md-2 ${background}`}></div>
                 </div>
                 <div className="mt-5 mb-5 text-center">
+                    <p className="text-warning text-center">{this.state.warningMsg}</p>
                     <button className="btn btn-success w-50" onClick={this.submitOrder}>Submit order</button>
                 </div>
             </div>

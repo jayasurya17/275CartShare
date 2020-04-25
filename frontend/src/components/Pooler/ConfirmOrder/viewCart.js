@@ -19,15 +19,11 @@ class ViewCart extends Component {
         })
     }
 
-    submitOrder = () => {
-        window.confirm("Submitting order");
-    }
-
     render() {
 
         let action = []
         if (this.state.confirmOrder) {
-            action = <UserContribution submitOrder={this.submitOrder} />
+            action = <UserContribution />
         } else {
             action = <CartDetails confirmOrder={this.confirmOrder} />
         }

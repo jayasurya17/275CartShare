@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import constants from '../../utils/constants';
 
 class Home extends Component {
 
@@ -6,7 +8,8 @@ class Home extends Component {
         super();
         this.state = {
             quantity: 0,
-            errMsg: ""
+            errMsg: "",
+            successMsg: "",
         }
     }
 
@@ -41,6 +44,29 @@ class Home extends Component {
         })
     }
 
+    addToCart = () => {
+        const reqBody = {
+            userId: localStorage.getItem('275UserId'),
+            storeId: this.props.productObj.store.id,
+            productId: this.props.productObj.id,
+            quantity: this.state.quantity
+        }
+        axios.post(`${constants.BACKEND_SERVER.URL}/orders/add/cart`, reqBody)
+        .then(() => {
+            this.setState({
+                successMsg: "Added to cart",
+                errMsg: "",
+                quantity: 0
+            })
+        })
+        .catch((err) => {
+            this.setState({
+                successMsg: "",
+                errMsg: err.response.data
+            })
+        })
+    }
+
     render() {
 
         let itemFunction = []
@@ -70,7 +96,7 @@ class Home extends Component {
                         <button className="btn btn-success" onClick={this.increaseQuantity}>+</button>
                     </div>
                     <div className="col-md-5 offset-md-1">
-                        <button className="btn btn-info">Add to cart</button>
+                        <button className="btn btn-info" onClick={this.addToCart}>Add to cart</button>
                     </div>
                 </div>
             ]
@@ -83,11 +109,12 @@ class Home extends Component {
                     <h6>Brand: <span className="font-weight-lighter">{this.props.productObj.brand}</span></h6>
                     <h6>SKU: <span className="font-weight-lighter">{this.props.productObj.sku}</span></h6>
                     <h6>${this.props.productObj.price} / {this.props.productObj.unit}</h6>
-                    <p className="text-danger">{this.state.errMsg}</p>
                     {itemFunction}
                 </div>
                 <div className="col-md-4">
                     <img src={this.props.productObj.imageURL} alt="..." class="img-thumbnail" />
+                    <p className="text-danger">{this.state.errMsg}</p>
+                    <p className="text-success">{this.state.successMsg}</p>
                 </div>
             </div>
         )

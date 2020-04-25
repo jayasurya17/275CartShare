@@ -20,12 +20,27 @@ class AddToCart extends Component {
     }
 
     componentDidMount() {
-        this.viewAllProducts(this.state.currentStoreID)
+        axios.get(`${constants.BACKEND_SERVER.URL}/orders/activeStoreInCart?userId=${localStorage.getItem('275UserId')}`)
+            .then((response) => {
+                this.setState({
+                    currentStoreID: response.data.id
+                })
+                this.viewAllProducts(response.data.id)
+            })
+
     }
 
     updateCurrentStore = (id) => {
         this.setState({
             currentStoreID: id
+        })
+    }
+
+    clearSearch = () => {
+        this.viewAllProducts(this.state.currentStoreID)
+        this.setState({
+            searchValue: "",
+            searchSKU: true,
         })
     }
 
@@ -87,17 +102,20 @@ class AddToCart extends Component {
             } else if (this.state.isFetched === true) {
                 allProducts.push(
                     <div className="row pt-5">
-                        <div className="col-md-3 offset-md-1">
+                        <div className="col-md-2 offset-md-1">
                             <select className="form-control" onChange={this.searchTypeChangeHandler} value={this.state.searchSKU} >
                                 <option value={true}>SKU</option>
                                 <option value={false}>Product Name</option>
                             </select>
                         </div>
-                        <div className="col-md-5">
+                        <div className="col-md-4">
                             <input type="text" className="form-control" placeholder="Product Name" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
                         </div>
                         <div className="col-md-2">
                             <button className="btn btn-success w-100" onClick={this.searchProducts}>Search</button>
+                        </div>
+                        <div className="col-md-2">
+                            <button className="btn btn-warning w-100" onClick={this.clearSearch}>Clear Search</button>
                         </div>
                     </div>
                 )
@@ -108,17 +126,20 @@ class AddToCart extends Component {
         } else {
             allProducts.push(
                 <div className="row pt-5">
-                    <div className="col-md-3 offset-md-1">
+                    <div className="col-md-2 offset-md-1">
                         <select className="form-control" onChange={this.searchTypeChangeHandler} value={this.state.searchSKU} >
                             <option value={true}>SKU</option>
                             <option value={false}>Product Name</option>
                         </select>
                     </div>
-                    <div className="col-md-5">
+                    <div className="col-md-4">
                         <input type="text" className="form-control" placeholder="Product Name" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
                     </div>
                     <div className="col-md-2">
                         <button className="btn btn-success w-100" onClick={this.searchProducts}>Search</button>
+                    </div>
+                    <div className="col-md-2">
+                        <button className="btn btn-warning w-100" onClick={this.clearSearch}>Clear Search</button>
                     </div>
                 </div>
             )
