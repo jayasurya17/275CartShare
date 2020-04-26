@@ -11,7 +11,7 @@ class AddStores extends Component {
             <div>
                 <Header isAdmin={true} />
                 <Navigation isAdmin={true} />
-                
+
                 <AddStoreComponent />
             </div>
         )

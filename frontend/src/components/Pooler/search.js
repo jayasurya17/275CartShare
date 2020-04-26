@@ -15,7 +15,7 @@ class Home extends Component {
                     
                     <div className="row mt-2">
                         <div className="col-md-6">
-                            <ItemCard />
+                            <ItemCard showQuantity={true}/>
                         </div>
                         <div className="col-md-6">
                             <ItemCard />

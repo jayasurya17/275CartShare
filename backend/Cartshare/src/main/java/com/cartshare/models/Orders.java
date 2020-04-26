@@ -3,8 +3,10 @@ package com.cartshare.models;
 import java.util.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -34,38 +36,29 @@ public class Orders {
 	@JoinColumn(name = "store_id")
 	private Store store;
 	
-	@NotBlank
+	@NotNull
 	@Column(name = "isfulfilled")
 	private boolean isFulfilled;
-	
-	@NotBlank
-	@Column(name = "order_type")
-	private String orderType;
 	
 	@NotBlank
 	@Column(name = "status")
 	private String status;
 	
-	@NotBlank
+	@CreationTimestamp
 	@Column(name = "timestamp")
 	private Date timestamp;
+	
+	@ManyToOne
+	@JoinColumn(name = "pickup")
+	private User pickupPooler;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy="orders", fetch = FetchType.EAGER)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<OrderItems> orderItems = new HashSet<OrderItems>();
 
-	public Orders(long id, Pool pool, Store store, @NotBlank boolean isFulfilled, @NotBlank String orderType,
-			@NotBlank String status, @NotBlank Date timestamp, Set<OrderItems> orderItems) {
-		super();
-		this.id = id;
-		this.pool = pool;
-		this.store = store;
-		this.isFulfilled = isFulfilled;
-		this.orderType = orderType;
-		this.status = status;
-		this.timestamp = timestamp;
-		this.orderItems = orderItems;
+	public Orders() {
+		isFulfilled = false;
 	}
 
 	public long getId() {
@@ -100,14 +93,6 @@ public class Orders {
 		this.isFulfilled = isFulfilled;
 	}
 
-	public String getOrderType() {
-		return orderType;
-	}
-
-	public void setOrderType(String orderType) {
-		this.orderType = orderType;
-	}
-
 	public String getStatus() {
 		return status;
 	}
@@ -130,6 +115,21 @@ public class Orders {
 
 	public void setOrderItems(Set<OrderItems> orderItems) {
 		this.orderItems = orderItems;
+	}
+	public User getUser() {
+		return this.user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+	public User getPickupPooler() {
+		return this.pickupPooler;
+	}
+
+	public void setPickupPooler(User pickupPooler) {
+		this.pickupPooler = pickupPooler;
 	}
 	
 }

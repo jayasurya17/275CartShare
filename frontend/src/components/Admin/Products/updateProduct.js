@@ -5,6 +5,8 @@ import ProductInfoComponent from './productInfoComponent';
 
 class AddStores extends Component {
 
+
+
     render() {
 
         return (
@@ -12,7 +14,7 @@ class AddStores extends Component {
                 <Header isAdmin={true} />
                 <Navigation isAdmin={true} />
                 
-                <ProductInfoComponent storeId={this.props.match.params.storeId} SKU={this.props.match.params.SKU} />
+                <ProductInfoComponent productId={this.props.match.params.productId} />
             </div>
         )
     }

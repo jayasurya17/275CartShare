@@ -1,12 +1,14 @@
 package com.cartshare.Store.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import com.cartshare.models.*;
 import com.cartshare.repositories.StoreRepository;
 
 @Service
+@Repository
 public class StoreDAO {
 
 	@Autowired
@@ -21,9 +23,8 @@ public class StoreDAO {
 	}
 
 
-	public Store findById(String id) {
-		Long storeId = Long.parseLong(id);
-		return storeRepository.findById(storeId).orElse(null);
+	public Store findById(Long id) {
+		return storeRepository.findById(id).orElse(null);
 	}
 
 	public List<Store> findAll() {

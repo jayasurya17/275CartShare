@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import constants from '../../utils/constants';
 
 class Home extends Component {
 
@@ -6,12 +8,13 @@ class Home extends Component {
         super();
         this.state = {
             quantity: 0,
-            errMsg: ""
+            errMsg: "",
+            successMsg: "",
         }
     }
 
     decreaseQuantity = () => {
-        if (this.state.quantity > 0) {
+        if (this.state.quantity > 1) {
             this.setState({
                 quantity: this.state.quantity - 1
             })
@@ -41,6 +44,29 @@ class Home extends Component {
         })
     }
 
+    addToCart = () => {
+        const reqBody = {
+            userId: localStorage.getItem('275UserId'),
+            storeId: this.props.productObj.store.id,
+            productId: this.props.productObj.id,
+            quantity: this.state.quantity
+        }
+        axios.post(`${constants.BACKEND_SERVER.URL}/orders/add/cart`, reqBody)
+        .then(() => {
+            this.setState({
+                successMsg: "Added to cart",
+                errMsg: "",
+                quantity: 0
+            })
+        })
+        .catch((err) => {
+            this.setState({
+                successMsg: "",
+                errMsg: err.response.data
+            })
+        })
+    }
+
     render() {
 
         let itemFunction = []
@@ -48,7 +74,7 @@ class Home extends Component {
             itemFunction = [
                 <div className="row">
                     <div className="col-md-6">
-                        <a href={`/admin/product/update/${this.props.storeId}/12039`}>
+                        <a href={`/admin/product/update/${this.props.productObj.id}`}>
                             <button className="btn btn-warning w-100">Update this product</button>
                         </a>
                     </div>
@@ -57,7 +83,7 @@ class Home extends Component {
                     </div>
                 </div>
             ]
-        } else {
+        } else if (this.props.showQuantity) {
             itemFunction = [
                 <div className="row">
                     <div className="col-md-1 p-0">
@@ -70,7 +96,7 @@ class Home extends Component {
                         <button className="btn btn-success" onClick={this.increaseQuantity}>+</button>
                     </div>
                     <div className="col-md-5 offset-md-1">
-                        <button className="btn btn-info">Add to cart</button>
+                        <button className="btn btn-info" onClick={this.addToCart}>Add to cart</button>
                     </div>
                 </div>
             ]
@@ -78,15 +104,17 @@ class Home extends Component {
         return (
             <div className="shadow row m-3 p-3 rounded border">
                 <div className="col-md-8">
-                    <h1 className="font-weight-lighter">Item Name</h1>
-                    <h6 className="font-weight-lighter">This is description for the item</h6>
-                    <h6>Brand: <span className="font-weight-lighter">Name of the brand</span></h6>
-                    <h6>$12 / unit</h6>
-                    <p className="text-danger">{this.state.errMsg}</p>
+                    <h1 className="font-weight-lighter">{this.props.productObj.productName}</h1>
+                    <h6 className="font-weight-lighter">{this.props.productObj.description}</h6>
+                    <h6>Brand: <span className="font-weight-lighter">{this.props.productObj.brand}</span></h6>
+                    <h6>SKU: <span className="font-weight-lighter">{this.props.productObj.sku}</span></h6>
+                    <h6>${this.props.productObj.price} / {this.props.productObj.unit}</h6>
                     {itemFunction}
                 </div>
                 <div className="col-md-4">
-                    <img src="https://www.okea.org/wp-content/uploads/2019/10/placeholder.png" alt="..." class="img-thumbnail" />
+                    <img src={this.props.productObj.imageURL} alt="..." class="img-thumbnail" />
+                    <p className="text-danger">{this.state.errMsg}</p>
+                    <p className="text-success">{this.state.successMsg}</p>
                 </div>
             </div>
         )

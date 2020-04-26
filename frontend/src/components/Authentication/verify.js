@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { Redirect } from 'react-router'
 // import firebase from 'firebase';
 import axios from 'axios';
@@ -44,16 +44,16 @@ class Verify extends Component {
         var id = localStorage.getItem('275UserId');
         var uri = '/user/'.concat(id).concat('/sendVerification');
         axios.post(uri, null, null)
-        .then((response1) => {
-            if(response1.status === 200){
-                // this.setState({code: response1.data});
-                // localStorage.setItem('verifCode', response1.data);
-                this.setState({code: response1.data, message: 'A second verification email has been sent to you'});
-            }
-        })
-        .catch((error) => {
-            this.setState({message: "Please wait for 5 minutes and click on the 'Resend verification' button again"});
-        })
+            .then((response1) => {
+                if (response1.status === 200) {
+                    // this.setState({code: response1.data});
+                    // localStorage.setItem('verifCode', response1.data);
+                    this.setState({ code: response1.data, message: 'A second verification email has been sent to you' });
+                }
+            })
+            .catch((error) => {
+                this.setState({ message: "Please wait for 5 minutes and click on the 'Resend verification' button again" });
+            })
     }
 
     handleChange = (event) => {
@@ -72,34 +72,34 @@ class Verify extends Component {
                     isProfileComplete: false
                 }
             })
-            .then((response) => {
-                if(response.status === 200){
-                    this.setState({redirect: true});
-                }
-            })
-            .catch((error) => {
-                alert(error.response.data);
-            })
+                .then((response) => {
+                    if (response.status === 200) {
+                        this.setState({ redirect: true });
+                    }
+                })
+                .catch((error) => {
+                    alert(error.response.data);
+                })
         }
     }
 
-    render(){
+    render() {
         if (this.state.redirect) {
-            return <Redirect to={this.state.redUrl}/>;
+            return <Redirect to={this.state.redUrl} />;
         }
-        return(
+        return (
             <div>
                 <p className="display-1 text-center pt-5 mt-5">Welcome to CartShare</p>
                 <h4 className="text-center mt-5 font-weight-light">{this.state.message}</h4>
                 <h5 className="text-center mt-5 font-weight-light">Please check your email, and enter the 4-digit verification code sent to you</h5>
-                
+
 
                 {/* Use this if needed for verify by code */}
                 <div className="row text-center mt-5">
                     <div className="col-md-4 offset-md-4">
-                        <input type="text" className="form-control" onChange={this.handleChange}/>
+                        <input type="text" className="form-control" onChange={this.handleChange} />
                     </div>
-                </div>                
+                </div>
                 <div className="row text-center mt-5">
                     <div className="col-md-4 offset-md-4">
                         <button className="btn btn-success w-50" onClick={this.resendVerification}>Resend verification</button>

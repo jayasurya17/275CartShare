@@ -24,7 +24,7 @@ public class Pool {
 	
 	@ManyToOne
 	@JoinColumn(name = "pooler_id")
-	private User user;
+	private User pooler;
 	
 	@NotBlank
 	@Column(name = "pool_name", unique = true)
@@ -40,24 +40,32 @@ public class Pool {
 	@Column(name = "zipcode")
 	private String zipcode;
 	
+	@ManyToOne
+	@JoinColumn(name = "leader_id")
+	private User leader;
 	
 	
+
+
 	@JsonIgnore
 	@OneToMany(mappedBy="pool", fetch = FetchType.EAGER)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<PoolMembers> poolMembers = new HashSet<PoolMembers>();
+	public Pool() {
+		
+	}
 
-
-	public Pool(long id, User user, @NotBlank String poolName, @NotBlank String neighborhoodName, String description,
-			String zipcode, Set<PoolMembers> poolMembers) {
+	public Pool(long id, User pooler, @NotBlank String poolName, @NotBlank String neighborhoodName, String description,
+			String zipcode, Set<PoolMembers> poolMembers, User leader) {
 		super();
 		this.id = id;
-		this.user = user;
+		this.pooler = pooler;
 		this.poolName = poolName;
 		this.neighborhoodName = neighborhoodName;
 		this.description = description;
 		this.zipcode = zipcode;
 		this.poolMembers = poolMembers;
+		this.leader = leader;
 	}
 
 
@@ -70,16 +78,13 @@ public class Pool {
 		this.id = id;
 	}
 
-
-	public User getUser() {
-		return user;
+	public User getPooler() {
+		return pooler;
 	}
 
-
-	public void setUser(User user) {
-		this.user = user;
+	public void setPooler(User pooler) {
+		this.pooler = pooler;
 	}
-
 
 	public String getPoolName() {
 		return poolName;
@@ -128,6 +133,14 @@ public class Pool {
 
 	public void setPoolMembers(Set<PoolMembers> poolMembers) {
 		this.poolMembers = poolMembers;
+	}
+	
+	public User getLeader() {
+		return leader;
+	}
+
+	public void setLeader(User leader) {
+		this.leader = leader;
 	}
 	
 	

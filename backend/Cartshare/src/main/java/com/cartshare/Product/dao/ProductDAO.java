@@ -19,16 +19,24 @@ public class ProductDAO {
 		return productRepository.save(product);
 	}
 
+	public Product findById(Long id) {
+		return productRepository.findById(id).orElse(null);
+	}
+
 	public List<Product> findByStore(Store store) {
 		return productRepository.findByStore(store);
 	}
 
-	public List<Product> findBySKU(String SKU) {
+	public List<Product> findBySKU(Long SKU) {
 		return productRepository.findBySku(SKU);
 	}
 
 	public List<Product> findAll() {
 		return productRepository.findAll();
+	}
+
+	public Product findByStoreIdAndSKU(Store store, Long SKU) {
+		return productRepository.findProductByStoreAndSku(store, SKU);
 	}
 
 }

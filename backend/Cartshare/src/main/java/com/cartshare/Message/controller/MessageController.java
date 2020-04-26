@@ -34,7 +34,7 @@ public class MessageController {
     UserDAO userDAO;
 
     @PostMapping(value="/{from}/{to}", produces = { "application/json", "application/xml" })
-    public ResponseEntity createMessage(@Valid
+    public ResponseEntity<?> createMessage(@Valid
                                         @PathVariable(name = "from") String from,
                                         @PathVariable(name = "to") String to,
                                         @RequestParam(name = "message") String message){
@@ -71,7 +71,7 @@ public class MessageController {
 
 
     @GetMapping(value="/{from}/{to}", produces = { "application/json", "application/xml" })
-    public ResponseEntity getMessages(@Valid
+    public ResponseEntity<?> getMessages(@Valid
                                         @PathVariable(name = "from") String from,
                                         @PathVariable(name = "to") String to){
                             

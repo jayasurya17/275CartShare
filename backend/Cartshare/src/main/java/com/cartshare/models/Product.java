@@ -2,9 +2,7 @@ package com.cartshare.models;
 
 import java.util.*;
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -27,9 +25,9 @@ public class Product {
 	@JoinColumn(name = "store_id")
 	private Store store;
 	
-	@NotBlank
+	@NotNull
 	@Column(name = "sku")
-	private String sku;
+	private long sku;
 	
 	@NotBlank
 	@Column(name = "product_name")
@@ -64,7 +62,7 @@ public class Product {
 	private List<OrderItems> orderItems = new ArrayList<OrderItems>();
 	
 	public Product(long id, @NotBlank String productName, @NotBlank String description,
-			@NotBlank String imageURL, @NotBlank String brand, @NotBlank String sku, String unit,
+			@NotBlank String imageURL, @NotBlank String brand, @NotBlank long sku, String unit,
 			@NotBlank Double price, List<OrderItems> orderItems, Store store) {
 		super();
 		this.id = id;
@@ -75,12 +73,12 @@ public class Product {
 		this.sku = sku;
 		this.unit = unit;
 		this.price = price;
-		this.orderItems = orderItems;
+		// this.orderItems = orderItems;
 		this.store = store;
 	}
 
 	public Product() {
-
+		this.isActive = true;
 	}
 	
 	public long getId() {
@@ -113,10 +111,10 @@ public class Product {
 	public void setBrand(String brand) {
 		this.brand = brand;
 	}
-	public String getSku() {
+	public long getSku() {
 		return sku;
 	}
-	public void setSku(String sku) {
+	public void setSku(long sku) {
 		this.sku = sku;
 	}
 	public String getUnit() {
