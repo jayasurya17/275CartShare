@@ -51,4 +51,8 @@ public class OrdersDAO {
 		return orderItemsRepository.findById(id).orElse(null);
 	}
 
+	public List<Orders> findOrdersWithNoPickup(Pool pool, String status, User pickupUser, Store store) {
+		// return ordersRepository.findAllOrdersByPoolAndStatusAndPickupPoolerAndStore(pool, status, pickupUser, store);
+		return ordersRepository.findAllOrdersByPoolAndStoreAndPickupPooler(pool, store, pickupUser);
+	}
 }

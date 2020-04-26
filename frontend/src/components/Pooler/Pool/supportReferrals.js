@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Header from '../../Common/header';
-import Navigation from '../../Common/navbar';
+// import Header from '../../Common/header';
+// import Navigation from '../../Common/navbar';
 
 class UserInfo extends Component {
 
@@ -39,8 +39,8 @@ class SupportReferral extends Component {
 
         return (
             <div>
-                <Header />
-                <Navigation />
+                {/* <Header />
+                <Navigation /> */}
                 <div className="p-5">
                     <p className="display-4 text-center">Active requests</p>
                     <div className="row p-2 bg-secondary text-white font-weight-bold">

@@ -15,7 +15,9 @@ import PoolerUpdateAccount from './Pooler/updateAccount';
 import PoolerAddCart from './Pooler/AddToCart/addToCart';
 import PoolerViewCart from './Pooler/ConfirmOrder/viewCart';
 import PoolerViewPool from './Pooler/Pool/viewDetails';
-import PoolerSupportReferrals from './Pooler/Pool/supportReferrals';
+import PoolerPickupOrders from './Pooler/PickupOrders/pickupOrders';
+import PoolerDeliverOrders from './Pooler/DeliverOrders/deliverOrders';
+import PoolerPastOrders from './Pooler/PastOrders/pastOrders';
 
 import AdminCheck from './Admin/adminCheck';
 import AdminStores from './Admin/Stores/browseStores';
@@ -48,7 +50,9 @@ class Main extends Component {
                 <Route path="/pooler/add/cart" component={PoolerAddCart} />
                 <Route path="/pooler/view/cart" component={PoolerViewCart} />
                 <Route path="/pooler/view/pool" component={PoolerViewPool} />
-                <Route path="/pooler/support/referrals" component={PoolerSupportReferrals} />
+                <Route path="/pooler/pickup" component={PoolerPickupOrders} />
+                <Route path="/pooler/deliver" component={PoolerDeliverOrders} />
+                <Route path="/pooler/past/orders" component={PoolerPastOrders} />
 
                 <Route path="/admin" component={AdminCheck} />
                 <Route path="/admin/browse" component={AdminStores} />

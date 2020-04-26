@@ -34,7 +34,7 @@ class BrowseStores extends Component {
         if (this.state.allStores.length === 0) {
             if (this.state.isFetched === true) {
                 allStores.push(
-                    <h2 className="font-weight-light text-center mt-5">Oops! Looks like there are not any stores at the moment</h2>
+                    <h2 className="font-weight-light text-center mt-5">Oops! Looks like there are no stores at the moment</h2>
                 )
             }
         } else {
