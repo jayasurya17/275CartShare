@@ -53,6 +53,9 @@ class UserContribution extends Component {
                 selfPickup: this.state.selfPickup
             }
             if (this.state.selfPickup === true) {
+                this.setState({
+                    warningMsg: "We are placing your order. Please be patient!"
+                })
                 axios.post(`${constants.BACKEND_SERVER.URL}/orders/confirmOrder`, reqBody)
                     .then((response1) => {
                         this.setState({
@@ -68,8 +71,11 @@ class UserContribution extends Component {
                     })
             } else {
                 if (this.state.contributionCredit <= -4) {
-                    var option = window.confirm("Are you sure?")
+                    var option = window.confirm(`Are you sure? Your contribution status is low (${this.state.contributionCredit} points)`)
                     if (option === true) {
+                        this.setState({
+                            warningMsg: "We are placing your order. Please be patient!"
+                        })
                         axios.post(`${constants.BACKEND_SERVER.URL}/orders/confirmOrder`, reqBody)
                             .then(() => {
                                 this.setState({
@@ -78,6 +84,9 @@ class UserContribution extends Component {
                             })
                     }
                 } else {
+                    this.setState({
+                        warningMsg: "We are placing your order. Please be patient!"
+                    })
                     axios.post(`${constants.BACKEND_SERVER.URL}/orders/confirmOrder`, reqBody)
                         .then(() => {
                             this.setState({
@@ -135,7 +144,7 @@ class UserContribution extends Component {
                     <div className="col-md-6 offset-md-3">
                         <select className="form-control" onChange={this.pickupTypeChangeHandler}>
                             <option value={true}>I will pick up the order</option>
-                            <option value={false}>Let fellow pooler pick up the order</option>
+                            <option value={false}>Let fellow pooler pick up and deliver within 2 days</option>
                         </select>
                     </div>
                 </div>

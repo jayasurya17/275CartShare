@@ -55,4 +55,8 @@ public class OrdersDAO {
 		// return ordersRepository.findAllOrdersByPoolAndStatusAndPickupPoolerAndStore(pool, status, pickupUser, store);
 		return ordersRepository.findAllOrdersByPoolAndStoreAndPickupPooler(pool, store, pickupUser);
 	}
+
+	public List<Orders> findOrdersToBePickedUp(User user) {
+		return ordersRepository.findAllOrdersByPickupPoolerAndStatus(user, "Confirmed");
+	}
 }

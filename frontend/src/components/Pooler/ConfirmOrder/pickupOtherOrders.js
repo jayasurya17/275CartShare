@@ -24,7 +24,8 @@ class PickupOtherOrders extends Component {
             numberOfOrders: this.state.numberOfOrdersToPickup
         }
         axios.post(`${constants.BACKEND_SERVER.URL}/orders/pickupOtherOrders`, reqBody)
-            .then(() => {
+            .then((response) => {
+                window.alert(response.data);
                 this.props.redirect()
             })
     }
