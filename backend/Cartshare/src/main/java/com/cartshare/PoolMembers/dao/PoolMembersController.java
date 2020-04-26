@@ -123,4 +123,24 @@ public class PoolMembersController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
+	
+	@GetMapping(value="/viewPoolMembers", produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> viewPoolMembers(@RequestParam(required = true) String poolId){
+		try {
+			if(poolId == null) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide required parameters");
+			}
+			poolId = poolId.trim();
+			
+			Long pool = Long.parseLong(poolId);
+			List<PoolMembers> poolMembers = poolMembersDAO.viewPoolMembers(pool);
+			if(poolMembers.size() == 0)
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No Requested Requests");
+			
+			return ResponseEntity.status(HttpStatus.OK).body(poolMembers);
+			
+		} catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+	}
 }
