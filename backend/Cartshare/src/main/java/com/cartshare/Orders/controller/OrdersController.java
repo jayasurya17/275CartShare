@@ -2,6 +2,9 @@ package com.cartshare.Orders.controller;
 
 import com.cartshare.User.dao.UserDAO;
 import com.cartshare.models.*;
+import com.cartshare.utils.MailController;
+import com.cartshare.utils.OrderDetails;
+
 import java.util.*;
 import com.cartshare.RequestBody.*;
 import com.cartshare.Store.dao.StoreDAO;
@@ -72,21 +75,25 @@ public class OrdersController {
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
+            if (user.getPoolMembers().size() == 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not part of any pools");
+            }
+
+            Pool pool = user.getPoolMembers().iterator().next().getPool();
             Orders order = ordersDAO.findOrdersByUserAndStatus(user, "Cart");
             if (order == null) {
                 order = new Orders();
                 order.setUser(user);
-
-                // Update with pool the pooler is part of
-                order.setPool(poolDAO.getPool(Long.parseLong("34")));
+                order.setPool(pool);
                 order.setStore(storeDAO.findById(storeId));
                 order.setStatus("Cart");
                 order = ordersDAO.saveOrderDetails(order);
             } else if (order.getStore().getId() != storeId) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Cart cannot have products from multiple stores");
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Cart cannot have products from multiple stores");
             }
-            
-            OrderItems orderItem = ordersDAO.findOrderItemsByOrdersAndProduct(order, product); 
+
+            OrderItems orderItem = ordersDAO.findOrderItemsByOrdersAndProduct(order, product);
             if (orderItem == null) {
                 orderItem = new OrderItems(order, product, quantity);
             } else {
@@ -191,7 +198,7 @@ public class OrdersController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product does not exist in order");
             }
             orderItem.setQuantity(quantity);
-            return ResponseEntity.status(HttpStatus.OK).body(ordersDAO.saveOrderItem(orderItem));            
+            return ResponseEntity.status(HttpStatus.OK).body(ordersDAO.saveOrderItem(orderItem));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -209,7 +216,7 @@ public class OrdersController {
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
-            
+
             Long orderItemId = null;
             try {
                 orderItemId = Long.parseLong(reqOrderItemId);
@@ -263,20 +270,181 @@ public class OrdersController {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User does not have an active order in cart");
             }
 
-            for (OrderItems orderItem: order.getOrderItems()) {
+            for (OrderItems orderItem : order.getOrderItems()) {
                 orderItem.setProductName(orderItem.getProduct().getProductName());
                 orderItem.setProductPrice(orderItem.getProduct().getPrice());
                 orderItem.setProductImage(orderItem.getProduct().getImageURL());
+                orderItem.setProductBrand(orderItem.getProduct().getBrand());
                 ordersDAO.saveOrderItem(orderItem);
             }
-            
+
             if (orderRequest.getSelfPickup() == true) {
                 order.setPickupPooler(user);
+                order.setStatus("Confirmed");
+            } else {
+                order.setStatus("Ordered");
             }
-            order.setStatus("Confirmed");
             order = ordersDAO.saveOrderDetails(order);
-            
+
+            MailController mc = new MailController();
+            OrderDetails od = new OrderDetails();
+            String heading = "Your order has been placed (#" + order.getId() + ")";
+            String message = od.GenerateProductTableWithPrice(order.getOrderItems());
+            System.out.println(message);
+            mc.sendHTML(user.getEmail(), heading, message);
+
             return ResponseEntity.status(HttpStatus.OK).body(order);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/pendingInPool", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> getPendingOrdersInPool(@RequestParam(value = "userId") String reqUserId,
+            @RequestParam(value = "storeId") String reqStoreId) {
+        try {
+            Long userId = null;
+            try {
+                userId = Long.parseLong(reqUserId);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
+            }
+
+            User user = userDAO.findById(userId);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
+            }
+
+            Long storeId = null;
+            try {
+                storeId = Long.parseLong(reqStoreId);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
+            }
+            Store store = storeDAO.findById(storeId);
+            if (store == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
+            }
+
+            if (user.getPoolMembers().size() == 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not part of any pools");
+            }
+            Pool pool = user.getPoolMembers().iterator().next().getPool();
+
+            List<Orders> listOfOrders = ordersDAO.findOrdersWithNoPickup(pool, "Ordered", null, store);
+            Integer count = 0;
+            List<Set<OrderItems>> listOfProductsInOrders = new ArrayList<>();
+            for (Orders order : listOfOrders) {
+                if (order.getUser().getId() != userId) {
+                    listOfProductsInOrders.add(order.getOrderItems());
+                    count++;
+                    if (count == 10) {
+                        break;
+                    }
+                }
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(listOfProductsInOrders);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/pickupOtherOrders", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> pickupOtherOrders(@RequestBody OrderRequest orderRequest) {
+        try {
+            Long userId = null;
+            try {
+                userId = Long.parseLong(orderRequest.getUserId());
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
+            }
+
+            User user = userDAO.findById(userId);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
+            }
+
+            Long storeId = null;
+            try {
+                storeId = Long.parseLong(orderRequest.getStoreId());
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
+            }
+            Store store = storeDAO.findById(storeId);
+            if (store == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
+            }
+            Integer numberOfOrders;
+            try {
+                numberOfOrders = Integer.parseInt(orderRequest.getNumberOfOrders());
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid number of orders");
+            }
+            if (numberOfOrders < 1 || numberOfOrders > 10) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid number of orders");
+            }
+
+            if (user.getPoolMembers().size() == 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not part of any pools");
+            }
+            MailController mc = new MailController();
+
+            Pool pool = user.getPoolMembers().iterator().next().getPool();
+            List<Orders> listOfOrders = ordersDAO.findOrdersWithNoPickup(pool, "Ordered", null, store);
+            int count = 0;
+            for (Orders order : listOfOrders) {
+                if (order.getUser().getId() != userId) {
+
+                    String heading = "A fellow pooler will be picking up your order (# " + order.getId() + ")";
+                    String message = "<p>This is a paragraph</p>";
+                    mc.send(order.getUser().getEmail(), heading, message);
+
+                    order.setStatus("Confirmed");
+                    order.setPickupPooler(user);
+                    ordersDAO.saveOrderDetails(order);
+                    count++;
+                    if (count == numberOfOrders) {
+                        break;
+                    }
+                }
+            }
+
+            String heading = "You have picked up " + count + " orders";
+            String message = "<p>This is a paragraph</p>";
+            mc.send(user.getEmail(), heading, message);
+
+            return ResponseEntity.status(HttpStatus.OK).body(heading);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/ordersToPickup", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> getOrdersToPickup(@RequestParam(value = "userId") String reqUserId) {
+        try {
+            Long userId = null;
+            try {
+                userId = Long.parseLong(reqUserId);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
+            }
+
+            User user = userDAO.findById(userId);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
+            }
+
+            List<Orders> listOfOrders = ordersDAO.findOrdersToBePickedUp(user);
+
+            List<Set<OrderItems>> listOfProductsInOrders = new ArrayList<>();
+            for (Orders order : listOfOrders) {
+                listOfProductsInOrders.add(order.getOrderItems());
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(listOfProductsInOrders);
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

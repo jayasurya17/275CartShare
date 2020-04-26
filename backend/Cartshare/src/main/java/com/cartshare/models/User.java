@@ -128,6 +128,7 @@ public class User {
 		this.isProfileComplete = isProfileComplete;
 		this.verificationCode = verificationCode;
 		this.leaders = leaders;
+		this.contributionCredit = (long) 0;
 	}
 
 	public User() {

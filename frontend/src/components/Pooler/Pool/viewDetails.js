@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Header from '../../Common/header';
 import Navigation from '../../Common/navbar';
 import AcceptRequests from './acceptRequests';
+import SupportReferrals from './supportReferrals';
 
 class UserInfo extends Component {
 
@@ -58,19 +59,21 @@ class ViewDetails extends Component {
             },
             contributionCredit: 10
         }
-        let allUsers = []
+        let poolMembers = []
         for (var i = 0; i < 10; i++) {
-            allUsers.push(<UserInfo slNo={i + 1} userObj={userObj} />)
+            poolMembers.push(<UserInfo slNo={i + 1} userObj={userObj} />)
         }
-        let adminActions = []
-        // if (localStorage.getItem('275UserId') === this.state.pool.coordinator.id) {
-            if(true) {
-            adminActions.push(
+        let requests = []
+        if (localStorage.getItem('275UserId') === this.state.pool.coordinator.id) {
+            // if(false) {
+            requests.push(
                 <div className="text-center pt-5">
                     <button className="w-50 btn btn-warning">Update pool information</button>
                 </div>
             )
-            adminActions.push(<AcceptRequests />)
+            requests.push(<AcceptRequests />)
+        } else {
+            requests.push(<SupportReferrals />)
         }
 
         return (
@@ -95,11 +98,10 @@ class ViewDetails extends Component {
                                 <div className="col-md-6">Address</div>
                                 <div className="col-md-2">Contribution</div>
                             </div>
-                            {allUsers}
+                            {poolMembers}
                         </div>
                     </div>
-                    {adminActions}
-                    
+                    {requests}
                 </div>
             </div>
         )

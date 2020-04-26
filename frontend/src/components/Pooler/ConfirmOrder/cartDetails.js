@@ -32,6 +32,11 @@ class ViewCart extends Component {
             })
     }
 
+    updateQuantity = (reqBody) => {
+        axios.post(`${constants.BACKEND_SERVER.URL}/orders/update/cart`, reqBody)
+        this.getAllProductsIncart()
+    }
+
     render() {
 
         if (this.state.isFetched === false) {
@@ -51,7 +56,7 @@ class ViewCart extends Component {
 
         for (var productObj of this.state.allProducts) {
             cartSubTotal = cartSubTotal + (productObj.product.price * productObj.quantity);
-            productsInCart.push(<CartProduct slNo={slNo} productObj={productObj} editable={this.props.editable} update={this.getAllProductsIncart} />);
+            productsInCart.push(<CartProduct slNo={slNo} productObj={productObj} editable={this.props.editable} update={this.updateQuantity} />);
             slNo++;
         }
         let tax = cartSubTotal * 0.0925,
@@ -147,9 +152,9 @@ class CartProduct extends Component {
             orderItemId: this.props.productObj.id,
             quantity: this.state.quantity
         }
-        axios.post(`${constants.BACKEND_SERVER.URL}/orders/update/cart`, reqBody)
+        // axios.post(`${constants.BACKEND_SERVER.URL}/orders/update/cart`, reqBody)
             // .then(() => {
-                this.props.update();
+                this.props.update(reqBody);
             // })
     }
 
