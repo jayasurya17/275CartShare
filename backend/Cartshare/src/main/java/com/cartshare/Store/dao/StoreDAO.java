@@ -1,12 +1,14 @@
 package com.cartshare.Store.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import com.cartshare.models.*;
 import com.cartshare.repositories.StoreRepository;
 
 @Service
+@Repository
 public class StoreDAO {
 
 	@Autowired

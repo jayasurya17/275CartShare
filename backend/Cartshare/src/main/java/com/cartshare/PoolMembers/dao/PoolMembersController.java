@@ -1,10 +1,13 @@
 package com.cartshare.PoolMembers.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -80,4 +83,44 @@ public class PoolMembersController {
 		}
 	}
 	
+	@GetMapping(value="/supportedRequests", produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> supportedRequests(@RequestParam(required = true) String referenceId){
+		try {
+			if(referenceId == null) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide required parameters");
+			}
+			
+			referenceId = referenceId.trim();
+			
+			Long reference = Long.parseLong(referenceId);
+			
+			List<PoolMembers> poolMembers = poolMembersDAO.supportedRequests(reference);
+			if(poolMembers.size() == 0)
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No Supported Requests");
+			
+			return ResponseEntity.status(HttpStatus.OK).body(poolMembers);
+				
+		} catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+	}
+	
+	
+	@GetMapping(value="/requestedRequests", produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> requestedRequests(@RequestParam(required = true) String screenName){
+		try {
+			if(screenName == null)
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide required parameters");
+			
+			screenName = screenName.trim();
+			
+			List<PoolMembers> poolMembers = poolMembersDAO.requestedRequests(screenName);
+			if(poolMembers.size() == 0)
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No Requested Requests");
+			
+			return ResponseEntity.status(HttpStatus.OK).body(poolMembers);
+		} catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+	}
 }

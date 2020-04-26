@@ -1,5 +1,11 @@
 package com.cartshare.PoolMembers.controller;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +24,9 @@ public class PoolMembersDAO {
 	PoolRepository poolRepository;
 	@Autowired
 	PoolMembersRepository poolMembersRepository;
+	
+	@PersistenceContext
+	EntityManager entityManager;
 	
 	public PoolMembers joinRequest(Long pool_id, Long member_id, Long reference_id) {
 		
@@ -51,5 +60,35 @@ public class PoolMembersDAO {
 		
 		poolMembers.setStatus(status);
 		return poolMembersRepository.save(poolMembers);
+	}
+	
+	public List<PoolMembers> supportedRequests(Long user_id){
+		// System.out.println(user_id);
+
+		Query query = entityManager.createQuery("FROM PoolMembers WHERE reference_id = :reference AND status = 'Accepted'");
+		
+		query.setParameter("reference", user_id);
+		List results = query.getResultList();
+		return results;
+	}
+	
+	public List<PoolMembers> requestedRequests(String screen_name){
+		
+		Query query = entityManager.createQuery("FROM User WHERE screen_name = :screenname");
+		query.setParameter("screenname", screen_name);
+		
+		List users = query.getResultList();
+		if(users.size() < 0)
+			return null;
+		
+		User user = (User) users.get(0);
+		
+		Long reference_id = user.getId();
+		System.out.println(reference_id);
+		Query query1 = entityManager.createQuery("FROM PoolMembers WHERE reference_id = :reference AND status = 'Requested' ");
+		query1.setParameter("reference", reference_id);
+		
+		List results = query1.getResultList();
+		return results;
 	}
 }
