@@ -5,7 +5,7 @@ class AdminCheck extends Component {
 
     render() {
         let redirectTo = null
-        if (localStorage.getItem('275UserId') === null) {
+        if (localStorage.getItem('275UserId') === null || localStorage.getItem('275NickName') === null) {
             redirectTo = <Redirect to="/login" />
         } else if (localStorage.getItem('275UserType') !== "Admin") {
             redirectTo = <Redirect to="/pooler/browse" />
