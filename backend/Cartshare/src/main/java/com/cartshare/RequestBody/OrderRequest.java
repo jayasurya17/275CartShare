@@ -9,6 +9,15 @@ public class OrderRequest {
     private Boolean selfPickup;
     private String orderItemId;
     private String numberOfOrders;
+    private String orderId;
+
+    public String getOrderId() {
+        return this.orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 
     public String getNumberOfOrders() {
         return this.numberOfOrders;

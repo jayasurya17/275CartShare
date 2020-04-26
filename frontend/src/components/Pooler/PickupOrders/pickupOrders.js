@@ -44,7 +44,7 @@ class PickupOrders extends Component {
                     <Header />
                     <Navbar />
 
-                    <p className="p-5 display-4">You do not have any orders waiting to be picked up</p>
+                    <p className="p-5 display-4 text-center">You do not have any orders waiting to be picked up</p>
 
                 </div>
             )
