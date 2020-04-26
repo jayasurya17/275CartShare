@@ -91,4 +91,12 @@ public class PoolMembersDAO {
 		List results = query1.getResultList();
 		return results;
 	}
+	
+	public List<PoolMembers> viewPoolMembers(Long pool_id){
+		Query query = entityManager.createQuery("FROM PoolMembers WHERE pool_id = :poolid");
+		query.setParameter("poolid", pool_id);
+		
+		List results = query.getResultList();
+		return results;
+	}
 }
