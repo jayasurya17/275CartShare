@@ -7,7 +7,8 @@ class PickupOtherOrders extends Component {
     constructor() {
         super()
         this.state = {
-            numberOfOrdersToPickup: 1
+            numberOfOrdersToPickup: 1,
+            warningMessage: ""
         }
     }
 
@@ -20,13 +21,20 @@ class PickupOtherOrders extends Component {
     submitPickUp = () => {
         const reqBody = {
             userId: localStorage.getItem('275UserId'),
+            orderId: this.props.orderId,
             storeId: this.props.storeId,
             numberOfOrders: this.state.numberOfOrdersToPickup
         }
+        this.setState({
+            warningMessage: "Please be patient while we are placing request to pickup the orders"
+        })
         axios.post(`${constants.BACKEND_SERVER.URL}/orders/pickupOtherOrders`, reqBody)
             .then((response) => {
                 window.alert(response.data);
                 this.props.redirect()
+            })
+            .catch((err) => {
+                window.alert(err.response.data)
             })
     }
 
@@ -73,6 +81,7 @@ class PickupOtherOrders extends Component {
                         <button className="btn btn-success w-100" onClick={this.submitPickUp}>Submit</button>
                     </div>
                 </div>
+                <p className="text-warning text-center">{this.state.warningMessage}</p>
                 {otherOrders}
             </div>
         )
