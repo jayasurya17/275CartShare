@@ -69,8 +69,8 @@ public class OrderDetails {
 
         String HTMLContent = "";
         
-        HTMLContent += "<table>";
-        HTMLContent += "<tr>";
+        HTMLContent += "<table style=\"background-color: #f8f9fa\">";
+        HTMLContent += "<tr style=\"background-color: #6c757d\">";
         HTMLContent += "<th>Sl No</th>";
         HTMLContent += "<th>Image</th>";
         HTMLContent += "<th>Name</th>";
