@@ -14,10 +14,10 @@ public class PoolDAO {
 	@Autowired
 	PoolRepository poolRepository;
 	
-	public Pool createPool(Pool pool, Long pooler_id, Long leader_id) {
+	public Pool createPool(Pool pool, Long pooler_id) {
 		User pooler = userRepository.findById(pooler_id).orElse(null);
-		User leader = userRepository.findById(leader_id).orElse(null);
-		if(pooler != null && leader != null) {
+		// User leader = userRepository.findById(leader_id).orElse(null);
+		if(pooler != null) {
 			
 			pool.setPooler(pooler);
 			System.out.println("New Entry");

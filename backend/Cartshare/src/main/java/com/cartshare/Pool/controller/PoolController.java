@@ -26,8 +26,7 @@ public class PoolController {
 			@RequestParam(required=true) String neighborhoodName,
 			@RequestParam(required=true) String poolName,
 			@RequestParam(required=false) String zipcode,
-			@RequestParam(required=true) String poolerId,
-			@RequestParam(required=true) String leaderId){
+			@RequestParam(required=true) String poolerId){
 		try {
 			
 			poolName = poolName.trim();
@@ -38,7 +37,7 @@ public class PoolController {
 				zipcode = zipcode.trim();
 			
 			long pooler = Long.parseLong(poolerId);
-			long leader = Long.parseLong(leaderId);
+			// long leader = Long.parseLong(leaderId);
 //			System.out.println(description);
 //			System.out.println(neighborhoodName);
 //			System.out.println(poolName);
@@ -51,7 +50,7 @@ public class PoolController {
 			pool.setPoolName(poolName);
 			pool.setZipcode(zipcode);
 			
-			Pool result = poolDAO.createPool(pool, pooler, leader);
+			Pool result = poolDAO.createPool(pool, pooler);
 			if(result == null) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Pooler");
 			}
@@ -104,8 +103,7 @@ public class PoolController {
 			@RequestParam(required=true) String neighborhoodName,
 			@RequestParam(required=true) String poolName,
 			@RequestParam(required=false) String zipcode,
-			@RequestParam(required=true) String poolerId,
-			@RequestParam(required=true) String leaderId){
+			@RequestParam(required=true) String poolerId){
 		try {
 			poolName = poolName.trim();
 			neighborhoodName = neighborhoodName.trim();
@@ -116,7 +114,7 @@ public class PoolController {
 			
 			long pooler = Long.parseLong(poolerId);
 			long poolId = Long.parseLong(id);
-			long leader = Long.parseLong(leaderId);
+			// long leader = Long.parseLong(leaderId);
 //			System.out.println(description);
 //			System.out.println(neighborhoodName);
 //			System.out.println(poolName);
@@ -130,7 +128,7 @@ public class PoolController {
 			pool.setZipcode(zipcode);
 			pool.setId(poolId);
 			
-			Pool result = poolDAO.createPool(pool, pooler, leader);
+			Pool result = poolDAO.createPool(pool, pooler);
 			if(result == null) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Pooler");
 			}
