@@ -9,7 +9,7 @@ class Home extends Component {
             return (
                 <div className="row pl-3 pt-1 pb-1 stickyHeader bg-light text-secondary">
                     <div className="col-md-8">
-                        <h1 class="display-4">CartShare</h1>
+                        <h1 className="display-4">CartShare</h1>
                     </div>
                     <div className="col-md-2 offset-md-2">
                         <div className="row pt-3">
@@ -25,7 +25,7 @@ class Home extends Component {
         return (
             <div className="row pl-3 pt-1 pb-1 stickyHeader bg-light text-secondary">
                 <div className="col-md-8">
-                    <a href="/pooler/browse" className="text-decoration-none text-dark"><h1 class="display-4">CartShare</h1></a>
+                    <a href="/pooler/browse" className="text-decoration-none text-dark"><h1 className="display-4">CartShare</h1></a>
                 </div>
                 <div className="col-md-2 offset-md-2">
                     <div className="row">
