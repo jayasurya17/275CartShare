@@ -19,6 +19,14 @@ class UserInfo extends Component {
 }
 
 class SupportReferral extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            userId : this.props.userId,
+            screenName : this.props.screenName,
+            poolDetails : this.props.poolDetails
+        }
+    }
 
     render() {
 
