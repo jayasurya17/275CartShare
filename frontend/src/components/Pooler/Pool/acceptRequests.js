@@ -17,7 +17,13 @@ class UserInfo extends Component {
 }
 
 class SupportReferral extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
 
+        }
+    }
+    
     render() {
 
         let userObj = {
