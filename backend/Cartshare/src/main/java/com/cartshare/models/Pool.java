@@ -38,13 +38,7 @@ public class Pool {
 	private String description;
 	
 	@Column(name = "zipcode")
-	private String zipcode;
-	
-	@ManyToOne
-	@JoinColumn(name = "leader_id")
-	private User leader;
-	
-	
+	private String zipcode;	
 
 
 	@JsonIgnore
@@ -56,7 +50,7 @@ public class Pool {
 	}
 
 	public Pool(long id, User pooler, @NotBlank String poolName, @NotBlank String neighborhoodName, String description,
-			String zipcode, Set<PoolMembers> poolMembers, User leader) {
+			String zipcode, Set<PoolMembers> poolMembers) {
 		super();
 		this.id = id;
 		this.pooler = pooler;
@@ -65,7 +59,6 @@ public class Pool {
 		this.description = description;
 		this.zipcode = zipcode;
 		this.poolMembers = poolMembers;
-		this.leader = leader;
 	}
 
 
@@ -134,14 +127,5 @@ public class Pool {
 	public void setPoolMembers(Set<PoolMembers> poolMembers) {
 		this.poolMembers = poolMembers;
 	}
-	
-	public User getLeader() {
-		return leader;
-	}
-
-	public void setLeader(User leader) {
-		this.leader = leader;
-	}
-	
 	
 }

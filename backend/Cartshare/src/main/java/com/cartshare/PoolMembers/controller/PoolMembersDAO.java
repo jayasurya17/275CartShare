@@ -29,10 +29,13 @@ public class PoolMembersDAO {
 	EntityManager entityManager;
 	
 	public PoolMembers joinRequest(Long pool_id, Long member_id, Long reference_id) {
-		
+		System.out.println(pool_id + " " + member_id + " " + reference_id);
 		User member = userRepository.findById(member_id).orElse(null);
 		User reference = userRepository.findById(reference_id).orElse(null);
 		Pool pool = poolRepository.findById(pool_id).orElse(null);
+		System.out.println(member);
+		System.out.println(reference);
+		System.out.println(pool);
 		
 		if(member == null || reference == null || pool == null) {
 			return null;
@@ -41,11 +44,16 @@ public class PoolMembersDAO {
 		/* Need to check whether member is already part of some other pool
 			*****Insert Code Here*****
 		*/
+		String status = "Requested";
+		if(member_id == reference_id) {
+			status = "Accepted";
+		}
 		PoolMembers poolMembers = new PoolMembers();
 		poolMembers.setMember(member);
 		poolMembers.setReference(reference);
 		poolMembers.setPool(pool);
-		poolMembers.setStatus("Requested");
+		poolMembers.setStatus(status);
+		System.out.println(poolMembers.getStatus());
 		return poolMembersRepository.save(poolMembers);
 	}
 	
@@ -98,5 +106,15 @@ public class PoolMembersDAO {
 		
 		List results = query.getResultList();
 		return results;
+	}
+	
+	public PoolMembers getPoolByUserId(Long userId) {
+		Query query = entityManager.createQuery("FROM PoolMembers WHERE member_id = :userid AND status = 'Accepted'");
+		query.setParameter("userid", userId);
+		
+		PoolMembers results = (PoolMembers) query.getSingleResult();
+		if(results != null)
+			return results;
+		return null;
 	}
 }

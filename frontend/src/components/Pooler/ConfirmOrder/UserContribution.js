@@ -17,6 +17,7 @@ class UserContribution extends Component {
             storeId: null,
             redirect: null,
             pendingOrders: [],
+            orderId: null
         }
     }
 
@@ -59,7 +60,8 @@ class UserContribution extends Component {
                 axios.post(`${constants.BACKEND_SERVER.URL}/orders/confirmOrder`, reqBody)
                     .then((response1) => {
                         this.setState({
-                            storeId: response1.data.store.id
+                            storeId: response1.data.store.id,
+                            orderId: response1.data.id
                         })
                         axios.get(`${constants.BACKEND_SERVER.URL}/orders/pendingInPool?userId=${localStorage.getItem('275UserId')}&storeId=${response1.data.store.id}`)
                             .then((response) => {
@@ -118,7 +120,7 @@ class UserContribution extends Component {
             if (this.state.pendingOrders.length === 0) {
                 return (<p className="display-4 text-justify p-5">Your order has been recieved. There are no pending orders from other poolers to be picked up at the moment.</p>)
             } else {
-                return (<PickupOtherOrders pendingOrders={this.state.pendingOrders} storeId={this.state.storeId} redirect={this.redirectToPickupPage} />)
+                return (<PickupOtherOrders pendingOrders={this.state.pendingOrders} storeId={this.state.storeId} orderId={this.state.orderId} redirect={this.redirectToPickupPage} />)
             }
         }
         let background = ""

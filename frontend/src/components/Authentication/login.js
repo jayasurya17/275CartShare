@@ -35,7 +35,7 @@ class Login extends Component {
 								localStorage.setItem('275UserId', response.data.id);
 								localStorage.setItem('275UserEmail', response.data.email);
 								localStorage.setItem('275UserIsActive', response.data.active);
-								// localStorage.setItem('275UserName', response.data.screenName)
+								localStorage.setItem('275UserName', response.data.screenName)
 								if (response.data.isAdmin) {
 									localStorage.setItem('275UserType', "Admin")
 								} else {
@@ -56,6 +56,7 @@ class Login extends Component {
 								localStorage.setItem('275UserId', response.data.id);
 								localStorage.setItem('275UserEmail', response.data.email);
 								localStorage.setItem('275UserIsActive', response.data.active);
+								localStorage.setItem('275UserName', response.data.screenName)
 								if (response.data.isAdmin) {
 									localStorage.setItem('275UserType', "Admin")
 								} else {

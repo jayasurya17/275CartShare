@@ -376,6 +376,14 @@ public class OrdersController {
             if (store == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
             }
+
+            Long orderId = null;
+            try {
+                orderId = Long.parseLong(orderRequest.getOrderId());
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid order ID");
+            }
+            Orders originalOrder = ordersDAO.findOrdersById(orderId);
             Integer numberOfOrders;
             try {
                 numberOfOrders = Integer.parseInt(orderRequest.getNumberOfOrders());
@@ -390,20 +398,31 @@ public class OrdersController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not part of any pools");
             }
             MailController mc = new MailController();
+            OrderDetails od = new OrderDetails();
 
             Pool pool = user.getPoolMembers().iterator().next().getPool();
             List<Orders> listOfOrders = ordersDAO.findOrdersWithNoPickup(pool, "Ordered", null, store);
             int count = 0;
+
+            String pickupUserMessage = "";
+
             for (Orders order : listOfOrders) {
                 if (order.getUser().getId() != userId) {
 
-                    String heading = "A fellow pooler will be picking up your order (# " + order.getId() + ")";
-                    String message = "<p>This is a paragraph</p>";
-                    mc.send(order.getUser().getEmail(), heading, message);
+                    pickupUserMessage += "<h2>Order " + (count + 1) + " details</h2>";
+                    pickupUserMessage += od.GenerateProductTableWithoutPrice(order.getOrderItems());
+
+                    String orderedUserHeading = "A fellow pooler will be picking up your order (# " + order.getId() + ")";
+                    String orderedUserMessage = od.GenerateProductTableWithPrice(order.getOrderItems());
+                    mc.sendHTML(order.getUser().getEmail(), orderedUserHeading, orderedUserMessage);
 
                     order.setStatus("Confirmed");
                     order.setPickupPooler(user);
                     ordersDAO.saveOrderDetails(order);
+
+                    AssociatedOrders associatedOrders = new AssociatedOrders(originalOrder, order);
+                    ordersDAO.saveAssociatedOrders(associatedOrders);
+
                     count++;
                     if (count == numberOfOrders) {
                         break;
@@ -411,11 +430,10 @@ public class OrdersController {
                 }
             }
 
-            String heading = "You have picked up " + count + " orders";
-            String message = "<p>This is a paragraph</p>";
-            mc.send(user.getEmail(), heading, message);
+            String pickupUserHeading = "You have picked up " + count + " orders";
+            mc.sendHTML(user.getEmail(), pickupUserHeading, pickupUserMessage);
 
-            return ResponseEntity.status(HttpStatus.OK).body(heading);
+            return ResponseEntity.status(HttpStatus.OK).body(pickupUserHeading);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
