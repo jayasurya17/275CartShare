@@ -111,29 +111,45 @@ class ViewDetails extends Component {
 
 	render() {
 		let poolMembers = [];
+		let requests = [];
 		if (this.state.membersReceived) {
 			for (var i = 0; i < this.state.members.length; i++) {
 				poolMembers.push(
-					<UserInfo slNo={i + 1} userObj={this.state.members[i]} />
+					<UserInfo key={i+1} slNo={i + 1} userObj={this.state.members[i]} />
 				);
 			}
 		}
-
-		let requests = [];
-		if (
-			localStorage.getItem("275UserId") === this.state.pool.coordinator.id
-		) {
-			// if(false) {
-			requests.push(
-				<div className="text-center pt-5">
-					<button className="w-50 btn btn-warning">
-						Update pool information
-					</button>
-				</div>
-			);
-			requests.push(<AcceptRequests />);
-		} else {
-			requests.push(<SupportReferrals />);
+		if (this.state.poolReceived) {
+			if (
+				Number(localStorage.getItem("275UserId")) ===
+				Number(this.state.poolDetails.pooler.id)
+			) {
+				// if(false) {
+				requests.push(
+					<div key="update" className="text-center pt-5">
+						<button className="w-50 btn btn-warning">
+							Update pool information
+						</button>
+					</div>
+				);
+				requests.push(
+					<AcceptRequests
+						key={this.state.userId}
+						userId={this.state.userId}
+						screenName={this.state.userScreenName}
+						poolDetails={this.state.poolDetails}
+					/>
+				);
+			} else {
+				requests.push(
+					<SupportReferrals
+						key={this.state.userId}
+						userId={this.state.userId}
+						screenName={this.state.userScreenName}
+						poolDetails={this.state.poolDetails}
+					/>
+				);
+			}
 		}
 
 		return (
