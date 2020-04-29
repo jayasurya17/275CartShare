@@ -80,7 +80,7 @@ public class PoolMembersDAO {
 		return results;
 	}
 	
-	public List<PoolMembers> requestedRequests(String screen_name){
+	public List<PoolMembers> requestedRequests(String screen_name, boolean isLeader){
 		
 		Query query = entityManager.createQuery("FROM User WHERE screen_name = :screenname");
 		query.setParameter("screenname", screen_name);
@@ -93,15 +93,24 @@ public class PoolMembersDAO {
 		
 		Long reference_id = user.getId();
 		System.out.println(reference_id);
-		Query query1 = entityManager.createQuery("FROM PoolMembers WHERE reference_id = :reference AND status = 'Requested' ");
-		query1.setParameter("reference", reference_id);
 		
+		
+		Query query1;
+		if(isLeader) {
+			query1 = entityManager.createQuery("FROM PoolMembers WHERE reference_id = :reference OR status = :status ");
+			query1.setParameter("reference", reference_id);
+			query1.setParameter("status", "Approved");
+		} else {
+			query1 = entityManager.createQuery("FROM PoolMembers WHERE reference_id = :reference AND status = :status ");
+			query1.setParameter("reference", reference_id);
+			query1.setParameter("status", "Requested");
+		}
 		List results = query1.getResultList();
 		return results;
 	}
 	
 	public List<PoolMembers> viewPoolMembers(Long pool_id){
-		Query query = entityManager.createQuery("FROM PoolMembers WHERE pool_id = :poolid");
+		Query query = entityManager.createQuery("FROM PoolMembers WHERE pool_id = :poolid AND status = 'Accepted'");
 		query.setParameter("poolid", pool_id);
 		
 		List results = query.getResultList();
