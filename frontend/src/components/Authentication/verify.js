@@ -69,7 +69,11 @@ class Verify extends Component {
                     isAdmin: isadmin,
                     isVerified: true,
                     isActive: true,
-                    isProfileComplete: false
+                    isProfileComplete: false,
+                    city: "",
+                    street: "",
+                    state: "",
+                    zipcode: "00000"
                 }
             })
                 .then((response) => {
@@ -78,7 +82,9 @@ class Verify extends Component {
                     }
                 })
                 .catch((error) => {
-                    alert(error.response.data);
+                    console.log('error in catch');
+                    
+                    alert(error.response);
                 })
         }
     }
