@@ -72,4 +72,14 @@ public class OrdersDAO {
 		return associatedOrdersRepository.save(order);
 	}
 
+	public List<Orders> findAssociatedOrders(Orders o){
+		List<AssociatedOrders> l = associatedOrdersRepository.findByOrder(o);
+		if(l == null || l.size() == 0)	return null;
+		List<Orders> r = new ArrayList<Orders>();
+		for(AssociatedOrders order : l){
+			r.add(order.getAssociated());
+		}
+		return r;
+	}
+
 }

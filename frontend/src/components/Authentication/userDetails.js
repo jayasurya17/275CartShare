@@ -74,7 +74,7 @@ class UserDetails extends Component {
     }
 
     updateInformation = () => {
-        if(this.state.nickName.length === 0 || this.state.screenName.length === 0 || this.state.street.length == 0 || this.state.city.length == 0 || this.state.state.length == 0 || this.state.zipcode.length == 0){
+        if(this.state.nickName.length === 0 || this.state.screenName.length === 0 || this.state.street.length === 0 || this.state.city.length === 0 || this.state.state.length === 0 || this.state.zipcode.length === 0){
             alert("None of the fields should be empty");
             return;
         }
@@ -87,7 +87,7 @@ class UserDetails extends Component {
             return;
         }
 
-        if(this.state.zipcode.length != 5){
+        if(this.state.zipcode.length !== 5){
             alert("Please enter a valid zipcode");
             return;
         }

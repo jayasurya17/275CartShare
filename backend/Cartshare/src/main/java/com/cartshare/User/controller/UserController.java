@@ -5,6 +5,7 @@ import java.util.Random;
 import javax.validation.Valid;
 
 import com.cartshare.User.dao.UserDAO;
+import com.cartshare.models.Address;
 import com.cartshare.models.User;
 import com.cartshare.utils.MailController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,7 +136,11 @@ public class UserController {
                                     @RequestParam(name = "isAdmin") String isAdmin,
                                     @RequestParam(name = "isVerified") String isVerified,
                                     @RequestParam(name = "isActive") String isActive,
-                                    @RequestParam(name = "isProfileComplete") String isProfileComplete){
+                                    @RequestParam(name = "isProfileComplete") String isProfileComplete,
+                                    @RequestParam(name = "city") String city,
+                                    @RequestParam(name = "state") String state,
+                                    @RequestParam(name = "street") String street,
+                                    @RequestParam(name = "zipcode") String zipcode){
 
         try {
             Long l ;
@@ -165,6 +170,21 @@ public class UserController {
             user.setVerified(isverified);
             user.setActive(isactive);
             user.setProfileComplete(isprofilecomplete);
+
+            try{
+                int x = Integer.parseInt(zipcode);
+            } catch(NumberFormatException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid zipcode");
+            }
+
+            Address a = new Address();
+            a.setCity(city);
+            a.setState(state);
+            a.setStreet(street);
+            a.setZipcode(zipcode);
+
+            user.setAddress(a);
+
             return ResponseEntity.status(HttpStatus.OK).body(userDAO.save(user));
 
 
