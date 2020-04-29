@@ -11,9 +11,9 @@ class Home extends Component {
                     <div class="col-md-2 border-left border-right"><a href="/admin/browse" class="text-secondary text-decoration-none"><p>View my stores</p></a></div>
                     <div class="col-md-2 border-left border-right"><a href="/admin/store/add" class="text-secondary text-decoration-none"><p>Add Stores</p></a></div>
                     <div class="col-md-2 border-left border-right"><a href="/admin/product/add" class="text-secondary text-decoration-none"><p>Add products</p></a></div>
-                    <div class="col-md-2 border-left border-right"><a href="" class="text-secondary text-decoration-none"><p>View orders</p></a></div>
-                    <div class="col-md-2 border-left border-right"><a href="" class="text-secondary text-decoration-none"><p>Something else</p></a></div>
-                    <div class="col-md-2 border-left border-right"><a href="/pooler/update/account" class="text-secondary text-decoration-none"><p>Update account</p></a></div>
+                    <div class="col-md-2 border-left border-right"><a href="/admin/pickup/orders" class="text-secondary text-decoration-none"><p>View orders</p></a></div>
+                    {/* <div class="col-md-2 border-left border-right"><a href="" class="text-secondary text-decoration-none"><p>Something else</p></a></div> */}
+                    <div class="col-md-2 offset-md-2 border-left border-right"><a href="/pooler/update/account" class="text-secondary text-decoration-none"><p>Update account</p></a></div>
                 </div>
             )
         }

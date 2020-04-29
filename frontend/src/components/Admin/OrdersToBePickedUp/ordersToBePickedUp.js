@@ -15,7 +15,7 @@ class PickupOrders extends Component {
     }
 
     componentDidMount() {
-        axios.get(`/orders/ordersToPickup?userId=${localStorage.getItem('275UserId')}`)
+        axios.get(`/orders/ordersToPickup`)
             .then((response) => {
                 this.setState({
                     fetched: true,
@@ -33,16 +33,16 @@ class PickupOrders extends Component {
         if (this.state.fetched === false) {
             return (
                 <div>
-                    <Header />
-                    <Navbar />
+                    <Header isAdmin={true} />
+                    <Navbar isAdmin={true} />
                 </div>
             )
         }
         if (this.state.allOrders.length === 0) {
             return (
                 <div>
-                    <Header />
-                    <Navbar />
+                    <Header isAdmin={true} />
+                    <Navbar isAdmin={true} />
 
                     <p className="p-5 display-4 text-center">You do not have any orders waiting to be picked up</p>
 
@@ -79,8 +79,8 @@ class PickupOrders extends Component {
 
         return (
             <div>
-                <Header />
-                <Navbar />
+                <Header isAdmin={true} />
+                <Navbar isAdmin={true} />
                 {orders}
             </div>
         )
@@ -108,7 +108,6 @@ class OrdersComponent extends Component {
                 <div className="row p-2 bg-secondary text-white">
                     <div className="col-md-2"><h5># {this.props.order[0].orders.id}</h5></div>
                     <div className="col-md-6"><h5>Store: {this.props.order[0].orders.store.storeName}</h5></div>
-                    <div className="col-md-4"><button className="btn btn-warning w-100">Show QR</button></div>
                 </div>
                 <div className="row p-2 bg-secondary text-white">
                     {/* <div className="col-md-3"><h5>Order: {this.props.slNo}</h5></div> */}

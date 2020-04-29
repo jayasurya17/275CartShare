@@ -4,7 +4,7 @@ import Navigation from '../../Common/navbar';
 import ItemCard from '../../Common/itemCard';
 import ProductInfoComponent from './productInfoComponent';
 import axios from 'axios';
-import constants from '../../../utils/constants';
+
 
 class Home extends Component {
 
@@ -21,7 +21,7 @@ class Home extends Component {
     }
 
     getAllProducts = () => {
-        axios.get(`${constants.BACKEND_SERVER.URL}/product/get/all?storeId=${this.props.match.params.storeId}`)
+        axios.get(`/product/get/all?storeId=${this.props.match.params.storeId}`)
             .then((response) => {
                 this.setState({
                     allProducts: response.data,

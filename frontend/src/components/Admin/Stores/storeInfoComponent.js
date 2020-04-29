@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import constants from '../../../utils/constants';
+
 
 class StoreInfoComponent extends Component {
 
@@ -21,7 +21,7 @@ class StoreInfoComponent extends Component {
 
     componentDidMount() {
         if (this.props.storeId) {
-            axios.get(`${constants.BACKEND_SERVER.URL}/store/details/${this.props.storeId}`)
+            axios.get(`/store/details/${this.props.storeId}`)
                 .then((response) => {
                     this.setState({
                         name: response.data.storeName,
@@ -121,7 +121,7 @@ class StoreInfoComponent extends Component {
                 state: this.state.state,
                 zipcode: this.state.zipcode
             }
-            axios.post(`${constants.BACKEND_SERVER.URL}/admin/create/store`, reqBody)
+            axios.post(`/admin/create/store`, reqBody)
                 .then(() => {
                     this.setState({
                         errMsg: "",
@@ -166,7 +166,7 @@ class StoreInfoComponent extends Component {
                 state: this.state.state,
                 zipcode: this.state.zipcode
             }
-            axios.put(`${constants.BACKEND_SERVER.URL}/admin/modify/store`, reqBody)
+            axios.put(`/admin/modify/store`, reqBody)
                 .then(() => {
                     this.setState({
                         errMsg: "",

@@ -275,6 +275,7 @@ public class OrdersController {
                 orderItem.setProductPrice(orderItem.getProduct().getPrice());
                 orderItem.setProductImage(orderItem.getProduct().getImageURL());
                 orderItem.setProductBrand(orderItem.getProduct().getBrand());
+                orderItem.setProductUnit(orderItem.getProduct().getUnit());
                 ordersDAO.saveOrderItem(orderItem);
             }
 
@@ -441,8 +442,11 @@ public class OrdersController {
     }
 
     @GetMapping(value = "/ordersToPickup", produces = { "application/json", "application/xml" })
-    public ResponseEntity<?> getOrdersToPickup(@RequestParam(value = "userId") String reqUserId) {
+    public ResponseEntity<?> getOrdersToPickup(@RequestParam(value = "userId", required = false) String reqUserId) {
         try {
+            if (reqUserId == null) {
+                return ResponseEntity.status(HttpStatus.OK).body(ordersDAO.findAllOrdersToBePickedup());
+            }
             Long userId = null;
             try {
                 userId = Long.parseLong(reqUserId);
@@ -455,7 +459,7 @@ public class OrdersController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
 
-            List<Orders> listOfOrders = ordersDAO.findOrdersToBePickedUp(user);
+            List<Orders> listOfOrders = ordersDAO.findOrdersToBePickedUpByUser(user);
 
             List<Set<OrderItems>> listOfProductsInOrders = new ArrayList<>();
             for (Orders order : listOfOrders) {

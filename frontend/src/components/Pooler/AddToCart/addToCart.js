@@ -4,7 +4,7 @@ import Navigation from '../../Common/navbar';
 import ItemCard from '../../Common/itemCard';
 import BrowseStores from './browseStores';
 import axios from 'axios';
-import constants from '../../../utils/constants';
+
 
 class AddToCart extends Component {
 
@@ -20,7 +20,7 @@ class AddToCart extends Component {
     }
 
     componentDidMount() {
-        axios.get(`${constants.BACKEND_SERVER.URL}/orders/activeStoreInCart?userId=${localStorage.getItem('275UserId')}`)
+        axios.get(`/orders/activeStoreInCart?userId=${localStorage.getItem('275UserId')}`)
             .then((response) => {
                 this.setState({
                     currentStoreID: response.data.id
@@ -46,7 +46,7 @@ class AddToCart extends Component {
 
     viewAllProducts = (storeId) => {
         if (storeId) {
-            axios.get(`${constants.BACKEND_SERVER.URL}/product/get/all?storeId=${storeId}`)
+            axios.get(`/product/get/all?storeId=${storeId}`)
                 .then((response) => {
                     this.setState({
                         allProducts: response.data,
@@ -76,14 +76,14 @@ class AddToCart extends Component {
     searchProducts = () => {
         if (this.state.currentStoreID) {
             if (this.state.searchSKU === true) {
-                axios.get(`${constants.BACKEND_SERVER.URL}/product/search/all/?storeId=${this.state.currentStoreID}&SKU=${this.state.searchValue}`)
+                axios.get(`/product/search/all/?storeId=${this.state.currentStoreID}&SKU=${this.state.searchValue}`)
                     .then((response) => {
                         this.setState({
                             allProducts: response.data
                         })
                     })
             } else {
-                axios.get(`${constants.BACKEND_SERVER.URL}/product/search/all/?storeId=${this.state.currentStoreID}&name=${this.state.searchValue}`)
+                axios.get(`/product/search/all/?storeId=${this.state.currentStoreID}&name=${this.state.searchValue}`)
                     .then((response) => {
                         this.setState({
                             allProducts: response.data
