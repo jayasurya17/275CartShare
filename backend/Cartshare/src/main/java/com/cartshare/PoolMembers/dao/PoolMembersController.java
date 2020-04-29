@@ -65,7 +65,7 @@ public class PoolMembersController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide required parameters");
 			}
 			status = status.trim();
-			if(status != "Accepted" && status != "Rejected")
+			if(status != "Accepted" && status != "Rejected" && status != "Approved")
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid status");
 			poolId = poolId.trim();
 			poolMemberId = poolMemberId.trim();
@@ -110,14 +110,19 @@ public class PoolMembersController {
 	
 	
 	@GetMapping(value="/requestedRequests", produces = {MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<?> requestedRequests(@RequestParam(required = true) String screenName){
+	public ResponseEntity<?> requestedRequests(@RequestParam(required = true) String screenName, 
+			@RequestParam(required = true) String isLeader){
 		try {
 			if(screenName == null)
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide required parameters");
 			
 			screenName = screenName.trim();
+			boolean isLeaderFlag = false;
 			
-			List<PoolMembers> poolMembers = poolMembersDAO.requestedRequests(screenName);
+			if(isLeader.equalsIgnoreCase("true")) {
+				isLeaderFlag = true;
+			}
+			List<PoolMembers> poolMembers = poolMembersDAO.requestedRequests(screenName, isLeaderFlag);
 			if(poolMembers.size() == 0)
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No Requested Requests");
 			
