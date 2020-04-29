@@ -32,6 +32,9 @@ public class OrderItems {
 	@Column(name = "product_name")
 	private String productName;
 	
+	@Column(name = "product_brand")
+	private String productBrand;
+	
 	@Column(name = "product_price")
 	private Double productPrice;
 	
@@ -104,6 +107,13 @@ public class OrderItems {
 
 	public void setProductImage(String productImage) {
 		this.productImage = productImage;
+	}
+	public String getProductBrand() {
+		return this.productBrand;
+	}
+
+	public void setProductBrand(String productBrand) {
+		this.productBrand = productBrand;
 	}
 	
 	

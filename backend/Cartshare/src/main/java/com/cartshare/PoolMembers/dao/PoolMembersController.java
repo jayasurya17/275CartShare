@@ -2,12 +2,15 @@ package com.cartshare.PoolMembers.dao;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -139,6 +142,26 @@ public class PoolMembersController {
 			
 			return ResponseEntity.status(HttpStatus.OK).body(poolMembers);
 			
+		} catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+	}
+	
+	@GetMapping(value="/getPoolByUser/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<?> getPoolByUser(@Valid @PathVariable(name = "userId") String id){
+		try {
+			if(id == null)
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide required parameters");
+			
+			id = id.trim();
+			Long userId = Long.parseLong(id);
+			PoolMembers poolMembers = poolMembersDAO.getPoolByUserId(userId);
+			
+			if(poolMembers == null) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User Does not belong to any pool");
+			}
+			// System.out.println(poolMembers);
+			return ResponseEntity.status(HttpStatus.OK).body(poolMembers);
 		} catch(Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}

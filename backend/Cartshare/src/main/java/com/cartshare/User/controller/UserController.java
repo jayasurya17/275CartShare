@@ -41,7 +41,7 @@ public class UserController {
         boolean isverified = (isVerified.compareTo("true") == 0) ? true : false;
         boolean isactive = (isActive.compareTo("true") == 0) ? true : false;
         boolean isprofilecomplete = (isProfileComplete.compareTo("true") == 0) ? true : false;
-        User user = new User(uid, email, nickName, screenName, isadmin, isverified, isactive, isprofilecomplete, "0000", null, null, null, null, null);
+        User user = new User(uid, email, nickName, screenName, isadmin, isverified, isactive, isprofilecomplete, "0000", null, null, null, null);
         
         MailController mc = new MailController();
 

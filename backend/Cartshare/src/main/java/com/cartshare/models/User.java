@@ -83,11 +83,6 @@ public class User {
 	@OneToMany(mappedBy="pooler", fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<Pool> pools = new HashSet<Pool>();
-	
-	@JsonIgnore
-	@OneToMany(mappedBy="leader", fetch = FetchType.LAZY)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private Set<Pool> leaders = new HashSet<Pool>();
 
 	@JsonIgnore
 	@OneToMany(mappedBy="member", fetch = FetchType.LAZY)
@@ -112,7 +107,7 @@ public class User {
 	public User(@NotBlank String uid, @NotBlank String email, @NotBlank String nickName, @NotBlank String screenName,
 			@NotBlank boolean isAdmin, @NotBlank boolean isVerified, @NotBlank boolean isActive,
 			@NotBlank boolean isProfileComplete, @NotBlank String verificationCode, Set<Store> stores, Set<Pool> pools,
-			Set<PoolMembers> poolMembers, Set<PoolMembers> refernces, Set<Pool> leaders) {
+			Set<PoolMembers> poolMembers, Set<PoolMembers> refernces) {
 		super();
 		this.uid = uid;
 		this.email = email;
@@ -127,7 +122,7 @@ public class User {
 		this.refernces = refernces;
 		this.isProfileComplete = isProfileComplete;
 		this.verificationCode = verificationCode;
-		this.leaders = leaders;
+		this.contributionCredit = (long) 0;
 	}
 
 	public User() {
@@ -276,14 +271,6 @@ public class User {
 
 	public void setUid(String uid) {
 		this.uid = uid;
-	}
-
-	public Set<Pool> getLeaders() {
-		return leaders;
-	}
-
-	public void setLeaders(Set<Pool> leaders) {
-		this.leaders = leaders;
 	}
 
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router'
-import firebase from 'firebase';
+// import firebase from 'firebase';
 import axios from 'axios';
 
 class Verify extends Component {
@@ -12,69 +12,32 @@ class Verify extends Component {
         code: '0001'
     }
 
-    componentDidMount = () => {
-        firebase.auth().onAuthStateChanged((user) => {
-            if (!user) {
-                console.log("user not there");
-                this.setState({ redUrl: '/login', redirect: true });
-            }
-            // else if (user.emailVerified) {
-            // 	that.setState({redirect: true});
-            // }
-            else {
-                var uri = '/user/'.concat(localStorage.getItem('275UserId'));
-                axios.get(uri)
-                    .then((response) => {
-                        if (response.status === 200) {
-                            this.setState({ code: response.data.verificationCode });
-                        }
-                    })
-                    .catch((error) => {
-                        console.log("Error in verify-get catch");
-                    })
-                // var isadmin = user.email.includes("@sjsu.edu");
-                // axios.post('/user', null, { // create user in backend
-                //     params: {
-                //         uid: user.uid,
-                //         email: user.email,
-                //         nickName: 'notSet',
-                //         screenName: 'notSet',
-                //         isAdmin: isadmin,
-                //         isVerified: false,
-                //         isActive: true,
-                //         isProfileComplete: false
-                //     }
-                // })
-                // .then((response) => {
-                //     if(response.status === 200){
-                //         localStorage.setItem('275UserId', response.data.id);
-                //         localStorage.setItem('275UserEmail', response.data.email);
-                //         localStorage.setItem('275UserIsActive', response.data.active);
-                //         // localStorage.setItem('275UserName', response.data.screenName)
-                //         if (response.data.isAdmin) {
-                //             localStorage.setItem('275UserType', "Admin")
-                //         } else {
-                //             localStorage.setItem('275UserType', "Pooler")
-                //         }
-                //         var id = response.data.id;
-                //         var uri = '/user/'.concat(id).concat('/sendVerification');
-                //         axios.post(uri, null, {
-                //             params: {
-                //                 email: response.data.email
-                //             }
-                //         })
-                //         .then((response1) => {
-                //             if(response1.status === 200){
-                //                 this.setState({code: response1.data});
-                //             }
-                //         })
-                //     }
-                // })
-                // .catch((error) => {
-                //     alert(error.response.data);
-                // });
-            }
-        });
+    componentDidMount = () =>{
+        var id = localStorage.getItem('275UserId');
+        var screenName = localStorage.getItem('275NickName');
+        console.log("id", id);
+        console.log("sname", screenName);
+        
+        if(id != null && screenName == null){
+            console.log("in verify else");
+            var uri = '/user/'.concat(localStorage.getItem('275UserId'));
+            axios.get(uri)
+            .then((response) => {
+                if(response.status === 200){
+                    this.setState({code: response.data.verificationCode});
+                }
+            })
+            .catch((error) => {
+                console.log("Error in verify-get catch");
+            })
+        }
+        else if(screenName != null){
+            this.setState({redUrl: '/pooler/landing', redirect: true});
+        }
+        else{
+            console.log("user not there");
+            this.setState({redUrl: '/login', redirect: true});
+        }
     }
 
     resendVerification = () => {
@@ -95,7 +58,7 @@ class Verify extends Component {
 
     handleChange = (event) => {
         var c = this.state.code;
-        if (c.localeCompare(event.target.value) === 0) {
+        if(c.localeCompare(event.target.value) === 0){
             var uri = '/user/'.concat(localStorage.getItem('275UserId'));
             var isadmin = localStorage.getItem('275UserType').localeCompare("Admin") === 0 ? true : false;
             axios.put(uri, null, {

@@ -15,6 +15,9 @@ public class OrdersDAO {
 	@Autowired
 	OrderItemsRepository orderItemsRepository;
 
+	@Autowired
+	AssociatedOrdersRepository associatedOrdersRepository;
+
 	public List<Orders> findOrdersByUser(User user) {
 		return ordersRepository.findByUser(user);
 	}
@@ -49,6 +52,24 @@ public class OrdersDAO {
 
 	public OrderItems findOrderItemsById(Long id) {
 		return orderItemsRepository.findById(id).orElse(null);
+	}
+
+	public List<Orders> findOrdersWithNoPickup(Pool pool, String status, User pickupUser, Store store) {
+		// return ordersRepository.findAllOrdersByPoolAndStatusAndPickupPoolerAndStore(pool, status, pickupUser, store);
+		return ordersRepository.findAllOrdersByPoolAndStoreAndPickupPooler(pool, store, pickupUser);
+	}
+
+	public List<Orders> findOrdersToBePickedUp(User user) {
+		// return ordersRepository.findAllOrdersByPickupPoolerAndStatus(user, "Confirmed");
+		return ordersRepository.findAllOrdersByPickupPoolerAndStatusAndUser(user, "Confirmed", user);
+	}
+
+	public Orders findOrdersById(Long id) {
+		return ordersRepository.findOrdersById(id);
+	}
+
+	public AssociatedOrders saveAssociatedOrders(AssociatedOrders order) {
+		return associatedOrdersRepository.save(order);
 	}
 
 }
