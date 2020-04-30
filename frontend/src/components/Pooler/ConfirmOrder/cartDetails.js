@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import constants from '../../../utils/constants';
+
 
 class ViewCart extends Component {
 
@@ -18,23 +18,39 @@ class ViewCart extends Component {
     }
 
     getAllProductsIncart = () => {
-        axios.get(`${constants.BACKEND_SERVER.URL}/orders/productsInCart?userId=${localStorage.getItem('275UserId')}`)
+        axios.get(`/orders/productsInCart?userId=${localStorage.getItem('275UserId')}`)
             .then((response) => {
                 this.setState({
                     allProducts: response.data,
                     isFetched: true
                 })
             })
-            .catch(() => {
-                this.setState({
-                    isFetched: true
-                })
+            .catch((error) => {
+                if (error.response.status === 409) {
+                    this.setState({
+                        allProducts: [],
+                        isFetched: true
+                    })
+                } else {
+                    this.setState({
+                        isFetched: true
+                    })
+                }
             })
     }
 
     updateQuantity = (reqBody) => {
-        axios.post(`${constants.BACKEND_SERVER.URL}/orders/update/cart`, reqBody)
-        this.getAllProductsIncart()
+        axios.post(`/orders/update/cart`, reqBody)
+            .then(() => {
+                this.getAllProductsIncart()
+            })
+    }
+
+    deleteQuantity = (reqParam) => {
+        axios.delete(`/orders/removeProductFromCart?userId=${reqParam.userId}&orderItemId=${reqParam.orderItemId}`)
+            .then(() => {
+                this.getAllProductsIncart()
+            })
     }
 
     render() {
@@ -56,7 +72,7 @@ class ViewCart extends Component {
 
         for (var productObj of this.state.allProducts) {
             cartSubTotal = cartSubTotal + (productObj.product.price * productObj.quantity);
-            productsInCart.push(<CartProduct slNo={slNo} productObj={productObj} editable={this.props.editable} update={this.updateQuantity} />);
+            productsInCart.push(<CartProduct slNo={slNo} productObj={productObj} editable={this.props.editable} update={this.updateQuantity} delete={this.deleteQuantity} />);
             slNo++;
         }
         let tax = cartSubTotal * 0.0925,
@@ -80,7 +96,7 @@ class ViewCart extends Component {
                     <div className="col-md-2">${cartSubTotal.toFixed(2)}</div>
                 </div>
                 <div className="row font-weight-bold bg-secondary p-2 text-white text-center">
-                    <div className="col-md-3 offset-md-6">Tax (9.75%)</div>
+                    <div className="col-md-3 offset-md-6">Tax (9.25%)</div>
                     <div className="col-md-2">${tax.toFixed(2)}</div>
                 </div>
                 <div className="row font-weight-bold bg-secondary p-2 text-white text-center">
@@ -115,9 +131,9 @@ class CartProduct extends Component {
         })
     }
 
-    componentWillReceiveProps() {
+    componentWillReceiveProps(props) {
         this.setState({
-            quantity: this.props.productObj.quantity
+            quantity: props.productObj.quantity
         })
     }
 
@@ -152,10 +168,15 @@ class CartProduct extends Component {
             orderItemId: this.props.productObj.id,
             quantity: this.state.quantity
         }
-        // axios.post(`${constants.BACKEND_SERVER.URL}/orders/update/cart`, reqBody)
-            // .then(() => {
-                this.props.update(reqBody);
-            // })
+        this.props.update(reqBody);
+    }
+
+    removeProductFromCart = () => {
+        const reqBody = {
+            userId: localStorage.getItem('275UserId'),
+            orderItemId: this.props.productObj.id
+        }
+        this.props.delete(reqBody);
     }
 
     render() {
@@ -166,7 +187,7 @@ class CartProduct extends Component {
                 <div className="col-md-1">{this.props.slNo}</div>
                 <div className="col-md-2"><img src="https://www.okea.org/wp-content/uploads/2019/10/placeholder.png" alt="..." class="img-thumbnail" /></div>
                 <div className="col-md-2">{this.props.productObj.product.productName}</div>
-                <div className="col-md-1">{this.props.productObj.product.price.toFixed(2)}</div>
+                <div className="col-md-1">{this.props.productObj.product.price.toFixed(2)} / {this.props.productObj.product.unit}</div>
                 <div className="col-md-3">
                     <div className="row">
                         <div className="col-md-2 p-0"><button className="btn btn-danger w-100" onClick={this.decreaseQuantity}>-</button></div>
@@ -176,7 +197,7 @@ class CartProduct extends Component {
                 </div>
                 <div className="col-md-1">{total.toFixed(2)}</div>
                 <div className="col-md-1"><button className="btn btn-warning" onClick={this.updateOrder}>Update</button></div>
-                <div className="col-md-1"><button className="btn btn-danger">Remove</button></div>
+                <div className="col-md-1"><button className="btn btn-danger" onClick={this.removeProductFromCart}>Remove</button></div>
             </div>
         )
     }

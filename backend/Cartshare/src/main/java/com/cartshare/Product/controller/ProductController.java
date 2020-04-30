@@ -91,7 +91,7 @@ public class ProductController {
                     try {
                         reqSku = Long.parseLong(SKU);
                     } catch(Exception e) {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid SKU");
+                        return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());
                     }
                     List<Product> tempList = new ArrayList<>();
                     for (Product temp: allProducts) {

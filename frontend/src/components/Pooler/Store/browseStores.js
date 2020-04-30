@@ -3,7 +3,7 @@ import Header from '../../Common/header';
 import Navigation from '../../Common/navbar';
 import StoreCard from '../../Common/storeCard';
 import axios from 'axios';
-import constants from '../../../utils/constants';
+
 
 class BrowseStores extends Component {
 
@@ -16,7 +16,7 @@ class BrowseStores extends Component {
     }
 
     componentDidMount() {
-        axios.get(`${constants.BACKEND_SERVER.URL}/store/all`)
+        axios.get(`/store/all`)
             .then((response) => {
                 this.setState({
                     allStores: response.data,
@@ -61,6 +61,19 @@ class BrowseStores extends Component {
                     {tempContainer}
                 </div>
             )
+        }
+
+        if ("Pooler is not part of any pools" === "TRUE") {
+            return (
+                <div>
+                    <Header isLanding={true} />
+                    <div className="pl-5 pr-5">
+    
+                        {allStores}
+    
+                    </div>
+                </div>
+            )   
         }
 
         return (

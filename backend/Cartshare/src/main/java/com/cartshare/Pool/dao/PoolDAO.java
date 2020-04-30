@@ -1,6 +1,11 @@
 package com.cartshare.Pool.dao;
 
 import java.util.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,11 +21,19 @@ public class PoolDAO {
 	PoolRepository poolRepository;
 	@Autowired
 	PoolMembersRepository poolMembersRepository;
+	@PersistenceContext
+	EntityManager entityManager;
 	
 	public Pool createPool(Pool pool, Long pooler_id) {
 		User pooler = userRepository.findById(pooler_id).orElse(null);
 		// User leader = userRepository.findById(leader_id).orElse(null);
+				
 		if(pooler != null) {
+			Query query = entityManager.createQuery("FROM PoolMembers WHERE member_id = :member_id");
+			query.setParameter("member_id", pooler.getId());
+			List results = query.getResultList();
+			if(results.size() > 0)
+				return null;
 			
 			pool.setPooler(pooler);
 			System.out.println("New Entry");

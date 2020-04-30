@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import constants from '../../../utils/constants';
+
 import { Redirect } from 'react-router';
 import PickupOtherOrders from './pickupOtherOrders';
 
@@ -22,7 +22,7 @@ class UserContribution extends Component {
     }
 
     componentDidMount() {
-        axios.get(`${constants.BACKEND_SERVER.URL}/user/${localStorage.getItem('275UserId')}`)
+        axios.get(`/user/${localStorage.getItem('275UserId')}`)
             .then((response) => {
                 this.setState({
                     contributionCredit: response.data.contributionCredit,
@@ -57,13 +57,13 @@ class UserContribution extends Component {
                 this.setState({
                     warningMsg: "We are placing your order. Please be patient!"
                 })
-                axios.post(`${constants.BACKEND_SERVER.URL}/orders/confirmOrder`, reqBody)
+                axios.post(`/orders/confirmOrder`, reqBody)
                     .then((response1) => {
                         this.setState({
                             storeId: response1.data.store.id,
                             orderId: response1.data.id
                         })
-                        axios.get(`${constants.BACKEND_SERVER.URL}/orders/pendingInPool?userId=${localStorage.getItem('275UserId')}&storeId=${response1.data.store.id}`)
+                        axios.get(`/orders/pendingInPool?userId=${localStorage.getItem('275UserId')}&storeId=${response1.data.store.id}`)
                             .then((response) => {
                                 this.setState({
                                     pendingOrders: response.data,
@@ -78,7 +78,7 @@ class UserContribution extends Component {
                         this.setState({
                             warningMsg: "We are placing your order. Please be patient!"
                         })
-                        axios.post(`${constants.BACKEND_SERVER.URL}/orders/confirmOrder`, reqBody)
+                        axios.post(`/orders/confirmOrder`, reqBody)
                             .then(() => {
                                 this.setState({
                                     redirect: false
@@ -89,7 +89,7 @@ class UserContribution extends Component {
                     this.setState({
                         warningMsg: "We are placing your order. Please be patient!"
                     })
-                    axios.post(`${constants.BACKEND_SERVER.URL}/orders/confirmOrder`, reqBody)
+                    axios.post(`/orders/confirmOrder`, reqBody)
                         .then(() => {
                             this.setState({
                                 redirect: false

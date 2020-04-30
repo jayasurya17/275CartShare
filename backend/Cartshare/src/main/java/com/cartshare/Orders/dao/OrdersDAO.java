@@ -59,7 +59,7 @@ public class OrdersDAO {
 		return ordersRepository.findAllOrdersByPoolAndStoreAndPickupPooler(pool, store, pickupUser);
 	}
 
-	public List<Orders> findOrdersToBePickedUp(User user) {
+	public List<Orders> findOrdersToBePickedUpByUser(User user) {
 		// return ordersRepository.findAllOrdersByPickupPoolerAndStatus(user, "Confirmed");
 		return ordersRepository.findAllOrdersByPickupPoolerAndStatusAndUser(user, "Confirmed", user);
 	}
@@ -70,6 +70,19 @@ public class OrdersDAO {
 
 	public AssociatedOrders saveAssociatedOrders(AssociatedOrders order) {
 		return associatedOrdersRepository.save(order);
+	}
+
+	public List<Orders> findAllOrdersToBePickedup() {
+		return ordersRepository.findAllOrdersByStatus("Ordered");
+	}
+	public List<Orders> findAssociatedOrders(Orders o){
+		List<AssociatedOrders> l = associatedOrdersRepository.findByOrder(o);
+		if(l == null || l.size() == 0)	return null;
+		List<Orders> r = new ArrayList<Orders>();
+		for(AssociatedOrders order : l){
+			r.add(order.getAssociated());
+		}
+		return r;
 	}
 
 }

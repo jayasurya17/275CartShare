@@ -1,10 +1,7 @@
 import React, { Component } from 'react'
-
 import Header from '../../Common/header'
 import Navbar from '../../Common/navbar'
 import axios from 'axios'
-import constants from '../../../utils/constants'
-var QRCode = require('qrcode.react')
 
 class PickupOrders extends Component {
   constructor () {
@@ -17,11 +14,7 @@ class PickupOrders extends Component {
 
   componentDidMount () {
     axios
-      .get(
-        `${
-          constants.BACKEND_SERVER.URL
-        }/orders/ordersToPickup?userId=${localStorage.getItem('275UserId')}`
-      )
+      .get(`/orders/ordersToPickup?userId=${localStorage.getItem('275UserId')}`)
       .then(response => {
         this.setState({
           fetched: true,
@@ -33,12 +26,6 @@ class PickupOrders extends Component {
           fetched: true
         })
       })
-  }
-
-  DisplayQRCode = e => {
-    this.setState({
-      SKU: e.target.value
-    })
   }
 
   render () {
@@ -95,18 +82,28 @@ class PickupOrders extends Component {
 class OrdersComponent extends Component {
   render () {
     let allProducts = []
+    let subTotal = 0
+    let price
     for (let product of this.props.order) {
+      price = product.productPrice * product.quantity
+      subTotal += price
       allProducts.push(
-        <div className='row p-2'>
+        <div className='row p-2 border-left border-right'>
           <div className='col-md-3'>
             <img src={product.productImage} alt='...' class='img-thumbnail' />
           </div>
-          <div className='col-md-4'>{product.productName}</div>
-          <div className='col-md-2'>{product.productBrand}</div>
-          <div className='col-md-2'>{product.quantity}</div>
+          <div className='col-md-3'>{product.productName}</div>
+          <div className='col-md-1'>{product.quantity}</div>
+          <div className='col-md-3'>
+            {product.productPrice} / {product.productUnit}
+          </div>
+          <div className='col-md-2'>{price}</div>
         </div>
       )
     }
+    let tax = subTotal * 0.0925,
+      convenienceFee = subTotal * 0.005,
+      total = subTotal + tax + convenienceFee
 
     return (
       <div className='p-3'>
@@ -118,54 +115,32 @@ class OrdersComponent extends Component {
             <h5>Store: {this.props.order[0].orders.store.storeName}</h5>
           </div>
           <div className='col-md-4'>
-            <button
-              className='btn btn-warning w-100'
-              data-toggle='modal'
-              data-target='#modalCenter'
-              onClick=''
-            >
-              Show QR
-            </button>
-          </div>
-          {/* <!-- Modal --> */}
-          <div
-            className='modal fade'
-            id='modalCenter'
-            tabIndex='-1'
-            role='dialog'
-            aria-labelledby='modalCenterTitle'
-            aria-hidden='true'
-          >
-            <div className='modal-dialog modal-dialog-centered' role='document'>
-              <div className='modal-content'>
-                <div className='modal-header'>
-                  <h5 className='modal-title' id='modalCenterTitle'>
-                    QR code for the selected order
-                  </h5>
-                </div>
-                <div className='modal-body' align='center'>
-                  <QRCode value={this.props.order[0].orders.id} />,
-                </div>
-                <div className='modal-footer'>
-                  <button
-                    type='button'
-                    className='btn btn-secondary'
-                    data-dismiss='modal'
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
+            <button className='btn btn-warning w-100'>Show QR</button>
           </div>
         </div>
         <div className='row p-2 bg-secondary text-white'>
-          {/* <div className="col-md-3"><h5>Order: {this.props.slNo}</h5></div> */}
-          <div className='col-md-4 offset-md-3'>Name</div>
-          <div className='col-md-2'>Brand</div>
-          <div className='col-md-2'>Quantity</div>
+          <div className='col-md-3 offset-md-3'>Name</div>
+          <div className='col-md-1'>Qty</div>
+          <div className='col-md-3'>Cost</div>
+          <div className='col-md-2'>Price</div>
         </div>
         {allProducts}
+        <div className='row font-weight-bold bg-secondary p-2 text-white text-center'>
+          <div className='col-md-6 offset-md-3'>Sub Total</div>
+          <div className='col-md-3'>${subTotal.toFixed(2)}</div>
+        </div>
+        <div className='row font-weight-bold bg-secondary p-2 text-white text-center'>
+          <div className='col-md-6 offset-md-3'>Tax (9.25%)</div>
+          <div className='col-md-3'>${tax.toFixed(2)}</div>
+        </div>
+        <div className='row font-weight-bold bg-secondary p-2 text-white text-center'>
+          <div className='col-md-6 offset-md-3'>Convenience fee (0.5%)</div>
+          <div className='col-md-3'>${convenienceFee.toFixed(2)}</div>
+        </div>
+        <div className='row font-weight-bold bg-secondary p-2 text-white text-center'>
+          <div className='col-md-6 offset-md-3'>Total</div>
+          <div className='col-md-3'>${total.toFixed(2)}</div>
+        </div>
       </div>
     )
   }

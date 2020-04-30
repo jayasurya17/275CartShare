@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Select from 'react-select'
 import axios from 'axios'
-import constants from '../../../utils/constants'
 
 class StoreInfoComponent extends Component {
   constructor () {
@@ -26,9 +25,7 @@ class StoreInfoComponent extends Component {
   componentDidMount () {
     if (this.props.productId) {
       axios
-        .get(
-          `${constants.BACKEND_SERVER.URL}/product/get/details?productId=${this.props.productId}`
-        )
+        .get(`/product/get/details?productId=${this.props.productId}`)
         .then(response => {
           if (response.data.store) {
             this.setState({
@@ -44,23 +41,15 @@ class StoreInfoComponent extends Component {
           }
         })
     } else if (this.props.storeId) {
-      axios
-        .get(
-          `${constants.BACKEND_SERVER.URL}/store/details/${this.props.storeId}`
-        )
-        .then(response => {
-          this.setState({
-            storeName: response.data.storeName,
-            selectedStores: [{ value: response.data.id }]
-          })
+      axios.get(`/store/details/${this.props.storeId}`).then(response => {
+        this.setState({
+          storeName: response.data.storeName,
+          selectedStores: [{ value: response.data.id }]
         })
+      })
     } else {
       axios
-        .get(
-          `${
-            constants.BACKEND_SERVER.URL
-          }/store/all?adminId=${localStorage.getItem('275UserId')}`
-        )
+        .get(`/store/all?adminId=${localStorage.getItem('275UserId')}`)
         .then(response => {
           this.setState({
             allStores: response.data
@@ -141,16 +130,6 @@ class StoreInfoComponent extends Component {
       for (var store of this.state.selectedStores) {
         storeIDs.push(store.value)
       }
-      let data = new FormData()
-      data.set('userId', localStorage.getItem('275UserId'))
-      data.set('storeIDs', storeIDs)
-      data.set('productName', this.state.name)
-      data.append('productImage', this.state.selectedFile)
-      data.set('productDescription', this.state.description)
-      data.set('productBrand', this.state.brand)
-      data.set('productUnit', this.state.productUnit)
-      data.set('price', this.state.price)
-      data.set('sku', this.state.SKU)
       let reqBody = {
         userId: localStorage.getItem('275UserId'),
         storeIDs: storeIDs,
@@ -164,9 +143,8 @@ class StoreInfoComponent extends Component {
         productPrice: this.state.price,
         productSKU: this.state.SKU
       }
-      console.log(data)
       axios
-        .post(`${constants.BACKEND_SERVER.URL}/admin/add/products`, data)
+        .post(`/admin/add/products`, reqBody)
         .then(() => {
           if (this.props.getAllProducts) {
             this.props.getAllProducts()
@@ -188,7 +166,7 @@ class StoreInfoComponent extends Component {
         .catch(error => {
           this.setState({
             successMsg: '',
-            errMsg: error
+            errMsg: error.response.data
           })
         })
     } else {
@@ -326,7 +304,7 @@ class StoreInfoComponent extends Component {
           </div>
           <div className='col-md-3 offset-md-2 pt-5'>
             <div className='form-group'>
-              <label>Unit</label>
+              <label>Unit (Enter pc for piece)</label>
               <input
                 type='text'
                 className='form-control'

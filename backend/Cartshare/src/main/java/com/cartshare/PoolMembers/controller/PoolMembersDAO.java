@@ -42,11 +42,18 @@ public class PoolMembersDAO {
 		}
 		
 		/* Need to check whether member is already part of some other pool
-			*****Insert Code Here*****
 		*/
+		Query query = entityManager.createQuery("FROM PoolMembers WHERE member_id = :member_id");
+		query.setParameter("member_id", member_id);
+		List results = query.getResultList();
+		if(results.size() > 0)
+			return null;
+		
 		String status = "Requested";
 		if(member_id == reference_id) {
 			status = "Accepted";
+		} else if(pool.getPooler().getId() == reference_id) {
+			status = "Approved";
 		}
 		PoolMembers poolMembers = new PoolMembers();
 		poolMembers.setMember(member);

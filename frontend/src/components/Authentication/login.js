@@ -12,6 +12,13 @@ class Login extends Component {
     transitionClass: 'init',
     transitionClass1: 'init1'
   }
+
+  state = {
+    redURL: '/pooler/landing',
+    signInDone: false,
+    transitionClass: 'init',
+    transitionClass1: 'init1'
+  }
   uiConfig = {
     callbacks: {
       signInSuccessWithAuthResult: (authResult, redirectUrl) => {
@@ -23,7 +30,6 @@ class Login extends Component {
         var user = authResult.user
         if (authResult.additionalUserInfo.isNewUser) {
           var isadmin = user.email.includes('@sjsu.edu')
-
           axios
             .post('/user', null, {
               // create user in backend
@@ -61,12 +67,10 @@ class Login extends Component {
             .get(uri)
             .then(response => {
               if (response.status === 200) {
-                console.log(response.data)
                 localStorage.setItem('275UserId', response.data.id)
                 localStorage.setItem('275UserEmail', response.data.email)
                 localStorage.setItem('275UserIsActive', response.data.active)
                 localStorage.setItem('275UserName', response.data.screenName)
-
                 if (response.data.admin) {
                   localStorage.setItem('275UserType', 'Admin')
                 } else {

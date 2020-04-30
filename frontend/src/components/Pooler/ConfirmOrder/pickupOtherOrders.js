@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import constants from '../../../utils/constants';
+
 
 class PickupOtherOrders extends Component {
 
@@ -28,7 +28,7 @@ class PickupOtherOrders extends Component {
         this.setState({
             warningMessage: "Please be patient while we are placing request to pickup the orders"
         })
-        axios.post(`${constants.BACKEND_SERVER.URL}/orders/pickupOtherOrders`, reqBody)
+        axios.post(`/orders/pickupOtherOrders`, reqBody)
             .then((response) => {
                 window.alert(response.data);
                 this.props.redirect()

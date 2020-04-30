@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { Redirect } from 'react-router';
 
 class Home extends Component {
 	constructor(props) {
@@ -10,6 +11,7 @@ class Home extends Component {
 			neighborhood: "",
 			description: "",
 			zipcode: "",
+			redirect: ""
 		};
 		this.changeHandler = this.changeHandler.bind(this);
 	}
@@ -68,25 +70,18 @@ class Home extends Component {
 					},
 				})
 				.then((response) => {
-					if (response.status === 200) {
-						this.setState({
-							user: response.data,
-							successMsg: "New Pool Created",
-						});
-					}
-					if (response.status === 400) {
-						this.setState({
-							errMsg: "Error with Pool Creation",
-						});
-					} else {
-						this.setState({
-							errMsg: "Server Error Occurred. Please try again",
-						});
-					}
+					this.setState({
+						user: response.data,
+						successMsg: "New Pool Created",
+						errMsg: "",
+						redirect: <Redirect to="/pooler/view/pool" />,
+					});
 				})
-				.catch((error) => {
-                    console.log(error);
-					alert(error.response.data);
+				.catch(() => {
+					this.setState({
+						successMsg: "",
+						errMsg: "Failed to create pool",
+					});
 				});
 		}
 	};
@@ -94,58 +89,26 @@ class Home extends Component {
 	render() {
 		return (
 			<div>
-				{this.state.successMsg ? <p className="text-success">{this.state.successMsg}</p> : null}
-				{this.state.errMsg ? <p className="text-danger">{this.state.errMsg}</p> : null}
+				{this.state.redirect}
 				<div className="form-group">
 					<label>Pool name</label>
-					<input
-						type="text"
-						onChange={this.changeHandler}
-						value={this.state.poolName}
-						className="form-control"
-						name="poolName"
-						required
-					/>
+					<input type="text" onChange={this.changeHandler} value={this.state.poolName} className="form-control" name="poolName" required />
 				</div>
 				<div className="form-group">
 					<label>Neighbourhood</label>
-					<input
-						type="text"
-						onChange={this.changeHandler}
-						value={this.state.neighborhood}
-						className="form-control"
-						name="neighborhood"
-						required
-					/>
+					<input type="text" onChange={this.changeHandler} value={this.state.neighborhood} className="form-control" name="neighborhood" required />
 				</div>
 				<div className="form-group">
 					<label>Description</label>
-					<input
-						type="text"
-						onChange={this.changeHandler}
-						value={this.state.description}
-						className="form-control"
-						name="description"
-					/>
+					<input type="text" onChange={this.changeHandler} value={this.state.description} className="form-control" name="description" />
 				</div>
 				<div className="form-group">
 					<label>Zipcode</label>
-					<input
-						type="text"
-						onChange={this.changeHandler}
-						value={this.state.zipcode}
-						className="form-control"
-						name="zipcode"
-						required
-					/>
+					<input type="text" onChange={this.changeHandler} value={this.state.zipcode} className="form-control" name="zipcode" required />
 				</div>
-				<button
-					type="submit"
-					onClick={this.onSubmit}
-					className="btn btn-success w-100"
-				>
-					Create a new pool
-				</button>
+				{this.state.successMsg ? <p className="text-success">{this.state.successMsg}</p> : null}
+				{this.state.errMsg ? <p className="text-danger">{this.state.errMsg}</p> : null}
+				<button type="submit" onClick={this.onSubmit} className="btn btn-success w-100"> Create a new pool</button>
 			</div>
 		);
 	}

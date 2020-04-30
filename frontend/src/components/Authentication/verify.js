@@ -44,16 +44,17 @@ class Verify extends Component {
         var id = localStorage.getItem('275UserId');
         var uri = '/user/'.concat(id).concat('/sendVerification');
         axios.post(uri, null, null)
-            .then((response1) => {
-                if (response1.status === 200) {
-                    // this.setState({code: response1.data});
-                    // localStorage.setItem('verifCode', response1.data);
-                    this.setState({ code: response1.data, message: 'A second verification email has been sent to you' });
-                }
-            })
-            .catch((error) => {
-                this.setState({ message: "Please wait for 5 minutes and click on the 'Resend verification' button again" });
-            })
+        .then((response1) => {
+            if (response1.status === 200) {
+                // this.setState({code: response1.data});
+                // localStorage.setItem('verifCode', response1.data);
+                this.setState({message: 'A second verification email has been sent to you' });
+                this.setState({ code: response1.data.toString() });
+            }
+        })
+        .catch((error) => {
+            this.setState({ message: "Please wait for 5 minutes and click on the 'Resend verification' button again" });
+        })
     }
 
     handleChange = (event) => {
@@ -69,17 +70,23 @@ class Verify extends Component {
                     isAdmin: isadmin,
                     isVerified: true,
                     isActive: true,
-                    isProfileComplete: false
+                    isProfileComplete: false,
+                    city: "",
+                    street: "",
+                    state: "",
+                    zipcode: "00000"
                 }
             })
-                .then((response) => {
-                    if (response.status === 200) {
-                        this.setState({ redirect: true });
-                    }
-                })
-                .catch((error) => {
-                    alert(error.response.data);
-                })
+            .then((response) => {
+                if (response.status === 200) {
+                    this.setState({ redirect: true });
+                }
+            })
+            .catch((error) => {
+                console.log('error in catch');
+                
+                alert(error.response);
+            })
         }
     }
 

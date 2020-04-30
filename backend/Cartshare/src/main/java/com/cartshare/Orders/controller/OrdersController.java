@@ -2,10 +2,14 @@ package com.cartshare.Orders.controller;
 
 import com.cartshare.User.dao.UserDAO;
 import com.cartshare.models.*;
+import com.cartshare.repositories.OrdersRepository;
 import com.cartshare.utils.MailController;
 import com.cartshare.utils.OrderDetails;
 
 import java.util.*;
+
+import javax.validation.Valid;
+
 import com.cartshare.RequestBody.*;
 import com.cartshare.Store.dao.StoreDAO;
 import com.cartshare.Orders.dao.OrdersDAO;
@@ -159,6 +163,79 @@ public class OrdersController {
         }
     }
 
+    @GetMapping(value = "/pickUp/{orderId}/{userId}", produces = { "application/json", "application/xml" })
+    public ResponseEntity pickUpOrder(@Valid
+                                    @PathVariable(name = "orderId") String orderId,
+                                    @PathVariable(name = "userId") String userId){
+        try{
+            Long l, l1;
+            try{
+                l = Long.parseLong(orderId);
+                l1 = Long.parseLong(userId);
+            }
+            catch(NumberFormatException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid order id or user id");
+            }
+            Orders order = ordersDAO.findOrdersById(l);
+            User user = userDAO.findById(l1);
+            if(order == null || user == null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("order or user with the provided Id doesn't exist");
+            }
+            order.setStatus("PickedUp");
+            
+            ordersDAO.saveOrderDetails(order);
+            MailController mc = new MailController();
+            mc.send(user.getEmail(), "Order #" + order.getId() + " picked up", "Your cartshare order #" + order.getId() + " has been picked up by " + user.getScreenName());
+            List<Orders> associated = ordersDAO.findAssociatedOrders(order); // get all associated orders
+            // Set<User> hs = new HashSet<User>(); // put users of ass orders in hash set
+            //send email to confirm order pick up to all associated poolers
+            OrderDetails od = new OrderDetails();
+            String message = "";
+            for(Orders o : associated){
+                User u = o.getUser();
+                o.setPickupPooler(user);
+                o.setStatus("PickedUp");
+                ordersDAO.saveOrderDetails(o);
+                Address a = u.getAddress();
+                message += "<h1>User " + u.getScreenName() + "'s order:</h1></br>Address: " + a.getStreet() + ", " + a.getCity() + ", " + a.getState() + ", " + a.getZipcode() + "</br>Order details: </br>" + od.GenerateProductTableWithPrice(o.getOrderItems()) + "</br></br>";
+                // hs.add(o.getUser());
+                mc.send(u.getEmail(), "Order #" + o.getId() + " picked up","Your cartshare order #" + o.getId() + " has been picked up by " + user.getScreenName());
+            }
+
+            //semd email to provide delivery instructions
+            mc.sendHTML(user.getEmail(), "Delivery Instructions for the associated orders", message);
+
+            return ResponseEntity.status(HttpStatus.OK).body("Order picked up");
+        } catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping(value="/deliver/{id}", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> deliverOrder(@Valid
+                                    @PathVariable(name = "id") String id){
+
+        try{
+            Long l;
+            try{
+                l = Long.parseLong(id);
+            } catch(NumberFormatException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Order ID");
+            }
+            Orders order = ordersDAO.findOrdersById(l);
+            order.setStatus("Delivered");
+            ordersDAO.saveOrderDetails(order);
+            MailController mc = new MailController();
+            mc.send(order.getUser().getEmail(), "Update to your order status", "Your order has been delivered by: " + order.getPickupPooler().getScreenName());
+            return ResponseEntity.status(HttpStatus.OK).body("Order status set to delivered");
+        } catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
+    }
+
     @PostMapping(value = "/update/cart", produces = { "application/json", "application/xml" })
     public ResponseEntity<?> updateQuantityOfProductInCart(@RequestBody OrderRequest orderRequest) {
         try {
@@ -275,6 +352,7 @@ public class OrdersController {
                 orderItem.setProductPrice(orderItem.getProduct().getPrice());
                 orderItem.setProductImage(orderItem.getProduct().getImageURL());
                 orderItem.setProductBrand(orderItem.getProduct().getBrand());
+                orderItem.setProductUnit(orderItem.getProduct().getUnit());
                 ordersDAO.saveOrderItem(orderItem);
             }
 
@@ -430,7 +508,7 @@ public class OrdersController {
                 }
             }
 
-            String pickupUserHeading = "You have picked up " + count + " orders";
+            String pickupUserHeading = "You have requested to pick up " + count + " orders";
             mc.sendHTML(user.getEmail(), pickupUserHeading, pickupUserMessage);
 
             return ResponseEntity.status(HttpStatus.OK).body(pickupUserHeading);
@@ -441,8 +519,11 @@ public class OrdersController {
     }
 
     @GetMapping(value = "/ordersToPickup", produces = { "application/json", "application/xml" })
-    public ResponseEntity<?> getOrdersToPickup(@RequestParam(value = "userId") String reqUserId) {
+    public ResponseEntity<?> getOrdersToPickup(@RequestParam(value = "userId", required = false) String reqUserId) {
         try {
+            if (reqUserId == null) {
+                return ResponseEntity.status(HttpStatus.OK).body(ordersDAO.findAllOrdersToBePickedup());
+            }
             Long userId = null;
             try {
                 userId = Long.parseLong(reqUserId);
@@ -455,7 +536,7 @@ public class OrdersController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
 
-            List<Orders> listOfOrders = ordersDAO.findOrdersToBePickedUp(user);
+            List<Orders> listOfOrders = ordersDAO.findOrdersToBePickedUpByUser(user);
 
             List<Set<OrderItems>> listOfProductsInOrders = new ArrayList<>();
             for (Orders order : listOfOrders) {
