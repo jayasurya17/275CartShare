@@ -90,18 +90,25 @@ class PickupOrders extends Component {
 class OrdersComponent extends Component {
 
     render() {
-
         let allProducts = []
+        let subTotal = 0
+        let price
         for (let product of this.props.order) {
+            price = product.productPrice * product.quantity
+            subTotal += price
             allProducts.push(
-                <div className="row p-2">
+                <div className="row p-2 border-left border-right">
                     <div className="col-md-3"><img src={product.productImage} alt="..." class="img-thumbnail" /></div>
-                    <div className="col-md-4">{product.productName}</div>
-                    <div className="col-md-2">{product.productBrand}</div>
-                    <div className="col-md-2">{product.quantity}</div>
+                    <div className="col-md-3">{product.productName}</div>
+                    <div className="col-md-1">{product.quantity}</div>
+                    <div className="col-md-3">{product.productPrice} / {product.productUnit}</div>
+                    <div className="col-md-2">{price}</div>
                 </div>
             )
         }
+        let tax = subTotal * 0.0925,
+            convenienceFee = subTotal * 0.005,
+            total = subTotal + tax + convenienceFee
 
         return (
             <div className="p-3">
@@ -111,12 +118,28 @@ class OrdersComponent extends Component {
                     <div className="col-md-4"><button className="btn btn-warning w-100">Show QR</button></div>
                 </div>
                 <div className="row p-2 bg-secondary text-white">
-                    {/* <div className="col-md-3"><h5>Order: {this.props.slNo}</h5></div> */}
-                    <div className="col-md-4 offset-md-3">Name</div>
-                    <div className="col-md-2">Brand</div>
-                    <div className="col-md-2">Quantity</div>
+                    <div className="col-md-3 offset-md-3">Name</div>
+                    <div className="col-md-1">Qty</div>
+                    <div className="col-md-3">Cost</div>
+                    <div className="col-md-2">Price</div>
                 </div>
                 {allProducts}
+                <div className="row font-weight-bold bg-secondary p-2 text-white text-center">
+                    <div className="col-md-6 offset-md-3">Sub Total</div>
+                    <div className="col-md-3">${subTotal.toFixed(2)}</div>
+                </div>
+                <div className="row font-weight-bold bg-secondary p-2 text-white text-center">
+                    <div className="col-md-6 offset-md-3">Tax (9.25%)</div>
+                    <div className="col-md-3">${tax.toFixed(2)}</div>
+                </div>
+                <div className="row font-weight-bold bg-secondary p-2 text-white text-center">
+                    <div className="col-md-6 offset-md-3">Convenience fee (0.5%)</div>
+                    <div className="col-md-3">${convenienceFee.toFixed(2)}</div>
+                </div>
+                <div className="row font-weight-bold bg-secondary p-2 text-white text-center">
+                    <div className="col-md-6 offset-md-3">Total</div>
+                    <div className="col-md-3">${total.toFixed(2)}</div>
+                </div>
             </div>
         )
     }
