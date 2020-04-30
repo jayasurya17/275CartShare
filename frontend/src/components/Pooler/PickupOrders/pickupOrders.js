@@ -115,7 +115,13 @@ class OrdersComponent extends Component {
             <h5>Store: {this.props.order[0].orders.store.storeName}</h5>
           </div>
           <div className='col-md-4'>
-            <button className='btn btn-warning w-100'>Show QR</button>
+            <button
+              className='btn btn-warning w-100'
+              data-toggle='modal'
+              data-target='#modalCenter'
+            >
+              Show QR
+            </button>
           </div>
         </div>
         <div className='row p-2 bg-secondary text-white'>

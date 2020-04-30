@@ -130,6 +130,17 @@ class StoreInfoComponent extends Component {
       for (var store of this.state.selectedStores) {
         storeIDs.push(store.value)
       }
+
+      let data = new FormData()
+      data.set('userId', localStorage.getItem('275UserId'))
+      data.set('storeIDs', storeIDs)
+      data.set('productName', this.state.name)
+      data.append('productImage', this.state.selectedFile)
+      data.set('productDescription', this.state.description)
+      data.set('productBrand', this.state.brand)
+      data.set('productUnit', this.state.productUnit)
+      data.set('price', this.state.price)
+      data.set('sku', this.state.SKU)
       let reqBody = {
         userId: localStorage.getItem('275UserId'),
         storeIDs: storeIDs,
@@ -144,7 +155,7 @@ class StoreInfoComponent extends Component {
         productSKU: this.state.SKU
       }
       axios
-        .post(`/admin/add/products`, reqBody)
+        .post(`/admin/add/products`, data)
         .then(() => {
           if (this.props.getAllProducts) {
             this.props.getAllProducts()
