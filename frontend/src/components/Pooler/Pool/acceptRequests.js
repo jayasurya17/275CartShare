@@ -1,6 +1,23 @@
 import React, { Component } from "react";
 import axios from "axios";
 class UserInfo extends Component {
+
+	acceptRequest = () => {
+		const reqParams = {
+			poolMemberId: this.props.userObj.id,
+			status: "Approved"
+		}
+		this.props.manageRequest(reqParams)
+	}
+
+	rejectRequest = () => {
+		const reqParams = {
+			poolMemberId: this.props.userObj.id,
+			status: "Rejected"
+		}
+		this.props.manageRequest(reqParams)
+	}
+
 	render() {
 		return (
 			<div className="row p-2">
@@ -14,10 +31,10 @@ class UserInfo extends Component {
 				)}
 
 				<div className="col-md-1">
-					<button className="btn btn-success w-100">Accept</button>
+					<button className="btn btn-success w-100" onClick={this.acceptRequest}>Accept</button>
 				</div>
 				<div className="col-md-1">
-					<button className="btn btn-danger w-100">Reject</button>
+					<button className="btn btn-danger w-100" onClick={this.rejectRequest}>Reject</button>
 				</div>
 			</div>
 		);
@@ -34,9 +51,13 @@ class SupportReferral extends Component {
 		};
 	}
 
-	componentWillMount = async () => {
-		await axios
-			.get("/poolMembers/requestedRequests", {
+	componentWillMount() {
+		this.getDetails()
+	};
+
+	getDetails = () => {
+		
+		axios.get("/poolMembers/requestedRequests", {
 				params: {
 					screenName: this.state.screenName,
 					isLeader: "true",
@@ -44,12 +65,9 @@ class SupportReferral extends Component {
 			})
 			.then((response) => {
 				if (response.status === 200) {
-					// console.log(response.data);
-
 					const data = response.data.filter((request) => {
 						return request.status !== "Accepted";
 					});
-					console.log(data);
 					this.setState({
 						requests: data,
 						requestsReceived: true,
@@ -66,7 +84,17 @@ class SupportReferral extends Component {
 					requestsReceived: false,
 				});
 			});
-	};
+	}
+
+	manageRequest = (reqParams) => {
+		axios.put(`/poolMembers/manageRequest?poolId=${this.state.poolDetails.id}&poolMemberId=${reqParams.poolMemberId}&status=${reqParams.status}`)
+		.then(() => {
+			this.getDetails()
+		})
+		.catch((error) => {
+			console.log(error.response.data)
+		})
+	}
 
 	render() {
 
@@ -79,6 +107,7 @@ class SupportReferral extends Component {
                         key={i+1}
 						slNo={i + 1}
 						userObj={this.state.requests[i].member}
+						manageRequest={this.manageRequest}
 					/>
 				);
 			}

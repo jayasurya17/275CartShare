@@ -13,9 +13,9 @@ class PoolCard extends Component {
             description: this.props.description ? this.props.description : "",
             leader: this.props.leader.screenName ? this.props.leader.screenName : "",
             zip: this.props.zip ? this.props.zip : "",
-            leaderDetails : this.props.leader,
-            referenceId : "",
-            poolId : this.props.poolId
+            leaderDetails: this.props.leader,
+            referenceId: "",
+            poolId: this.props.poolId
         }
         this.sendRequest = this.sendRequest.bind(this);
     }
@@ -44,70 +44,62 @@ class PoolCard extends Component {
     }
 
     sendRequest = async () => {
-        if(this.state.referenceName === "" && this.state.knowsLeader === false){
+        if (this.state.referenceName === "" && this.state.knowsLeader === false) {
             alert("Please provide required details");
         } else {
-            if(this.state.knowsLeader === false){
+            if (this.state.knowsLeader === false) {
                 await axios.get("/user/getUserByScreenName/" + this.state.referenceName)
-                .then(response => {
-                    if(response.status === 200){
-                        console.log(response.data);
-                        this.setState({
-                            referenceId : response.data.id,
-                            screenNameReference : true
-                        })
-                    }
-                })
-                .catch(error => {
-                    console.log(error.response.data);
-                    this.setState({
-                        screenNameReference : false,
-                        referenceId : ""
+                    .then(response => {
+                        if (response.status === 200) {
+                            console.log(response.data);
+                            this.setState({
+                                referenceId: response.data.id,
+                                screenNameReference: true
+                            })
+                        }
                     })
-                })
+                    .catch(error => {
+                        console.log(error.response.data);
+                        this.setState({
+                            screenNameReference: false,
+                            referenceId: ""
+                        })
+                    })
             }
 
-            if(this.state.referenceId === "" && this.state.knowsLeader && this.state.screenNameReference === false){
+            if (this.state.referenceId === "" && this.state.knowsLeader && this.state.screenNameReference === false) {
                 alert("Please provide valid screen name");
-            }
-            else {
+            } else {
                 let reference;
-                if(this.state.screenNameReference){
+                if (this.state.screenNameReference) {
                     reference = this.state.referenceId
                 } else {
                     reference = this.state.leaderDetails.id;
                 }
                 await axios.post("/poolMembers/joinPool", null, {
-                    params : {
-                        poolId : this.state.poolId,
-                        userId : localStorage.getItem("275UserId"),
-                        referenceId : reference
+                    params: {
+                        poolId: this.state.poolId,
+                        userId: localStorage.getItem("275UserId"),
+                        referenceId: reference
                     }
                 })
-                .then(response => {
-                    if(response.status === 200){
+                    .then(response => {
                         this.setState({
-                            joinRequest : true,
-                            successMsg : "Pool Joined Successfully",
-                            errorMsg : ""
+                            joinRequest: true,
+                            successMsg: "You have successfully requested to join the pool",
+                            errorMsg: "",
+                            knowsLeader: false,
                         })
-                    } else {
-                        this.setState({
-                            joinRequest : false,
-                            errorMsg : "Pool Join Failed",
-                            successMsg : ""
-                        })
-                    }
-                })
-                .catch(error => {
-                    console.log(error.response.data);
-                    this.setState({
-                        joinRequest : false,
-                        errorMsg : "Pool Join Failed",
-                        successMsg : ""
                     })
-                })
-            }        
+                    .catch(error => {
+                        console.log(error.response.data);
+                        this.setState({
+                            joinRequest: false,
+                            errorMsg: "Request failed",
+                            successMsg: ""
+                        })
+                    })
+            }
         }
     }
 
@@ -135,20 +127,19 @@ class PoolCard extends Component {
                                 </button>
                             </div>
                             <div className="modal-body">
-                            {
-                                this.state.errorMsg ? <p className="text-danger">{this.state.errorMsg}</p> : null
-                            }
-                            {
-                                this.state.successMsg ? <p className="text-success">{this.state.successMsg}</p> : null
-                            }
+                                {
+                                    this.state.errorMsg ? <p className="text-danger text-center">{this.state.errorMsg}</p> : null
+                                }
+                                {
+                                    this.state.successMsg ? <p className="text-success text-center">{this.state.successMsg}</p> : null
+                                }
                                 <div className="form-group">
                                     <label>Referred by</label>
-                                    <input type="text" className="form-control" value={this.state.referenceName} onChange={this.nameChangeHandler}/>
+                                    <input type="text" className="form-control" placeholder="Screen name" value={this.state.referenceName} onChange={this.nameChangeHandler} />
                                 </div>
                                 <p>(or)</p>
                                 <input type="checkbox" onClick={this.knowsLeader} />
                                 <label> I know the pool leader</label>
-                                
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>

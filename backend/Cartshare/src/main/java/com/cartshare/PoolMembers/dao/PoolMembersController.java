@@ -65,7 +65,7 @@ public class PoolMembersController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide required parameters");
 			}
 			status = status.trim();
-			if(status != "Accepted" && status != "Rejected" && status != "Approved")
+			if(status.compareTo("Accepted") != 0 && status.compareTo("Rejected") != 0 && status.compareTo("Approved") != 0)
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid status");
 			poolId = poolId.trim();
 			poolMemberId = poolMemberId.trim();
