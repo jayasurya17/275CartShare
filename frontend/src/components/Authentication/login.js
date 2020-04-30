@@ -57,7 +57,7 @@ class Login extends Component {
 								localStorage.setItem('275UserEmail', response.data.email);
 								localStorage.setItem('275UserIsActive', response.data.active);
 								localStorage.setItem('275UserName', response.data.screenName)
-								if (response.data.isAdmin) {
+								if (response.data.admin) {
 									localStorage.setItem('275UserType', "Admin")
 								} else {
 									localStorage.setItem('275UserType', "Pooler")

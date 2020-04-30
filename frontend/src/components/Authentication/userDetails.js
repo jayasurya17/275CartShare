@@ -11,7 +11,11 @@ class UserDetails extends Component {
             nickName: "",
             screenName: "",
             redURL: "",
-            redirect: false
+            redirect: false,
+            city: "",
+            state: "",
+            street: "",
+            zipcode: ""
         }
     }
 
@@ -48,10 +52,30 @@ class UserDetails extends Component {
             screenName: e.target.value
         })
     }
+    streetChangeHandler = (e) => {
+        this.setState({
+            street: e.target.value
+        })
+    }
+    cityChangeHandler = (e) => {
+        this.setState({
+            city: e.target.value
+        })
+    }
+    stateChangeHandler = (e) => {
+        this.setState({
+            state: e.target.value
+        })
+    }
+    zipcodeChangeHandler = (e) => {
+        this.setState({
+            zipcode: e.target.value
+        })
+    }
 
     updateInformation = () => {
-        if(this.state.nickName.length === 0 || this.state.screenName.length === 0){
-            alert("Nickname and Screenname can't be empty");
+        if(this.state.nickName.length === 0 || this.state.screenName.length === 0 || this.state.street.length === 0 || this.state.city.length === 0 || this.state.state.length === 0 || this.state.zipcode.length === 0){
+            alert("None of the fields should be empty");
             return;
         }
         if(this.state.nickName.localeCompare('notSet') === 0){
@@ -62,6 +86,12 @@ class UserDetails extends Component {
             alert("ScreenName is already taken");
             return;
         }
+
+        if(this.state.zipcode.length !== 5){
+            alert("Please enter a valid zipcode");
+            return;
+        }
+
         var id = localStorage.getItem('275UserId');
         var uri = '/user/'.concat(id);
         var email = localStorage.getItem('275UserEmail');
@@ -74,7 +104,11 @@ class UserDetails extends Component {
                 isAdmin: isadmin,
                 isVerified: true,
                 isActive: localStorage.getItem('275UserIsActive'),
-                isProfileComplete: true
+                isProfileComplete: true,
+                city: this.state.city,
+                street: this.state.street,
+                state: this.state.state,
+                zipcode: this.state.zipcode
             }
         })
         .then((res) => {
@@ -84,7 +118,7 @@ class UserDetails extends Component {
             }
         })
         .catch((error) => {
-            alert("screen name or nick name is not unique");
+            alert(error.response);
         })
         // var user = firebase.auth().currentUser;
         // var isadmin = user.email.includes("@sjsu.edu");
@@ -151,6 +185,22 @@ class UserDetails extends Component {
                         <div className="form-group">
                             <label>Nick name</label>
                             <input className="form-control" type="text" value={this.state.nickName} onChange={this.nickNameChangeHandler} />
+                        </div>
+                        <div className="form-group">
+                            <label>Street</label>
+                            <input className="form-control" type="text" value={this.state.street} onChange={this.streetChangeHandler} />
+                        </div>
+                        <div className="form-group">
+                            <label>City</label>
+                            <input className="form-control" type="text" value={this.state.city} onChange={this.cityChangeHandler} />
+                        </div>
+                        <div className="form-group">
+                            <label>State</label>
+                            <input className="form-control" type="text" value={this.state.state} onChange={this.stateChangeHandler} />
+                        </div>
+                        <div className="form-group">
+                            <label>Zip Code</label>
+                            <input className="form-control" type="text" value={this.state.zipcode} onChange={this.zipcodeChangeHandler} />
                         </div>
                         <button className="btn btn-success w-50" onClick={this.updateInformation}>Update details</button>
                     </div>
