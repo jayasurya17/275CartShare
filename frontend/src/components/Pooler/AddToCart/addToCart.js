@@ -15,7 +15,8 @@ class AddToCart extends Component {
             isFetched: false,
             searchValue: "",
             searchSKU: true,
-            currentStoreID: null
+            currentStoreID: null,
+            searchResult: false,
         }
     }
 
@@ -38,10 +39,6 @@ class AddToCart extends Component {
 
     clearSearch = () => {
         this.viewAllProducts(this.state.currentStoreID)
-        this.setState({
-            searchValue: "",
-            searchSKU: true,
-        })
     }
 
     viewAllProducts = (storeId) => {
@@ -50,12 +47,16 @@ class AddToCart extends Component {
                 .then((response) => {
                     this.setState({
                         allProducts: response.data,
-                        isFetched: true
+                        isFetched: true,
+                        searchValue: "",
+                        searchResult: false,
                     })
                 })
                 .catch(() => {
                     this.setState({
-                        isFetched: true
+                        isFetched: true,
+                        searchValue: "",
+                        searchResult: false,
                     })
                 })
         }
@@ -79,14 +80,16 @@ class AddToCart extends Component {
                 axios.get(`/product/search/all/?storeId=${this.state.currentStoreID}&SKU=${this.state.searchValue}`)
                     .then((response) => {
                         this.setState({
-                            allProducts: response.data
+                            allProducts: response.data,
+                            searchResult: true,
                         })
                     })
             } else {
                 axios.get(`/product/search/all/?storeId=${this.state.currentStoreID}&name=${this.state.searchValue}`)
                     .then((response) => {
                         this.setState({
-                            allProducts: response.data
+                            allProducts: response.data,
+                            searchResult: true,
                         })
                     })
             }
@@ -109,7 +112,7 @@ class AddToCart extends Component {
                             </select>
                         </div>
                         <div className="col-md-4">
-                            <input type="text" className="form-control" placeholder="Product Name" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
+                            <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
                         </div>
                         <div className="col-md-2">
                             <button className="btn btn-success w-100" onClick={this.searchProducts}>Search</button>
@@ -119,9 +122,16 @@ class AddToCart extends Component {
                         </div>
                     </div>
                 )
-                allProducts.push(
-                    <h2 className="font-weight-light text-center mt-5">Oops! Looks like there are no products in this store at the moment</h2>
-                )
+                if (this.state.searchResult === false) {
+                    allProducts.push(
+                        <h2 className="font-weight-light text-center mt-5">Oops! Looks like there are no products in this store at the moment</h2>
+                    )
+                } else {
+                    allProducts.push(
+                        <h2 className="font-weight-light text-center mt-5">Oops! There are no products matching your search</h2>
+                    )
+                }
+
             }
         } else {
             allProducts.push(
@@ -133,7 +143,7 @@ class AddToCart extends Component {
                         </select>
                     </div>
                     <div className="col-md-4">
-                        <input type="text" className="form-control" placeholder="Product Name" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
+                        <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
                     </div>
                     <div className="col-md-2">
                         <button className="btn btn-success w-100" onClick={this.searchProducts}>Search</button>

@@ -63,6 +63,19 @@ class BrowseStores extends Component {
             )
         }
 
+        if ("Pooler is not part of any pools" === "TRUE") {
+            return (
+                <div>
+                    <Header isLanding={true} />
+                    <div className="pl-5 pr-5">
+    
+                        {allStores}
+    
+                    </div>
+                </div>
+            )   
+        }
+
         return (
             <div>
                 <Header />
