@@ -142,10 +142,6 @@ class Home extends Component {
                 <div className="pl-5 pr-5 row">
                     <div className="col-md-4 offset-md-1 pt-5">
                         <div className="form-group">
-                            <label>Screen name</label>
-                            <input type="text" className="form-control" />
-                        </div>
-                        <div className="form-group">
                             <label>NickName</label>
                             <br/>
                             <input type="text" value={this.state.nickName} onChange={this.nickNameChangeHandler} lassName="form-control" />
@@ -179,6 +175,9 @@ class Home extends Component {
                             <div className="col-md-8">Your contribution status</div>
                             <div className={`col-md-2 ${background}`}></div>
                         </div>
+                        <br/>
+                        <br/>
+                        <br/>
                     </div>
                 </div>
             </div>
