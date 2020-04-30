@@ -54,13 +54,10 @@ class Home extends Component {
             <a className="text-decoration-none text-dark" href={redirectTo}>
                 <div className="shadow m-3 p-3 rounded border">
                     <div className="row">
-                        <div className="col-md-8">
+                        <div className="col-md-12">
                             <h1 className="font-weight-lighter">{this.props.storeObj.storeName}</h1>
                             <h6 className="font-weight-lighter">{address}</h6>
                             <p className="text-danger">{this.state.errMsg}</p>
-                        </div>
-                        <div className="col-md-4">
-                            <img src="https://www.okea.org/wp-content/uploads/2019/10/placeholder.png" alt="..." class="img-thumbnail" />
                         </div>
                     </div>
                     {adminFunctions}

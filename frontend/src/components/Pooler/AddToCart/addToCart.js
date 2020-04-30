@@ -4,7 +4,7 @@ import Navigation from '../../Common/navbar';
 import ItemCard from '../../Common/itemCard';
 import BrowseStores from './browseStores';
 import axios from 'axios';
-import constants from '../../../utils/constants';
+
 
 class AddToCart extends Component {
 
@@ -15,12 +15,13 @@ class AddToCart extends Component {
             isFetched: false,
             searchValue: "",
             searchSKU: true,
-            currentStoreID: null
+            currentStoreID: null,
+            searchResult: false,
         }
     }
 
     componentDidMount() {
-        axios.get(`${constants.BACKEND_SERVER.URL}/orders/activeStoreInCart?userId=${localStorage.getItem('275UserId')}`)
+        axios.get(`/orders/activeStoreInCart?userId=${localStorage.getItem('275UserId')}`)
             .then((response) => {
                 this.setState({
                     currentStoreID: response.data.id
@@ -38,24 +39,24 @@ class AddToCart extends Component {
 
     clearSearch = () => {
         this.viewAllProducts(this.state.currentStoreID)
-        this.setState({
-            searchValue: "",
-            searchSKU: true,
-        })
     }
 
     viewAllProducts = (storeId) => {
         if (storeId) {
-            axios.get(`${constants.BACKEND_SERVER.URL}/product/get/all?storeId=${storeId}`)
+            axios.get(`/product/get/all?storeId=${storeId}`)
                 .then((response) => {
                     this.setState({
                         allProducts: response.data,
-                        isFetched: true
+                        isFetched: true,
+                        searchValue: "",
+                        searchResult: false,
                     })
                 })
                 .catch(() => {
                     this.setState({
-                        isFetched: true
+                        isFetched: true,
+                        searchValue: "",
+                        searchResult: false,
                     })
                 })
         }
@@ -76,17 +77,19 @@ class AddToCart extends Component {
     searchProducts = () => {
         if (this.state.currentStoreID) {
             if (this.state.searchSKU === true) {
-                axios.get(`${constants.BACKEND_SERVER.URL}/product/search/all/?storeId=${this.state.currentStoreID}&SKU=${this.state.searchValue}`)
+                axios.get(`/product/search/all/?storeId=${this.state.currentStoreID}&SKU=${this.state.searchValue}`)
                     .then((response) => {
                         this.setState({
-                            allProducts: response.data
+                            allProducts: response.data,
+                            searchResult: true,
                         })
                     })
             } else {
-                axios.get(`${constants.BACKEND_SERVER.URL}/product/search/all/?storeId=${this.state.currentStoreID}&name=${this.state.searchValue}`)
+                axios.get(`/product/search/all/?storeId=${this.state.currentStoreID}&name=${this.state.searchValue}`)
                     .then((response) => {
                         this.setState({
-                            allProducts: response.data
+                            allProducts: response.data,
+                            searchResult: true,
                         })
                     })
             }
@@ -109,7 +112,7 @@ class AddToCart extends Component {
                             </select>
                         </div>
                         <div className="col-md-4">
-                            <input type="text" className="form-control" placeholder="Product Name" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
+                            <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
                         </div>
                         <div className="col-md-2">
                             <button className="btn btn-success w-100" onClick={this.searchProducts}>Search</button>
@@ -119,9 +122,16 @@ class AddToCart extends Component {
                         </div>
                     </div>
                 )
-                allProducts.push(
-                    <h2 className="font-weight-light text-center mt-5">Oops! Looks like there are no products in this store at the moment</h2>
-                )
+                if (this.state.searchResult === false) {
+                    allProducts.push(
+                        <h2 className="font-weight-light text-center mt-5">Oops! Looks like there are no products in this store at the moment</h2>
+                    )
+                } else {
+                    allProducts.push(
+                        <h2 className="font-weight-light text-center mt-5">Oops! There are no products matching your search</h2>
+                    )
+                }
+
             }
         } else {
             allProducts.push(
@@ -133,7 +143,7 @@ class AddToCart extends Component {
                         </select>
                     </div>
                     <div className="col-md-4">
-                        <input type="text" className="form-control" placeholder="Product Name" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
+                        <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
                     </div>
                     <div className="col-md-2">
                         <button className="btn btn-success w-100" onClick={this.searchProducts}>Search</button>

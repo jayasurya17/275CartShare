@@ -26,6 +26,7 @@ import AdminViewStoreProducts from './Admin/Products/viewProducts';
 import AdminUpdateStore from './Admin/Stores/updateStores';
 import AdminAddProduct from './Admin/Products/addProducts';
 import AdminUpdateProduct from './Admin/Products/updateProduct';
+import AdminOrdersToBePickedUp from './Admin/OrdersToBePickedUp/ordersToBePickedUp';
 
 
 
@@ -61,6 +62,7 @@ class Main extends Component {
                 <Route path="/admin/store/update/:storeId" component={AdminUpdateStore} />
                 <Route path="/admin/product/add" component={AdminAddProduct} />
                 <Route path="/admin/product/update/:productId" component={AdminUpdateProduct} />
+                <Route path="/admin/pickup/orders" component={AdminOrdersToBePickedUp} />
             </div>
         )
     }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import constants from '../../utils/constants';
+
 
 class Home extends Component {
 
@@ -49,22 +49,22 @@ class Home extends Component {
             userId: localStorage.getItem('275UserId'),
             storeId: this.props.productObj.store.id,
             productId: this.props.productObj.id,
-            quantity: this.state.quantity
+            quantity: this.props.productObj.unit === "pc" ? 1 : this.state.quantity
         }
-        axios.post(`${constants.BACKEND_SERVER.URL}/orders/add/cart`, reqBody)
-        .then(() => {
-            this.setState({
-                successMsg: "Added to cart",
-                errMsg: "",
-                quantity: 0
+        axios.post(`/orders/add/cart`, reqBody)
+            .then(() => {
+                this.setState({
+                    successMsg: "Added to cart",
+                    errMsg: "",
+                    quantity: 0
+                })
             })
-        })
-        .catch((err) => {
-            this.setState({
-                successMsg: "",
-                errMsg: err.response.data
+            .catch((err) => {
+                this.setState({
+                    successMsg: "",
+                    errMsg: err.response.data
+                })
             })
-        })
     }
 
     render() {
@@ -84,22 +84,35 @@ class Home extends Component {
                 </div>
             ]
         } else if (this.props.showQuantity) {
-            itemFunction = [
-                <div className="row">
-                    <div className="col-md-1 p-0">
-                        <button className="btn btn-danger w-100" onClick={this.decreaseQuantity}>-</button>
+            if (this.props.productObj.unit === "pc") {
+                itemFunction = [
+                    <div className="row">
+                        <div className="col-md-4 p-0">
+                            <input type="text" className="form-control" disabled value="1 (default)" />
+                        </div>
+                        <div className="col-md-5 offset-md-3">
+                            <button className="btn btn-info" onClick={this.addToCart}>Add to cart</button>
+                        </div>
                     </div>
-                    <div className="col-md-4 p-0">
-                        <input type="text" className="form-control" value={this.state.quantity} onChange={this.quantityChangeHandler} />
+                ]
+            } else {
+                itemFunction = [
+                    <div className="row">
+                        <div className="col-md-1 p-0">
+                            <button className="btn btn-danger w-100" onClick={this.decreaseQuantity}>-</button>
+                        </div>
+                        <div className="col-md-4 p-0">
+                            <input type="text" className="form-control" value={this.state.quantity} onChange={this.quantityChangeHandler} />
+                        </div>
+                        <div className="col-md-1 p-0">
+                            <button className="btn btn-success" onClick={this.increaseQuantity}>+</button>
+                        </div>
+                        <div className="col-md-5 offset-md-1">
+                            <button className="btn btn-info" onClick={this.addToCart}>Add to cart</button>
+                        </div>
                     </div>
-                    <div className="col-md-1 p-0">
-                        <button className="btn btn-success" onClick={this.increaseQuantity}>+</button>
-                    </div>
-                    <div className="col-md-5 offset-md-1">
-                        <button className="btn btn-info" onClick={this.addToCart}>Add to cart</button>
-                    </div>
-                </div>
-            ]
+                ]
+            }
         }
         return (
             <div className="shadow row m-3 p-3 rounded border">

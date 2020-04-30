@@ -14,10 +14,10 @@ class Home extends Component {
     }
 
     render() {
-        
+
 
         let background = "bg-success"
-        if (this.state.user.contributionCredit <= -6 ) {
+        if (this.state.user.contributionCredit <= -6) {
             background = "bg-danger"
         } else if (this.state.user.contributionCredit <= -4) {
             background = "bg-warning"
@@ -28,9 +28,13 @@ class Home extends Component {
                 <Header />
                 <Navigation />
                 <div className="pl-5 pr-5 row">
-                    <div className="col-md-6 offset-md-3 pt-5">
+                    <div className="col-md-4 offset-md-1 pt-5">
                         <div className="form-group">
-                            <label>Name</label>
+                            <label>Screen name</label>
+                            <input type="text" className="form-control" />
+                        </div>
+                        <div className="form-group">
+                            <label>Nick name</label>
                             <input type="text" className="form-control" />
                         </div>
                         <div className="form-group">
@@ -41,6 +45,28 @@ class Home extends Component {
                             <label>Password</label>
                             <input type="password" className="form-control" />
                         </div>
+                    </div>
+                    <div className="col-md-4 offset-md-1 pt-5">
+                        <div className="form-group">
+                            <label>Street</label>
+                            <input type="text" className="form-control" />
+                        </div>
+                        <div className="form-group">
+                            <label>City</label>
+                            <input type="text" className="form-control" />
+                        </div>
+                        <div className="form-group">
+                            <label>State</label>
+                            <input type="text" className="form-control" />
+                        </div>
+                        <div className="form-group">
+                            <label>Zipcode</label>
+                            <input type="password" className="form-control" />
+                        </div>
+                    </div>
+                </div>
+                <div className="pl-5 pr-5 row">
+                    <div className="col-md-6 offset-md-3 pt-5">
                         <button className="btn btn-success w-100">Update account</button>
                         <div className="pt-5 row text-center">
                             <div className="col-md-8">Your contribution credit</div>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import axios from 'axios';
-import constants from '../../../utils/constants';
+
 
 class StoreInfoComponent extends Component {
 
@@ -26,7 +26,7 @@ class StoreInfoComponent extends Component {
 
     componentDidMount() {
         if (this.props.productId) {
-            axios.get(`${constants.BACKEND_SERVER.URL}/product/get/details?productId=${this.props.productId}`)
+            axios.get(`/product/get/details?productId=${this.props.productId}`)
             .then((response) => {
                 if (response.data.store) {
                     this.setState({
@@ -42,7 +42,7 @@ class StoreInfoComponent extends Component {
                 }
             })
         } else if (this.props.storeId) {
-            axios.get(`${constants.BACKEND_SERVER.URL}/store/details/${this.props.storeId}`)
+            axios.get(`/store/details/${this.props.storeId}`)
             .then((response) => {
                 this.setState({
                     storeName: response.data.storeName,
@@ -50,7 +50,7 @@ class StoreInfoComponent extends Component {
                 })
             })
         } else {
-            axios.get(`${constants.BACKEND_SERVER.URL}/store/all?adminId=${localStorage.getItem('275UserId')}`)
+            axios.get(`/store/all?adminId=${localStorage.getItem('275UserId')}`)
                 .then((response) => {
                     this.setState({
                         allStores: response.data
@@ -150,7 +150,7 @@ class StoreInfoComponent extends Component {
                 "productPrice": this.state.price,
                 "productSKU": this.state.SKU
             }
-            axios.post(`${constants.BACKEND_SERVER.URL}/admin/add/products`, reqBody)
+            axios.post(`/admin/add/products`, reqBody)
             .then(() => {
                 if (this.props.getAllProducts) {
                     this.props.getAllProducts()
@@ -260,7 +260,7 @@ class StoreInfoComponent extends Component {
                     </div>
                     <div className="col-md-3 offset-md-2 pt-5">
                         <div className="form-group">
-                            <label>Unit</label>
+                            <label>Unit (Enter pc for piece)</label>
                             <input type="text" className="form-control" onChange={this.unitChangeHandler} value={this.state.unit} />
                         </div>
                         <div className="form-group">

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import StoreCard from '../../Common/storeCard';
 import axios from 'axios';
-import constants from '../../../utils/constants';
+
 
 class BrowseStores extends Component {
 
@@ -14,7 +14,7 @@ class BrowseStores extends Component {
     }
 
     componentDidMount() {
-        axios.get(`${constants.BACKEND_SERVER.URL}/store/all`)
+        axios.get(`/store/all`)
             .then((response) => {
                 this.setState({
                     allStores: response.data,

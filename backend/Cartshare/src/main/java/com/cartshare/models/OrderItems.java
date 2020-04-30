@@ -37,6 +37,9 @@ public class OrderItems {
 	
 	@Column(name = "product_price")
 	private Double productPrice;
+
+	@Column(name = "product_unit")
+	private String productUnit;
 	
 	@Column(name = "product_image")
 	private String productImage;
@@ -115,6 +118,13 @@ public class OrderItems {
 	public void setProductBrand(String productBrand) {
 		this.productBrand = productBrand;
 	}
-	
+
+	public String getProductUnit() {
+		return this.productUnit;
+	}
+
+	public void setProductUnit(String productUnit) {
+		this.productUnit = productUnit;
+	}
 	
 }
