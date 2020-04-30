@@ -8,7 +8,6 @@ import com.cartshare.User.dao.UserDAO;
 import com.cartshare.models.User;
 import com.cartshare.utils.MailController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.*;
 
@@ -192,6 +191,20 @@ public class UserController {
         } catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
+    }
+    
+    @GetMapping(value="/getUserByScreenName/{screenName}", produces = { MediaType.APPLICATION_JSON_VALUE })
+    public ResponseEntity<?> getUserByScreenName(@Valid @PathVariable(name="screenName") String screenName){
+    	try {
+    		screenName = screenName.trim();
+    		User user = userDAO.findByScreenName(screenName);
+    		if(user == null)
+    			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Details");
+    		else
+    			return ResponseEntity.status(HttpStatus.OK).body(user);
+    	} catch(Exception e) {
+    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    	}
     }
 
 }

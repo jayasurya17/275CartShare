@@ -21,12 +21,12 @@ class Home extends Component {
         return (
             <div className="row text-center border-bottom pb-3 stickyNavBar bg-light">
                 {/* <div class="col-md-2 border-left border-right"><a href="/pooler/browse" class="text-secondary text-decoration-none"><p>Browse stores</p></a></div> */}
-                <div class="col-md-2 border-left border-right"><a href="/pooler/add/cart" class="text-secondary text-decoration-none"><p>Add to cart</p></a></div>
-                <div class="col-md-2 border-left border-right"><a href="/pooler/view/pool" class="text-secondary text-decoration-none"><p>View Pool details</p></a></div>
-                <div class="col-md-2 border-left border-right"><a href="/pooler/pickup" class="text-secondary text-decoration-none"><p>Orders to pickup</p></a></div>
-                <div class="col-md-2 border-left border-right"><a href="/pooler/deliver" class="text-secondary text-decoration-none"><p>Orders to deliver</p></a></div>
-                <div class="col-md-2 border-left border-right"><a href="/pooler/past/orders" class="text-secondary text-decoration-none"><p>My past orders</p></a></div>
-                <div class="col-md-2 border-left border-right"><a href="/pooler/update/account" class="text-secondary text-decoration-none"><p>Update account</p></a></div>
+                <div className="col-md-2 border-left border-right"><a href="/pooler/add/cart" className="text-secondary text-decoration-none"><p>Add to cart</p></a></div>
+                <div className="col-md-2 border-left border-right"><a href="/pooler/view/pool" className="text-secondary text-decoration-none"><p>View Pool details</p></a></div>
+                <div className="col-md-2 border-left border-right"><a href="/pooler/pickup" className="text-secondary text-decoration-none"><p>Orders to pickup</p></a></div>
+                <div className="col-md-2 border-left border-right"><a href="/pooler/deliver" className="text-secondary text-decoration-none"><p>Orders to deliver</p></a></div>
+                <div className="col-md-2 border-left border-right"><a href="/pooler/past/orders" className="text-secondary text-decoration-none"><p>My past orders</p></a></div>
+                <div className="col-md-2 border-left border-right"><a href="/pooler/update/account" className="text-secondary text-decoration-none"><p>Update account</p></a></div>
             </div>
         )
     }
