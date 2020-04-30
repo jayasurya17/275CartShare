@@ -38,8 +38,9 @@ class Home extends Component {
 					<PoolCard
 						poolName={pool.poolName}
 						description={pool.description}
-						leader={pool.pooler.screenName}
+						leader={pool.pooler}
 						zip={pool.zipcode}
+						poolId={pool.id}
 					/>
 				);
 			});
