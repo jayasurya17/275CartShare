@@ -7,9 +7,12 @@ import com.cartshare.Product.dao.ProductDAO;
 import com.cartshare.RequestBody.StoreRequest;
 import com.cartshare.RequestBody.ProductRequest;
 import com.cartshare.models.*;
+import com.cartshare.s3.s3Service;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -24,8 +27,11 @@ public class AdminController {
 
     @Autowired
     ProductDAO productDAO;
+    
+    @Autowired
+    s3Service s3;
 
-    @PostMapping(value = "/create/store", produces = { "application/json", "application/xml" })
+    @PostMapping(value = "/create/store", produces = { "application/json", "application/xml" } )
     public ResponseEntity<?> createStore(@RequestBody StoreRequest storeRequest) {
 
         try {
@@ -97,14 +103,25 @@ public class AdminController {
 
     }
 
-    @PostMapping(value = "/add/products", produces = { "application/json", "application/xml" })
-    public ResponseEntity<?> addProducts(@RequestBody ProductRequest productRequest) {
-
+    @PostMapping(value = "/add/products", produces = { "application/json", "application/xml" },consumes = { "multipart/form-data" })
+    public ResponseEntity<?> addProducts(@RequestParam("productImage") MultipartFile myfile,@RequestParam("userId") Long userid,@RequestParam("storeIDs") ArrayList<String> storeids,@RequestParam("productName") String productname,@RequestParam("productDescription") String productdescription,
+    		@RequestParam("productBrand") String productbrand,@RequestParam("productUnit") String productunit,@RequestParam("price") String price1,@RequestParam("sku") String sku) {
+    	
+    	
+    	String productPhoto="https://toppng.com/uploads/preview/clipart-free-seaweed-clipart-draw-food-placeholder-11562968708qhzooxrjly.png";
         try {
+        	try {
+         productPhoto=s3.uploadFile(myfile);
+        		
+        	}
+        	 catch (Exception e) {
+                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product image upload failed");
+             }
+        	
 
             Long userId = null;
             try {
-                userId = Long.parseLong(productRequest.getUserId());
+                userId = userid;
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
@@ -115,19 +132,19 @@ public class AdminController {
             }
             Double price = null;
             try {
-                price = Double.parseDouble(productRequest.getProductPrice());
+                price = Double.parseDouble(price1);
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid price");
             }
 
             Long SKU = null;
             try {
-                SKU = Long.parseLong(productRequest.getProductSKU());
+                SKU = Long.parseLong(sku);
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid product SKU");
             }
 
-            for (String id : productRequest.getStoreIDs()) {
+            for (String id : storeids) {
                 Long reqStoreId = null;
                 try{
                     reqStoreId = Long.parseLong(id);
@@ -145,7 +162,7 @@ public class AdminController {
             }
 
             List<Product> createdProducts = new ArrayList<>();
-            for (String id : productRequest.getStoreIDs()) {
+            for (String id : storeids) {
                 Product product = new Product();
                 // Product createdProduct;
                 Long reqStoreId = null;
@@ -156,11 +173,11 @@ public class AdminController {
                 }
                 product.setStore(storeDAO.findById(reqStoreId));
                 product.setSku(SKU);
-                product.setProductName(productRequest.getProductName());
-                product.setDescription(productRequest.getProductDescription());
-                product.setImageURL(productRequest.getProductImage());
-                product.setBrand(productRequest.getProductBrand());
-                product.setUnit(productRequest.getProductUnit());
+                product.setProductName(productname);
+                product.setDescription(productdescription);
+                product.setImageURL(productPhoto);
+                product.setBrand(productbrand);
+                product.setUnit(productunit);
                 product.setPrice(price);
                 createdProducts.add(productDAO.save(product));
             }
