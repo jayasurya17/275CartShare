@@ -27,7 +27,7 @@ import java.nio.file.Path;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping(value = "/storage")
-public class s3Controller {
+public class S3Controller {
 	@Autowired
 	private s3Service s3Client;
 	

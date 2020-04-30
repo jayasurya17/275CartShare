@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
+
 import Header from '../../Common/header'
 import Navbar from '../../Common/navbar'
 import axios from 'axios'
 import constants from '../../../utils/constants'
+var QRCode = require('qrcode.react')
 
 class PickupOrders extends Component {
   constructor () {
@@ -31,6 +33,12 @@ class PickupOrders extends Component {
           fetched: true
         })
       })
+  }
+
+  DisplayQRCode = e => {
+    this.setState({
+      SKU: e.target.value
+    })
   }
 
   render () {
@@ -114,6 +122,7 @@ class OrdersComponent extends Component {
               className='btn btn-warning w-100'
               data-toggle='modal'
               data-target='#modalCenter'
+              onClick=''
             >
               Show QR
             </button>
@@ -133,25 +142,9 @@ class OrdersComponent extends Component {
                   <h5 className='modal-title' id='modalCenterTitle'>
                     QR code for the selected order
                   </h5>
-                  <button
-                    type='button'
-                    className='close'
-                    data-dismiss='modal'
-                    aria-label='Close'
-                  >
-                    <span aria-hidden='true'>&times;</span>
-                  </button>
                 </div>
-                <div className='modal-body'>
-                  <div className='form-group'>
-                    <label>Referred by</label>
-                    <input
-                      type='image'
-                      className='form-control'
-                      value=''
-                      onChange=''
-                    />
-                  </div>
+                <div className='modal-body' align='center'>
+                  <QRCode value={this.props.order[0].orders.id} />,
                 </div>
                 <div className='modal-footer'>
                   <button
