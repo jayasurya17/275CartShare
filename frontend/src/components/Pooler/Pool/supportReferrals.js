@@ -5,6 +5,22 @@ import axios from 'axios';
 
 class UserInfo extends Component {
 
+	supportReferral = () => {
+		const reqParams = {
+			poolMemberId: this.props.userObj.id,
+			status: "Accepted"
+		}
+		this.props.manageRequest(reqParams)
+	}
+
+	rejectReferral = () => {
+		const reqParams = {
+			poolMemberId: this.props.userObj.id,
+			status: "Rejected"
+		}
+		this.props.manageRequest(reqParams)
+	}
+
     render() {
         return (
             <div className="row p-2">
@@ -16,8 +32,8 @@ class UserInfo extends Component {
 				) : (
 					<div className="col-md-5">{`${this.props.userObj.address.street}, ${this.props.userObj.address.city}, ${this.props.userObj.address.state} - ${this.props.userObj.address.zipcode}`}</div>
 				)}
-                <div className="col-md-1"><button className="btn btn-success w-100">Support</button></div>
-                <div className="col-md-1"><button className="btn btn-danger w-100">Reject</button></div>
+                <div className="col-md-1"><button className="btn btn-success w-100" onClick={this.supportReferral}>Support</button></div>
+                <div className="col-md-1"><button className="btn btn-danger w-100" onClick={this.rejectReferral}>Reject</button></div>
             </div>
         )
     }
@@ -33,8 +49,12 @@ class SupportReferral extends Component {
         }
     }
 
-    componentWillMount = async () =>{
-        await axios.get("/poolMembers/requestedRequests", {
+    componentWillMount() {
+        this.getDetails()
+    }
+
+    getDetails = () => {
+        axios.get("/poolMembers/requestedRequests", {
             params: {
                 screenName: this.state.screenName,
                 isLeader: "false"
@@ -61,6 +81,16 @@ class SupportReferral extends Component {
         })
     }
 
+	manageRequest = (reqParams) => {
+		axios.put(`/poolMembers/manageRequest?poolId=${this.state.poolDetails.id}&poolMemberId=${reqParams.poolMemberId}&status=${reqParams.status}`)
+		.then(() => {
+			this.getDetails()
+		})
+		.catch((error) => {
+			console.log(error.response.data)
+		})
+	}
+
     render() {
 
         let allUsers = []
@@ -70,7 +100,8 @@ class SupportReferral extends Component {
 				allUsers.push(
 					<UserInfo
 						slNo={i + 1}
-						userObj={this.state.requests[i].member}
+                        userObj={this.state.requests[i].member}
+                        manageRequest={this.manageRequest}
 					/>
 				);
 			}

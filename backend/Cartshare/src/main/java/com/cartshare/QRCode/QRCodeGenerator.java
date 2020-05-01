@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import org.springframework.stereotype.Service;
 @Service
 public class QRCodeGenerator {
-	 private static final String QR_CODE_IMAGE_PATH = "./Test.png";
 
 	    public static byte[] generateQRCodeImage(String text, int width, int height, String filePath)
 	            throws WriterException, IOException {
