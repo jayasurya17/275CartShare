@@ -164,7 +164,7 @@ public class OrdersController {
     }
 
     @GetMapping(value = "/pickUp/{orderId}/{userId}", produces = { "application/json", "application/xml" })
-    public ResponseEntity pickUpOrder(@Valid
+    public ResponseEntity<?> pickUpOrder(@Valid
                                     @PathVariable(name = "orderId") String orderId,
                                     @PathVariable(name = "userId") String userId){
         try{
