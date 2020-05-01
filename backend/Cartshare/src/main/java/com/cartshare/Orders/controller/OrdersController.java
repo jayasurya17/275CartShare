@@ -2,7 +2,6 @@ package com.cartshare.Orders.controller;
 
 import com.cartshare.User.dao.UserDAO;
 import com.cartshare.models.*;
-import com.cartshare.repositories.OrdersRepository;
 import com.cartshare.utils.MailController;
 import com.cartshare.utils.OrderDetails;
 
@@ -164,7 +163,7 @@ public class OrdersController {
     }
 
     @GetMapping(value = "/pickUp/{orderId}/{userId}", produces = { "application/json", "application/xml" })
-    public ResponseEntity pickUpOrder(@Valid
+    public ResponseEntity<?> pickUpOrder(@Valid
                                     @PathVariable(name = "orderId") String orderId,
                                     @PathVariable(name = "userId") String userId){
         try{

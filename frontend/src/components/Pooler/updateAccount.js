@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Header from '../Common/header';
 import Navigation from '../Common/navbar';
-import firebase from 'firebase';
 import axios from 'axios';
 
 class Home extends Component {

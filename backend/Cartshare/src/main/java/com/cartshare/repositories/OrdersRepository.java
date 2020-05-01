@@ -15,4 +15,5 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
     public List<Orders> findAllOrdersByPickupPoolerAndStatus(User user, String status);
     public List<Orders> findAllOrdersByPickupPoolerAndStatusAndUser(User pickupUser, String status, User user);
     public List<Orders> findAllOrdersByStatus(String status);
+    public List<Orders> findAllOrdersByStore(Store store);
 }

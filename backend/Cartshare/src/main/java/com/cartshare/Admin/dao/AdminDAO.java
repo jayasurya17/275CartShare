@@ -30,4 +30,8 @@ public class AdminDAO {
 		return storeRepository.findAll();
 	}
 
+	public Store findByName(String name) {
+		return storeRepository.findByStoreName(name);
+	}
+
 }

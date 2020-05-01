@@ -135,9 +135,9 @@ class StoreInfoComponent extends Component {
                         filename: "",
                     })
                 })
-                .catch(() => {
+                .catch((error) => {
                     this.setState({
-                        errMsg: "Error occured",
+                        errMsg: error.response.data,
                         successMsg: ""
                     })
                 })
@@ -173,9 +173,9 @@ class StoreInfoComponent extends Component {
                         successMsg: "Updated"
                     })
                 })
-                .catch(() => {
+                .catch((error) => {
                     this.setState({
-                        errMsg: "Error occured",
+                        errMsg: error.response.data,
                         successMsg: ""
                     })
                 })
@@ -216,10 +216,6 @@ class StoreInfoComponent extends Component {
                     <div className="form-group">
                         <label>Zipcode</label>
                         <input type="text" className="form-control" onChange={this.zipcodeChangeHandler} value={this.state.zipcode} />
-                    </div>
-                    <div className="form-group">
-                        <div className="form-text">Upload an image for this store</div>
-                        <input type="file" onChange={this.fileUploadChangeHandler} value={this.state.filename} />
                     </div>
                     <p className="text-success text-center">{this.state.successMsg}</p>
                     <p className="text-danger text-center">{this.state.errMsg}</p>

@@ -85,4 +85,7 @@ public class OrdersDAO {
 		return r;
 	}
 
+	public List<Orders> findAllOrdersByStore(Store store) {
+		return ordersRepository.findAllOrdersByStore(store);
+	}
 }

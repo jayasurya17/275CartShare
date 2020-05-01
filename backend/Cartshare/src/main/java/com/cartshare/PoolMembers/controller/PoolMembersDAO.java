@@ -69,7 +69,11 @@ public class PoolMembersDAO {
 		if(pool == null)
 			return null;
 		
-		PoolMembers poolMembers = poolMembersRepository.findById(poolMember).orElse(null);
+		User member = userRepository.findById(poolMember).orElse(null);
+		if (member == null) {
+			return null;
+		}
+		PoolMembers poolMembers = poolMembersRepository.findByMember(member);
 		if(poolMembers == null)
 			return null;
 		

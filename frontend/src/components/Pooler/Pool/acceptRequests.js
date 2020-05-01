@@ -5,7 +5,7 @@ class UserInfo extends Component {
 	acceptRequest = () => {
 		const reqParams = {
 			poolMemberId: this.props.userObj.id,
-			status: "Approved"
+			status: "Accepted"
 		}
 		this.props.manageRequest(reqParams)
 	}

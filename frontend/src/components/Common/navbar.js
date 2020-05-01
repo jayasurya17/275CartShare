@@ -8,7 +8,7 @@ class Home extends Component {
         if (this.props.isAdmin) {
             return (
                 <div className="row text-center border-bottom pb-3 stickyNavBar bg-light">
-                    <div class="col-md-2 border-left border-right"><a href="/admin/browse" class="text-secondary text-decoration-none"><p>View my stores</p></a></div>
+                    <div class="col-md-2 border-left border-right"><a href="/admin/browse" class="text-secondary text-decoration-none"><p>View stores</p></a></div>
                     <div class="col-md-2 border-left border-right"><a href="/admin/store/add" class="text-secondary text-decoration-none"><p>Add Stores</p></a></div>
                     <div class="col-md-2 border-left border-right"><a href="/admin/product/add" class="text-secondary text-decoration-none"><p>Add products</p></a></div>
                     <div class="col-md-2 border-left border-right"><a href="/admin/pickup/orders" class="text-secondary text-decoration-none"><p>View orders</p></a></div>
