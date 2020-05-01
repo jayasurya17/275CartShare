@@ -100,13 +100,24 @@ public class PoolMembersDAO {
 		
 		Long reference_id = user.getId();
 		System.out.println(reference_id);
-		
+		System.out.println(user.getPools());
 		
 		Query query1;
 		if(isLeader) {
-			query1 = entityManager.createQuery("FROM PoolMembers WHERE reference_id = :reference OR status = :status ");
+			//AND pool_id = :poolid)
+			
+			Query pool = entityManager.createQuery("FROM Pool WHERE pooler_id = :poolerId");
+			pool.setParameter("poolerId", reference_id);
+			
+			List res = pool.getResultList();
+			if(!(res.size() > 0))
+				return null;
+			Pool poolDetails = (Pool) res.get(0);
+			
+			query1 = entityManager.createQuery("FROM PoolMembers WHERE reference_id = :reference OR (status = :status AND pool_id = :poolid)");
 			query1.setParameter("reference", reference_id);
 			query1.setParameter("status", "Approved");
+			query1.setParameter("poolid", poolDetails.getId());
 		} else {
 			query1 = entityManager.createQuery("FROM PoolMembers WHERE reference_id = :reference AND status = :status ");
 			query1.setParameter("reference", reference_id);
