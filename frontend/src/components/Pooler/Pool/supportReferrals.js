@@ -105,6 +105,19 @@ class SupportReferral extends Component {
 					/>
 				);
 			}
+			if (this.state.requests.length === 0) {
+				return (
+					<div className="p-5">
+						<p className="display-4 text-center">There are no active requests</p>
+					</div>
+				);
+			}
+		} else {
+			return (
+				<div className="p-5">
+					<p className="display-4 text-center">Fetching...</p>
+				</div>
+			);			
 		}
 
         return (
