@@ -2,13 +2,15 @@ import React, { Component } from 'react'
 import Header from '../../Common/header'
 import Navbar from '../../Common/navbar'
 import axios from 'axios'
+var QRCode = require('qrcode.react')
 
 class PickupOrders extends Component {
 	constructor() {
 		super()
 		this.state = {
 			allOrders: [],
-			fetched: false
+			fetched: false,
+			hi: 'hi'
 		}
 	}
 
@@ -20,12 +22,16 @@ class PickupOrders extends Component {
 					fetched: true,
 					allOrders: response.data
 				})
+				console.log(this.state.allOrders)
 			})
 			.catch(() => {
 				this.setState({
 					fetched: true
 				})
 			})
+	}
+	generateQR = e => {
+		alert('testing ')
 	}
 
 	render() {
@@ -42,7 +48,10 @@ class PickupOrders extends Component {
 				<div>
 					<Header />
 					<Navbar />
-					<p className='p-5 display-4 text-center'>You do not have any orders waiting to be picked up</p>
+
+					<p className='p-5 display-4 text-center'>
+						You do not have any orders waiting to be picked up
+          </p>
 				</div>
 			)
 		}
@@ -101,7 +110,6 @@ class OrdersComponent extends Component {
 		let tax = subTotal * 0.0925,
 			convenienceFee = subTotal * 0.005,
 			total = subTotal + tax + convenienceFee
-
 		return (
 			<div className='p-3'>
 				<div className='row p-2 bg-secondary text-white'>
@@ -112,7 +120,7 @@ class OrdersComponent extends Component {
 						<h5>Store: {this.props.order[0].orders.store.storeName}</h5>
 					</div>
 					<div className='col-md-4'>
-						<button className='btn btn-warning w-100' data-toggle='modal' data-target='#modalCenter'>Show QR</button>
+						<button key={this.props.order[0].orders.id} type='button' className='btn btn-warning w-100' data-target={'#modalCenter' + this.props.order[0].orders.id} data-toggle='modal' >Checkout</button>
 					</div>
 				</div>
 				<div className='row p-2 bg-secondary text-white'>
@@ -137,6 +145,30 @@ class OrdersComponent extends Component {
 				<div className='row font-weight-bold bg-secondary p-2 text-white text-center'>
 					<div className='col-md-6 offset-md-3'>Total</div>
 					<div className='col-md-3'>${total.toFixed(2)}</div>
+				</div>
+
+
+
+				{/* <!-- Modal --> */}
+				<div className='modal fade' id={'modalCenter' + this.props.order[0].orders.id} tabIndex='-1' role='dialog' aria-labelledby='modalCenterTitle' aria-hidden='true' >
+					<div className='modal-dialog modal-dialog-centered' role='document'>
+						<div className='modal-content'>
+							<div className='modal-header'>
+								<h5 className='modal-title text-center' id='modalCenterTitle'>QR CODE</h5>
+								<button type='button' className='close' data-dismiss='modal' aria-label='Close' >
+									<span aria-hidden='true'>&times;</span>
+								</button>
+							</div>
+							<div className='modal-body'>
+								<div align='center'>
+									<QRCode value={`You have picked up order #${this.props.order[0].orders.id} and associated orders`} />
+								</div>
+							</div>
+							<div className='modal-footer'>
+								<button type='button' className='btn btn-secondary' data-dismiss='modal'>Close</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		)

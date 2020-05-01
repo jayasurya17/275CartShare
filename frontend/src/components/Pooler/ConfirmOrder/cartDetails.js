@@ -185,7 +185,7 @@ class CartProduct extends Component {
         return (
             <div className="row border p-2 text-center">
                 <div className="col-md-1">{this.props.slNo}</div>
-                <div className="col-md-2"><img src="https://www.okea.org/wp-content/uploads/2019/10/placeholder.png" alt="..." class="img-thumbnail" /></div>
+                <div className="col-md-2"><img src={this.props.productObj.product.imageURL} alt="..." class="img-thumbnail" /></div>
                 <div className="col-md-2">{this.props.productObj.product.productName}</div>
                 <div className="col-md-1">{this.props.productObj.product.price.toFixed(2)} / {this.props.productObj.product.unit}</div>
                 <div className="col-md-3">
