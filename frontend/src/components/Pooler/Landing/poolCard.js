@@ -9,15 +9,29 @@ class PoolCard extends Component {
             referenceName: "",
             knowsLeader: false,
             tempName: "",
+            // poolName: this.props.poolName ? this.props.poolName : "",
+            // description: this.props.description ? this.props.description : "",
+            // leader: this.props.leader.screenName ? this.props.leader.screenName : "",
+            // zip: this.props.zip ? this.props.zip : "",
+            // leaderDetails: this.props.leader,
+            referenceId: "",
+            // poolId: this.props.poolId,
+        }
+        console.log(this.state);
+        this.sendRequest = this.sendRequest.bind(this);
+        this.knowsLeader = this.knowsLeader.bind(this);
+        this.nameChangeHandler = this.nameChangeHandler.bind(this);
+    }
+
+    componentWillMount = () => {
+        this.setState({
             poolName: this.props.poolName ? this.props.poolName : "",
             description: this.props.description ? this.props.description : "",
             leader: this.props.leader.screenName ? this.props.leader.screenName : "",
             zip: this.props.zip ? this.props.zip : "",
             leaderDetails: this.props.leader,
-            referenceId: "",
             poolId: this.props.poolId
-        }
-        this.sendRequest = this.sendRequest.bind(this);
+        })
     }
 
     knowsLeader = () => {
@@ -47,6 +61,7 @@ class PoolCard extends Component {
         if (this.state.referenceName === "" && this.state.knowsLeader === false) {
             alert("Please provide required details");
         } else {
+            console.log(this.state);
             if (this.state.knowsLeader === false) {
                 await axios.get("/user/getUserByScreenName/" + this.state.referenceName)
                     .then(response => {
@@ -113,11 +128,11 @@ class PoolCard extends Component {
                     <h4>San Jose <span className="font-weight-light">{this.state.zip}</span></h4>
                 </div>
                 <div className="col-md-3">
-                    <button className="btn btn-warning" data-toggle="modal" data-target="#modalCenter">Join this pool</button>
+                    <button className="btn btn-warning" data-toggle="modal" data-target={"#ModalCenter" + this.state.poolId}>Join this pool</button>
                 </div>
 
                 {/* <!-- Modal --> */}
-                <div className="modal fade" id="modalCenter" tabIndex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+                <div className="modal fade" id={"ModalCenter" + this.state.poolId} tabIndex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
                     <div className="modal-dialog modal-dialog-centered" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
