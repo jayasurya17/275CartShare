@@ -37,7 +37,7 @@ class DeliverOrders extends Component {
                     <Header />
                     <Navbar />
 
-                    <p className="p-5 display-4 text-center">You do not have any orders that has to be delivered</p>
+                    <p className="p-5 display-4 text-center">You do not have any orders that have to be delivered</p>
 
                 </div>
             )

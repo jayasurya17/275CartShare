@@ -162,6 +162,31 @@ public class OrdersController {
         }
     }
 
+    @GetMapping(value = "/pickUp/associatedOrders/{id}", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> pickUpOrder(@Valid
+                                        @PathVariable(name = "id") String id){
+
+        try{
+            long l;
+            try{
+                l = Long.parseLong(id);
+            } catch(NumberFormatException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid order ID");
+            }
+            Orders o = ordersDAO.findOrdersById(l);
+            List<Orders> list = ordersDAO.findAssociatedOrders(o);
+            if(list == null || list.size() == 0){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There are no associated orders for this order");
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(list);
+        } catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
+    }
+
+
     @GetMapping(value = "/pickUp/{orderId}/{userId}", produces = { "application/json", "application/xml" })
     public ResponseEntity<?> pickUpOrder(@Valid
                                     @PathVariable(name = "orderId") String orderId,
