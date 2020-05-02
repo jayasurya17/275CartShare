@@ -155,6 +155,13 @@ class OrdersComponent extends Component {
                     <div className="col-md-8"><h5 className="text-danger">This order has been marked as not delivered</h5></div>
                 </div>
             )
+        } else if (statusOfOrder === "Cancelled") {
+            status.push(
+                <div className="row p-2 border">
+                    <div className="col-md-4"><h5>Order # 291</h5></div>
+                    <div className="col-md-8"><h5 className="text-danger">This order has been cancelled since nobody picked it up</h5></div>
+                </div>
+            )
         }
 
 

@@ -139,6 +139,7 @@ public class OrdersController {
     @GetMapping(value = "/productsInCart", produces = { "application/json", "application/xml" })
     public ResponseEntity<?> getProductsInCart(@RequestParam(value = "userId") String reqUserId) {
         try {
+            ordersDAO.updateOrderStatus();
             Long userId = null;
             try {
                 userId = Long.parseLong(reqUserId);
@@ -386,6 +387,7 @@ public class OrdersController {
             } else {
                 order.setStatus("Ordered");
             }
+            order.setTimestamp(new Date());
             order = ordersDAO.saveOrderDetails(order);
 
             MailController mc = new MailController();

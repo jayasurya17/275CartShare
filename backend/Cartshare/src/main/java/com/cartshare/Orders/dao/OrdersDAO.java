@@ -2,7 +2,13 @@ package com.cartshare.Orders.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+
 import com.cartshare.models.*;
 import com.cartshare.repositories.*;
 
@@ -87,5 +93,23 @@ public class OrdersDAO {
 
 	public List<Orders> findAllOrdersByStore(Store store) {
 		return ordersRepository.findAllOrdersByStore(store);
+	}
+
+	public void updateOrderStatus() {
+		List<Orders> allOrders = ordersRepository.findAll();
+		for (Orders order: allOrders) {
+			Date orderTime = order.getTimestamp();
+			Date now = new Date();
+
+			long twoDays = (long) 172800000;
+			long diffInMillies = Math.abs(now.getTime() - orderTime.getTime());
+			System.out.println(order.getStatus());
+			if (diffInMillies >= twoDays && order.getStatus().compareTo("Ordered") == 0 && order.getPickupPooler() == null) {
+				System.out.println("Need to mark as cancelled");
+				order.setStatus("Cancelled");
+				ordersRepository.save(order);
+			}
+			
+		}
 	}
 }
