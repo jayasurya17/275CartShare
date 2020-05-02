@@ -163,7 +163,7 @@ public class OrdersController {
     }
 
     @GetMapping(value = "/pickUp/associatedOrders/{id}", produces = { "application/json", "application/xml" })
-    public ResponseEntity<?> pickUpOrder(@Valid @PathVariable(name = "id") String id) {
+    public ResponseEntity<?> pickUpAssociatedOrder(@Valid @PathVariable(name = "id") String id) {
         try {
             long l;
             try {
@@ -185,24 +185,27 @@ public class OrdersController {
 
     }
 
-    @GetMapping(value = "/pickUp/{orderId}/{userId}", produces = { "application/json", "application/xml" })
-    public ResponseEntity<?> pickUpOrder(@Valid @PathVariable(name = "orderId") String orderId,
-            @PathVariable(name = "userId") String userId) {
+    @GetMapping(value = "/pickUp/{orderId}", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> pickUpOrder(@Valid @PathVariable(name = "orderId") String orderId) {
         try {
             ordersDAO.updateOrderStatus();
-            Long l, l1;
+            Long l;
             try {
                 l = Long.parseLong(orderId);
-                l1 = Long.parseLong(userId);
             } catch (NumberFormatException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid order id or user id");
             }
             Orders order = ordersDAO.findOrdersById(l);
-            User user = userDAO.findById(l1);
+            User user = order.getUser();
             if (order == null || user == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("order or user with the provided Id doesn't exist");
             }
+
+            if(order.getStatus().compareTo("Confirmed") != 0){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This order and all it's associated orders have already been picked up");
+            }
+
             order.setStatus("PickedUp");
 
             ordersDAO.saveOrderDetails(order);
@@ -233,6 +236,41 @@ public class OrdersController {
 
             return ResponseEntity.status(HttpStatus.OK).body("Order picked up");
         } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/deliver/{userId}", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> ordersToDeliver(@Valid @PathVariable(name = "userId") String userId) {
+        try{
+            long l;
+            try{
+                l = Long.parseLong(userId);
+            } catch(NumberFormatException e){
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user id");
+            }
+
+            User user = userDAO.findById(l);
+            if(user == null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with ID doesn't exist");
+            }
+
+            List<Orders> list = ordersDAO.findOrdersToBeDeliveredByUser(user);
+            if(list == null || list.size() == 0){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No orders to be delivered");
+            }
+            List<Set<OrderItems>> listOfProductsInOrders = new ArrayList<>();
+
+            for (Orders order : list) {
+                listOfProductsInOrders.add(order.getOrderItems());
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(listOfProductsInOrders);
+
+            // return ResponseEntity.status(HttpStatus.OK).body(list);
+
+        } catch(Exception e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
