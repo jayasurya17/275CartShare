@@ -185,6 +185,37 @@ public class OrdersController {
 
     }
 
+    @GetMapping(value = "/pastOrders/{userId}", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> getPastOrdersOfUser(@Valid @PathVariable(name = "userId") String userId) {
+        try {
+            Long l;
+            try {
+                l = Long.parseLong(userId);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user id");
+            }
+            User u = userDAO.findById(l);
+            if(u == null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user with given ID");
+            }
+            List<Orders> list = ordersDAO.findOrdersByUser(u);
+            if(list == null || list.size() == 0){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No past orders");
+            }
+            List<Set<OrderItems>> listOfProductsInOrders = new ArrayList<>();
+
+            for (Orders order : list) {
+                listOfProductsInOrders.add(order.getOrderItems());
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(listOfProductsInOrders);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+
     @GetMapping(value = "/pickUp/{orderId}", produces = { "application/json", "application/xml" })
     public ResponseEntity<?> pickUpOrder(@Valid @PathVariable(name = "orderId") String orderId) {
         try {
@@ -206,7 +237,7 @@ public class OrdersController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This order and all it's associated orders have already been picked up");
             }
 
-            order.setStatus("PickedUp");
+            order.setStatus("Was picked up by myself");
 
             ordersDAO.saveOrderDetails(order);
             MailController mc = new MailController();
@@ -217,24 +248,26 @@ public class OrdersController {
             // send email to confirm order pick up to all associated poolers
             OrderDetails od = new OrderDetails();
             String message = "";
-            for (Orders o : associated) {
-                User u = o.getUser();
-                o.setPickupPooler(user);
-                o.setStatus("PickedUp");
-                ordersDAO.saveOrderDetails(o);
-                Address a = u.getAddress();
-                message += "<h1>User " + u.getScreenName() + "'s order:</h1></br>Address: " + a.getStreet() + ", "
-                        + a.getCity() + ", " + a.getState() + ", " + a.getZipcode() + "</br>Order details: </br>"
-                        + od.GenerateProductTableWithPrice(o.getOrderItems()) + "</br></br>";
-                // hs.add(o.getUser());
-                mc.send(u.getEmail(), "Order #" + o.getId() + " picked up",
-                        "Your cartshare order #" + o.getId() + " has been picked up by " + user.getScreenName());
+            if(associated != null){
+                for (Orders o : associated) {
+                    User u = o.getUser();
+                    o.setPickupPooler(user);
+                    o.setStatus("Fellow pooler has picked up the order from store");
+                    ordersDAO.saveOrderDetails(o);
+                    Address a = u.getAddress();
+                    message += "<h1>User " + u.getScreenName() + "'s order:</h1></br>Address: " + a.getStreet() + ", "
+                            + a.getCity() + ", " + a.getState() + ", " + a.getZipcode() + "</br>Order details: </br>"
+                            + od.GenerateProductTableWithPrice(o.getOrderItems()) + "</br></br>";
+                    // hs.add(o.getUser());
+                    mc.send(u.getEmail(), "Order #" + o.getId() + " picked up",
+                            "Your cartshare order #" + o.getId() + " has been picked up by " + user.getScreenName());
+                }
             }
 
             // semd email to provide delivery instructions
             mc.sendHTML(user.getEmail(), "Delivery Instructions for the associated orders", message);
 
-            return ResponseEntity.status(HttpStatus.OK).body("Order picked up");
+            return ResponseEntity.status(HttpStatus.OK).body("Orders picked up");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -287,7 +320,7 @@ public class OrdersController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Order ID");
             }
             Orders order = ordersDAO.findOrdersById(l);
-            order.setStatus("Delivered");
+            order.setStatus("Delivered by someone else");
             ordersDAO.saveOrderDetails(order);
             MailController mc = new MailController();
             mc.send(order.getUser().getEmail(), "Update to your order status",
