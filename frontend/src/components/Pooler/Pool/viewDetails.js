@@ -49,11 +49,24 @@ class ViewDetails extends Component {
 					name: null,
 				},
 			},
+			editName : "",
+			editDescription : "",
+			editNeighborhood : ""
 		};
 	}
 
+	changeHandler = (e) => {
+		this.setState({
+			[e.target.name]: e.target.value,
+		});
+		// console.log(this.state.editName);
+		// console.log(this.state.editNeighborhood);
+		// console.log(this.state.editDescription);
+	};
+
 	componentDidMount = () => {
-		axios.get("/poolMembers/getPoolByUser/" + this.state.userId)
+		axios
+			.get("/poolMembers/getPoolByUser/" + this.state.userId)
 			.then((response) => {
 				if (response.status === 200) {
 					console.log(response.data);
@@ -78,31 +91,78 @@ class ViewDetails extends Component {
 	};
 
 	fetchPoolMembers = () => {
-		axios.get("/poolMembers/viewPoolMembers", {
-			params: {
-				poolId: this.state.poolDetails.id,
-			},
-		})
-		.then((response) => {
-			if (response.status === 200) {
-				let members = response.data.map((member) => {
-					return member.member;
-				});
+		axios
+			.get("/poolMembers/viewPoolMembers", {
+				params: {
+					poolId: this.state.poolDetails.id,
+				},
+			})
+			.then((response) => {
+				if (response.status === 200) {
+					let members = response.data.map((member) => {
+						return member.member;
+					});
+					this.setState({
+						members: members,
+						membersReceived: true,
+					});
+				} else {
+					this.setState({
+						membersReceived: true,
+					});
+				}
+			})
+			.catch((error) => {
 				this.setState({
-					members: members,
 					membersReceived: true,
 				});
-			} else {
-				this.setState({
-					membersReceived: true,
-				});
-			}
-		})
-		.catch((error) => {
-			this.setState({
-				membersReceived: true,
 			});
-		});
+	};
+
+	editPoolInformation = () => {
+		if(this.state.editName === "" || this.state.editNeighborhood === ""){
+			alert("Please provide require Name and Neighborhood Details")
+		} else {
+			console.log({
+				id : this.state.poolDetails.id,
+				description : this.state.editDescription,
+				neighborhoodName : this.state.editNeighborhood,
+				poolName : this.state.editName,
+				zipcode : this.state.poolDetails.zipcode,
+				poolerId : this.state.poolDetails.pooler.id
+			});
+			axios.put("/pool/editPool", null, {
+				params : {
+					id : this.state.poolDetails.id,
+					description : this.state.editDescription,
+					neighborhoodName : this.state.editNeighborhood,
+					poolName : this.state.editName,
+					zipcode : this.state.poolDetails.zipcode,
+					poolerId : this.state.poolDetails.pooler.id
+				}
+			})
+			.then(response => {
+				if(response.status === 200){
+					console.log(response.data);
+					this.setState({
+						successMsgModal : "Pool Details Updated Successfully",
+						errorMsgModal : ""
+					})
+				} else {
+					this.setState({
+						successMsgModal : "",
+						errorMsgModal : "Pool Details could not be updated. Try again!"
+					})
+				}
+			})
+			.catch(error => {
+				console.log(error.response.data);
+				this.setState({
+					successMsgModal : "",
+					errorMsgModal : "Pool Details could not be updated. Try again!"
+				})
+			})
+		}
 	}
 
 	render() {
@@ -111,7 +171,11 @@ class ViewDetails extends Component {
 		if (this.state.membersReceived) {
 			for (var i = 0; i < this.state.members.length; i++) {
 				poolMembers.push(
-					<UserInfo key={i+1} slNo={i + 1} userObj={this.state.members[i]} />
+					<UserInfo
+						key={i + 1}
+						slNo={i + 1}
+						userObj={this.state.members[i]}
+					/>
 				);
 			}
 		}
@@ -123,7 +187,11 @@ class ViewDetails extends Component {
 				// if(false) {
 				requests.push(
 					<div key="update" className="text-center pt-5">
-						<button className="w-50 btn btn-warning">
+						<button
+							className="w-50 btn btn-warning"
+							data-toggle="modal"
+							data-target={"#ModalCenter"}
+						>
 							Update pool information
 						</button>
 					</div>
@@ -134,7 +202,7 @@ class ViewDetails extends Component {
 						userId={this.state.userId}
 						screenName={this.state.userScreenName}
 						poolDetails={this.state.poolDetails}
-						update={this.fetchPoolMembers} 
+						update={this.fetchPoolMembers}
 					/>
 				);
 			} else {
@@ -144,7 +212,7 @@ class ViewDetails extends Component {
 						userId={this.state.userId}
 						screenName={this.state.userScreenName}
 						poolDetails={this.state.poolDetails}
-						update={this.fetchPoolMembers} 
+						update={this.fetchPoolMembers}
 					/>
 				);
 			}
@@ -208,6 +276,101 @@ class ViewDetails extends Component {
 						</div>
 					</div>
 					{requests}
+					<div
+						className="modal fade"
+						id={"ModalCenter"}
+						tabIndex="-1"
+						role="dialog"
+						aria-labelledby="modalCenterTitle"
+						aria-hidden="true"
+					>
+						<div
+							className="modal-dialog modal-dialog-centered"
+							role="document"
+						>
+							<div className="modal-content">
+								<div className="modal-header">
+									<h5
+										className="modal-title"
+										id="modalCenterTitle"
+									>
+										Update Pool Information
+									</h5>
+									<button
+										type="button"
+										className="close"
+										data-dismiss="modal"
+										aria-label="Close"
+									>
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div className="modal-body">
+									{this.state.errorMsgModal ? (
+										<p className="text-danger text-center">
+											{this.state.errorMsgModal}
+										</p>
+									) : null}
+									{this.state.successMsgModal ? (
+										<p className="text-success text-center">
+											{this.state.successMsgModal}
+										</p>
+									) : null}
+									<div className="form-group">
+										<label>Name</label>
+										<input
+											type="text"
+											className="form-control"
+											placeholder="Name"
+											value={this.state.editName}
+											onChange={this.changeHandler}
+											name="editName"
+											required
+										/>
+									</div>
+									<div className="form-group">
+										<label>Neighborhood</label>
+										<input
+											type="text"
+											className="form-control"
+											placeholder="Neighborhood"
+											value={this.state.editNeighborhood}
+											onChange={this.changeHandler}
+											name="editNeighborhood"
+											required
+										/>
+									</div>
+									<div className="form-group">
+										<label>Description</label>
+										<input
+											type="text"
+											className="form-control"
+											placeholder="Description"
+											value={this.state.editDescription}
+											onChange={this.changeHandler}
+											name="editDescription"
+										/>
+									</div>
+								</div>
+								<div className="modal-footer">
+									<button
+										type="button"
+										className="btn btn-secondary"
+										data-dismiss="modal"
+									>
+										Close
+									</button>
+									<button
+										type="button"
+										className="btn btn-primary"
+										onClick={this.editPoolInformation}
+									>
+										Send request
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		);
