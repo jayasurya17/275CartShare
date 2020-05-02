@@ -118,7 +118,15 @@ class OrdersComponent extends Component {
             total = subTotal + tax + convenienceFee
         let status = []
         let statusOfOrder = this.props.order[0].orders.status;
-        if (statusOfOrder === "Delivered by someone else") {
+        var myId = this.props.order[0].orders.user.id;
+        var pickUpPoolerId = 0;
+        if(this.props.order[0].orders.pickupPooler != null){
+            pickUpPoolerId = this.props.order[0].orders.pickupPooler.id;
+        }
+        else{
+            pickUpPoolerId = null;
+        }
+        if (statusOfOrder === "Delivered" && pickUpPoolerId != null && myId != pickUpPoolerId) {
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # {this.props.order[0].orders.id}</h5></div>
@@ -133,28 +141,28 @@ class OrdersComponent extends Component {
                     </div>
                 </div>
             )
-        } else if (statusOfOrder === "Was picked up by myself") {
+        } else if (statusOfOrder === "Delivered" && pickUpPoolerId != null && myId === pickUpPoolerId) {
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # 291</h5></div>
                     <div className="col-md-8"><h5 className="text-success">Picked up from {this.props.order[0].orders.store.storeName}</h5></div>
                 </div>
             )
-        } else if (statusOfOrder === "Waiting to be picked up by someone else. Nobody has requested to pickup the order yet.") {
+        } else if (statusOfOrder === "Ordered" || pickUpPoolerId == null) {
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # 291</h5></div>
                     <div className="col-md-8"><h5 className="text-warning">Waiting to be picked up by fellow pooler</h5></div>
                 </div>
             )
-        } else if (statusOfOrder === "Waiting to be picked up by someone else from the store. Someone has requested to pickup but not taken it from the store") {
+        } else if (statusOfOrder === "Confirmed") {
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # 291</h5></div>
                     <div className="col-md-8"><h5 className="text-info">A fellow pooler will be picking up this order soon</h5></div>
                 </div>
             )
-        } else if (statusOfOrder === "Fellow pooler has picked up the order from store") {
+        } else if (statusOfOrder === "PickedUp") {
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # 291</h5></div>
