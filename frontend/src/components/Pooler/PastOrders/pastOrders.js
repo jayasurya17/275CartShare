@@ -17,8 +17,21 @@ class PastOrders extends Component {
     componentDidMount() {
 
         // Set state as fetched when you get response
-        this.setState({
-            fetched: true
+        axios.get('/orders/pastOrders/'.concat(localStorage.getItem('275UserId')))
+        .then((res) => {
+            if(res.status === 200){
+                this.setState({
+                    fetched: true,
+                    allOrders: res.data
+                })
+            }
+        })
+        .catch((err) => {
+            this.setState({
+                fetched: true,
+                allOrders: []
+            })
+            alert(err.response.data);
         })
     }
 
@@ -37,7 +50,7 @@ class PastOrders extends Component {
                     <Header />
                     <Navbar />
 
-                    <p className="p-5 display-4 text-center">You do not have any orders that has to be delivered</p>
+                    <p className="p-5 display-4 text-center">You do not have any past orders</p>
 
                 </div>
             )
@@ -87,14 +100,14 @@ class OrdersComponent extends Component {
         let allProducts = []
         let subTotal = 0
         let price
-        for (let product of ["productObj", "productObj"]) {
-            price = 6.4
+        for (let product of this.props.order) {
+            price = product.productPrice
             subTotal += price
             allProducts.push(
                 <div className="row p-2 border-left border-right">
-                    <div className="col-md-3"><img src="https://toppng.com/uploads/preview/clipart-free-seaweed-clipart-draw-food-placeholder-11562968708qhzooxrjly.png" alt="..." class="img-thumbnail" /></div>
-                    <div className="col-md-3">Product Name</div>
-                    <div className="col-md-1">2</div>
+                    <div className="col-md-3"><img src={product.productImage} alt="..." class="img-thumbnail" /></div>
+                    <div className="col-md-3">{product.productName}</div>
+                    <div className="col-md-1">{product.quantity}</div>
                     <div className="col-md-3">3.2 / KG</div>
                     <div className="col-md-2">{price}</div>
                 </div>
@@ -104,19 +117,19 @@ class OrdersComponent extends Component {
             convenienceFee = subTotal * 0.005,
             total = subTotal + tax + convenienceFee
         let status = []
-        let statusOfOrder = ""
+        let statusOfOrder = this.props.order[0].orders.status;
         if (statusOfOrder === "Delivered by someone else") {
             status.push(
                 <div className="row p-2 border">
-                    <div className="col-md-4"><h5>Order # 291</h5></div>
+                    <div className="col-md-4"><h5>Order # {this.props.order[0].orders.id}</h5></div>
                     <div className="col-md-6 offset-md-2"><button className="btn btn-success w-100">Mark as not delivered</button></div>
                 </div>
             )
             status.push(
                 <div className="row p-2 bg-secondary text-white">
                     <div className="col-md-12">
-                        <h5><span className="font-weight-light">Picked up from: </span>Store Name</h5>
-                        <h5><span className="font-weight-light">Deliver By: </span>Jayasurya</h5>
+                        <h5><span className="font-weight-light">Picked up from: </span>{this.props.order[0].orders.store.storeName}</h5>
+                        <h5><span className="font-weight-light">Deliver By: </span>{this.props.order[0].orders.pickupPooler.screenName}</h5>
                     </div>
                 </div>
             )
@@ -124,17 +137,17 @@ class OrdersComponent extends Component {
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # 291</h5></div>
-                    <div className="col-md-8"><h5 className="text-success">Picked up from Store Name</h5></div>
+                    <div className="col-md-8"><h5 className="text-success">Picked up from {this.props.order[0].orders.store.storeName}</h5></div>
                 </div>
             )
-        } else if (statusOfOrder === "Waiting to be up by someone else. Nobody has requested to pickup the order yet.") {
+        } else if (statusOfOrder === "Waiting to be picked up by someone else. Nobody has requested to pickup the order yet.") {
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # 291</h5></div>
                     <div className="col-md-8"><h5 className="text-warning">Waiting to be picked up by fellow pooler</h5></div>
                 </div>
             )
-        } else if (statusOfOrder === "Waiting to be up by someone else from the store. Someone has requested to pickup but not taken it from the store") {
+        } else if (statusOfOrder === "Waiting to be picked up by someone else from the store. Someone has requested to pickup but not taken it from the store") {
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # 291</h5></div>
