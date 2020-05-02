@@ -90,7 +90,7 @@ class PickupOrders extends Component {
 class OrdersComponent extends Component {
 
     render() {
-
+        console.log(this.props.order)
         let allProducts = []
         for (let product of this.props.order) {
             allProducts.push(

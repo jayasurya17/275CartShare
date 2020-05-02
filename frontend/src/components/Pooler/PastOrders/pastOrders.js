@@ -96,7 +96,7 @@ class OrdersComponent extends Component {
                     <div className="col-md-3">Product Name</div>
                     <div className="col-md-1">2</div>
                     <div className="col-md-3">3.2 / KG</div>
-                    <div className="col-md-2">{price}</div>
+                    <div className="col-md-2">{price.toFixed(2)}</div>
                 </div>
             )
         }

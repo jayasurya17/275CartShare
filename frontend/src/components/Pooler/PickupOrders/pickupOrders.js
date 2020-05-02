@@ -159,7 +159,7 @@ class OrdersComponent extends Component {
 					<div className='col-md-3'>
 						{product.productPrice} / {product.productUnit}
 					</div>
-					<div className='col-md-2'>{price}</div>
+					<div className='col-md-2'>{price.toFixed(2)}</div>
 				</div>
 			)
 		}
