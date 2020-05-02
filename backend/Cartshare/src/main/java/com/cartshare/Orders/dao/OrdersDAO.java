@@ -73,8 +73,9 @@ public class OrdersDAO {
 	}
 
 	public List<Orders> findAllOrdersToBePickedup() {
-		return ordersRepository.findAllOrdersByStatus("Ordered");
+		return ordersRepository.findAllOrdersByStatus("Confirmed");
 	}
+	
 	public List<Orders> findAssociatedOrders(Orders o){
 		List<AssociatedOrders> l = associatedOrdersRepository.findByOrder(o);
 		if(l == null || l.size() == 0)	return null;
@@ -87,5 +88,24 @@ public class OrdersDAO {
 
 	public List<Orders> findAllOrdersByStore(Store store) {
 		return ordersRepository.findAllOrdersByStore(store);
+	}
+
+	public void updateOrderStatus() {
+		List<Orders> allOrders = ordersRepository.findAll();
+		for (Orders order: allOrders) {
+			Date orderTime = order.getTimestamp();
+			Date now = new Date();
+
+			long twoDays = (long) 172800000;
+			long diffInMillies = Math.abs(now.getTime() - orderTime.getTime());
+			System.out.println(order.getStatus());
+			if (diffInMillies >= twoDays && order.getStatus().compareTo("Ordered") == 0 && order.getPickupPooler() == null) {
+				System.out.println("Need to mark as cancelled");
+				order.setStatus("Cancelled");
+				ordersRepository.save(order);
+				// associatedOrdersRepository.deleteByOrderAndAssociated(order, associated)
+			}
+			
+		}
 	}
 }

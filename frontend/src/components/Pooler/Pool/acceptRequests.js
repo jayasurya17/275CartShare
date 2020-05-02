@@ -89,6 +89,7 @@ class SupportReferral extends Component {
 	manageRequest = (reqParams) => {
 		axios.put(`/poolMembers/manageRequest?poolId=${this.state.poolDetails.id}&poolMemberId=${reqParams.poolMemberId}&status=${reqParams.status}`)
 		.then(() => {
+			this.props.update()
 			this.getDetails()
 		})
 		.catch((error) => {

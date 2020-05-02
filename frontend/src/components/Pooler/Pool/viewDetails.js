@@ -52,9 +52,8 @@ class ViewDetails extends Component {
 		};
 	}
 
-	componentWillMount = async () => {
-		await axios
-			.get("/poolMembers/getPoolByUser/" + this.state.userId)
+	componentDidMount = () => {
+		axios.get("/poolMembers/getPoolByUser/" + this.state.userId)
 			.then((response) => {
 				if (response.status === 200) {
 					console.log(response.data);
@@ -62,6 +61,7 @@ class ViewDetails extends Component {
 						poolDetails: response.data.pool,
 						poolReceived: true,
 					});
+					this.fetchPoolMembers();
 				} else {
 					console.log(response.data);
 					this.setState({
@@ -75,39 +75,35 @@ class ViewDetails extends Component {
 					poolReceived: false,
 				});
 			});
-		if (this.state.poolReceived) {
-			await axios
-				.get("/poolMembers/viewPoolMembers", {
-					params: {
-						poolId: this.state.poolDetails.id,
-					},
-				})
-				.then((response) => {
-					if (response.status === 200) {
-						// console.log(response);
-
-						let members = response.data.map((member) => {
-							return member.member;
-						});
-						console.log(members);
-						this.setState({
-							members: members,
-							membersReceived: true,
-						});
-					} else {
-						this.setState({
-							membersReceived: true,
-						});
-					}
-				})
-				.catch((error) => {
-					console.log(error.response.data);
-					this.setState({
-						membersReceived: true,
-					});
-				});
-		}
 	};
+
+	fetchPoolMembers = () => {
+		axios.get("/poolMembers/viewPoolMembers", {
+			params: {
+				poolId: this.state.poolDetails.id,
+			},
+		})
+		.then((response) => {
+			if (response.status === 200) {
+				let members = response.data.map((member) => {
+					return member.member;
+				});
+				this.setState({
+					members: members,
+					membersReceived: true,
+				});
+			} else {
+				this.setState({
+					membersReceived: true,
+				});
+			}
+		})
+		.catch((error) => {
+			this.setState({
+				membersReceived: true,
+			});
+		});
+	}
 
 	render() {
 		let poolMembers = [];
@@ -138,6 +134,7 @@ class ViewDetails extends Component {
 						userId={this.state.userId}
 						screenName={this.state.userScreenName}
 						poolDetails={this.state.poolDetails}
+						update={this.fetchPoolMembers} 
 					/>
 				);
 			} else {
@@ -147,6 +144,7 @@ class ViewDetails extends Component {
 						userId={this.state.userId}
 						screenName={this.state.userScreenName}
 						poolDetails={this.state.poolDetails}
+						update={this.fetchPoolMembers} 
 					/>
 				);
 			}
