@@ -138,6 +138,9 @@ class OrdersComponent extends Component {
 			showQRcode.push(
 				<QRCode value={`You are picking up order #${this.props.order[0].orders.id}`} />
 			)
+			scanQRcode.push(
+				<button className='btn btn-success' onClick={this.handleScanQR}>Scan QR code</button>
+			)
 			associatedOrders.push(
 				<h3 className="font-weight-light text-center">There are no associated orders</h3>
 			)
