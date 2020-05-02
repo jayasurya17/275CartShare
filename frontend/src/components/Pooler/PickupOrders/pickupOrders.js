@@ -15,6 +15,10 @@ class PickupOrders extends Component {
 	}
 
 	componentDidMount() {
+		this.fetchAllOrders();
+	}
+
+	fetchAllOrders = () => {
 		axios
 			.get(`/orders/ordersToPickup?userId=${localStorage.getItem('275UserId')}`)
 			.then(response => {
@@ -31,6 +35,7 @@ class PickupOrders extends Component {
 				})
 			})
 	}
+
 	generateQR = e => {
 		alert('testing ')
 	}
@@ -63,7 +68,7 @@ class PickupOrders extends Component {
 		for (let order of this.state.allOrders) {
 			temp.push(
 				<div className='col-md-4'>
-					<OrdersComponent slNo={slNo + 1} order={order} />
+					<OrdersComponent slNo={slNo + 1} order={order} update={this.fetchAllOrders}/>
 				</div>
 			)
 			slNo++
@@ -117,7 +122,7 @@ class OrdersComponent extends Component {
 		.then((res) => {
 			if(res.status === 200){
 				alert("The order and its associated orders have been marked as picked up, and an email has been sent to you regarding the delivery instructions");
-				window.location.reload(false);
+				this.props.update();
 			}
 		})
 		.catch((err) => {

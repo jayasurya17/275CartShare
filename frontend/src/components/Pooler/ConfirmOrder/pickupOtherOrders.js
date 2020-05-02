@@ -108,7 +108,7 @@ class OtherOrders extends Component {
         return (
             <div className="p-3">
                 <div className="row p-2 bg-secondary text-white">
-                    <div className="col-md-3"><h5>Order: {this.props.slNo}</h5></div>
+                    <div className="col-md-3"><h5>Order: {this.props.order[0].orders.id}</h5></div>
                     <div className="col-md-4">Name</div>
                     <div className="col-md-2">Brand</div>
                     <div className="col-md-2">Quantity</div>

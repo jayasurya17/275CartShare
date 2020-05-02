@@ -333,6 +333,31 @@ public class OrdersController {
 
     }
 
+    @PutMapping(value = "/notDelivered/{id}", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> markAsNotDelivered(@Valid @PathVariable(name = "id") String id) {
+        try{
+            Long l;
+            try {
+                l = Long.parseLong(id);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Order ID");
+            }
+            Orders o = ordersDAO.findOrdersById(l);
+            if(o == null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Order ID");
+            }
+            o.setStatus("NotDelivered");
+            ordersDAO.saveOrderDetails(o);
+            User u = o.getUser();
+            MailController mc = new MailController();
+            mc.send(o.getPickupPooler().getEmail(), "Update about one of the orders you delivered", "User " + u.getScreenName() + " has marked order # " + o.getId() + " as Not Delivered");
+            return ResponseEntity.status(HttpStatus.OK).body("Order successfully marked as Not Delivered");
+        } catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     @PostMapping(value = "/update/cart", produces = { "application/json", "application/xml" })
     public ResponseEntity<?> updateQuantityOfProductInCart(@RequestBody OrderRequest orderRequest) {
         try {

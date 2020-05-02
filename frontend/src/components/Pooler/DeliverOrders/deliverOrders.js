@@ -9,27 +9,34 @@ class DeliverOrders extends Component {
     constructor() {
         super()
         this.state = {
-            allOrders: [1, 2, 3, 4],
+            allOrders: [],
             fetched: false
         }
     }
 
     componentDidMount() {
-        
+        this.fetchAllOrders();
+    }
+
+    fetchAllOrders = () => {
         // Set state as fetched when you get response
         axios.get('/orders/deliver/'.concat(localStorage.getItem('275UserId')))
-        .then((res) => {
-            if(res.status === 200){
-                console.log('delivery', res.data);
+            .then((res) => {
+                if (res.status === 200) {
+                    console.log('delivery', res.data);
+                    this.setState({
+                        fetched: true,
+                        allOrders: res.data
+                    });
+                }
+            })
+            .catch((err) => {
+                // alert(err.response.data);
                 this.setState({
                     fetched: true,
-                    allOrders: res.data
-                });   
-            }
-        })
-        .catch((err) => {
-            alert(err.response.data);
-        })
+                    allOrders: []
+                })
+            })
     }
 
     render() {
@@ -38,6 +45,8 @@ class DeliverOrders extends Component {
                 <div>
                     <Header />
                     <Navbar />
+
+                    <p className="p-5 display-4 text-center">Fetching...</p>
                 </div>
             )
         }
@@ -59,7 +68,7 @@ class DeliverOrders extends Component {
         for (let order of this.state.allOrders) {
             temp.push(
                 <div className="col-md-4">
-                    <OrdersComponent slNo={slNo + 1} order={order}/>
+                    <OrdersComponent slNo={slNo + 1} order={order} update={this.fetchAllOrders}/>
                 </div>
             )
             slNo++
@@ -95,15 +104,15 @@ class OrdersComponent extends Component {
     markDelivered = () => {
         var orderId = this.props.order[0].orders.id;
         axios.put('/orders/deliver/'.concat(orderId), null, null)
-        .then((res) => {
-            if(res.status === 200){
-                alert('The order has been marked as delivered');
-                window.location.reload(false);
-            }
-        })
-        .catch((err) => {
-            alert(err.response.data);
-        })
+            .then((res) => {
+                if (res.status === 200) {
+                    alert('The order has been marked as delivered');
+                    this.props.update();
+                }
+            })
+            .catch((err) => {
+                alert(err.response.data);
+            })
     }
 
     render() {
