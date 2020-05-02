@@ -8,4 +8,5 @@ import com.cartshare.models.Orders;
 
 public interface AssociatedOrdersRepository extends JpaRepository<AssociatedOrders, Long> {
     public List<AssociatedOrders> findByOrder(Orders o);
+    public List<AssociatedOrders> deleteByOrderAndAssociated(Orders order, Orders associated);
 }

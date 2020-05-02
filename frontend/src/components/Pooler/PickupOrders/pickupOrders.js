@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import Header from '../../Common/header'
 import Navbar from '../../Common/navbar'
+import AssociatedOrders from './associatedOrders'
 import axios from 'axios'
-var QRCode = require('qrcode.react')
+import QRCode from 'qrcode.react'
 
 class PickupOrders extends Component {
 	constructor() {
@@ -10,7 +11,6 @@ class PickupOrders extends Component {
 		this.state = {
 			allOrders: [],
 			fetched: false,
-			hi: 'hi'
 		}
 	}
 
@@ -86,7 +86,63 @@ class PickupOrders extends Component {
 }
 
 class OrdersComponent extends Component {
+
+
+	constructor() {
+		super()
+		this.state = {
+			associatedOrders: [],
+			isFetched: false
+		}
+	}
+	componentDidMount() {
+		axios.get(`/orders/associatedOrders?orderId=${this.props.order[0].orders.id}`)
+			.then((response) => {
+				this.setState({
+					associatedOrders: response.data,
+					isFetched: true
+				})
+			})
+			.catch(() => {
+				this.setState({
+					isFetched: true
+				})
+			})
+	}
+
 	render() {
+
+		let associatedOrders = []
+		let showQRcode = []
+		let scanQRcode = []
+		if (this.state.isFetched === false) {
+			associatedOrders.push(
+				<h3 className="font-weight-light text-center">Fetching all your associated orders and generating QR code..</h3>
+			)
+		} else if (this.state.associatedOrders.length === 0) {
+			showQRcode.push(
+				<QRCode value={`You are picking up order #${this.props.order[0].orders.id}`} />
+			)
+			associatedOrders.push(
+				<h3 className="font-weight-light text-center">There are no associated orders</h3>
+			)
+		} else {
+			var text = `You are picking up order #${this.props.order[0].orders.id} and associated orders`
+			for (var order of this.state.associatedOrders) {
+				associatedOrders.push(
+					<AssociatedOrders order={order} />
+				)
+				text += ` #${order[0].orders.id}`
+			}
+			showQRcode.push(
+				<QRCode value={text} />
+			)
+			scanQRcode.push(
+				<button className='btn btn-success'>Scan QR code</button>
+			)
+		}
+
+
 		let allProducts = []
 		let subTotal = 0
 		let price
@@ -161,10 +217,14 @@ class OrdersComponent extends Component {
 							</div>
 							<div className='modal-body'>
 								<div align='center'>
-									<QRCode value={`You have picked up order #${this.props.order[0].orders.id} and associated orders`} />
+									{showQRcode}
+								</div>
+								<div>
+									{associatedOrders}
 								</div>
 							</div>
 							<div className='modal-footer'>
+								{scanQRcode}
 								<button type='button' className='btn btn-secondary' data-dismiss='modal'>Close</button>
 							</div>
 						</div>
