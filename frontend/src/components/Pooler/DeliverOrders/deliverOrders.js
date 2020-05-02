@@ -17,8 +17,18 @@ class DeliverOrders extends Component {
     componentDidMount() {
         
         // Set state as fetched when you get response
-        this.setState({
-            fetched: true
+        axios.get('/orders/deliver/'.concat(localStorage.getItem('275UserId')))
+        .then((res) => {
+            if(res.status === 200){
+                console.log('delivery', res.data);
+                this.setState({
+                    fetched: true,
+                    allOrders: res.data
+                });   
+            }
+        })
+        .catch((err) => {
+            alert(err.response.data);
         })
     }
 
@@ -49,7 +59,7 @@ class DeliverOrders extends Component {
         for (let order of this.state.allOrders) {
             temp.push(
                 <div className="col-md-4">
-                    <OrdersComponent />
+                    <OrdersComponent slNo={slNo + 1} order={order}/>
                 </div>
             )
             slNo++
@@ -82,33 +92,48 @@ class DeliverOrders extends Component {
 
 class OrdersComponent extends Component {
 
+    markDelivered = () => {
+        var orderId = this.props.order[0].orders.id;
+        axios.put('/orders/deliver/'.concat(orderId), null, null)
+        .then((res) => {
+            if(res.status === 200){
+                alert('The order has been marked as delivered');
+                window.location.reload(false);
+            }
+        })
+        .catch((err) => {
+            alert(err.response.data);
+        })
+    }
+
     render() {
 
         let allProducts = []
-        for (let product of ["productObj", "productObj"]) {
+        for (let product of this.props.order) {
             allProducts.push(
                 <div className="row p-2">
-                    <div className="col-md-3"><img src="https://toppng.com/uploads/preview/clipart-free-seaweed-clipart-draw-food-placeholder-11562968708qhzooxrjly.png" alt="..." class="img-thumbnail" /></div>
-                    <div className="col-md-4">Product Name</div>
-                    <div className="col-md-2">Brand</div>
-                    <div className="col-md-2">8</div>
+                    <div className="col-md-3"><img src={product.productImage} alt="..." class="img-thumbnail" /></div>
+                    <div className="col-md-4">{product.productName}</div>
+                    <div className="col-md-2">{product.productBrand}</div>
+                    <div className="col-md-2">{product.quantity}</div>
                 </div>
             )
         }
 
+        var addr = this.props.order[0].orders.user.address;
 
         return (
             <div className="p-3 border">
                 <div className="row p-2 bg-secondary text-white">
                     <div className="col-md-12">
-                        <h5><span className="font-weight-light">Picked up from: </span>Store Name</h5>
-                        <h5><span className="font-weight-light">Deliver to: </span>Jayasurya</h5>
-                        <h5>1334 The Alameda, San Jose, CA - 95126</h5>
+                        <h5><span className="font-weight-light">Picked up from: </span>{this.props.order[0].orders.store.storeName}</h5>
+                        <h5><span className="font-weight-light">Deliver to: </span>{this.props.order[0].orders.user.screenName}</h5>
+                        <h5>{`${addr.street}, ${addr.city}, ${addr.state}, ${addr.zipcode}`}</h5>
                     </div>
                 </div>
                 <div className="row p-2 bg-secondary text-white">
-                    <div className="col-md-4"><h5>Order # 291</h5></div>
-                    <div className="col-md-6 offset-md-2"><button className="btn btn-success w-100">Mark as delivered</button></div>
+                    <div className="col-md-4"><h5>Order #{this.props.order[0].orders.id}</h5></div>
+                    <div className="col-md-6 offset-md-2"><button className="btn btn-success w-100" onClick={this.markDelivered}>Mark as delivered</button></div>
                 </div>
                 <div className="row p-2 bg-secondary text-white">
                     {/* <div className="col-md-3"><h5>Order: {this.props.slNo}</h5></div> */}
