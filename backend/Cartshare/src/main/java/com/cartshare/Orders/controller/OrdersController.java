@@ -237,7 +237,7 @@ public class OrdersController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This order and all it's associated orders have already been picked up");
             }
 
-            order.setStatus("Was picked up by myself");
+            order.setStatus("Delivered");
 
             ordersDAO.saveOrderDetails(order);
             MailController mc = new MailController();
@@ -252,7 +252,7 @@ public class OrdersController {
                 for (Orders o : associated) {
                     User u = o.getUser();
                     o.setPickupPooler(user);
-                    o.setStatus("Fellow pooler has picked up the order from store");
+                    o.setStatus("PickedUp");
                     ordersDAO.saveOrderDetails(o);
                     Address a = u.getAddress();
                     message += "<h1>User " + u.getScreenName() + "'s order:</h1></br>Address: " + a.getStreet() + ", "
@@ -320,7 +320,7 @@ public class OrdersController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Order ID");
             }
             Orders order = ordersDAO.findOrdersById(l);
-            order.setStatus("Delivered by someone else");
+            order.setStatus("Delivered");
             ordersDAO.saveOrderDetails(order);
             MailController mc = new MailController();
             mc.send(order.getUser().getEmail(), "Update to your order status",
