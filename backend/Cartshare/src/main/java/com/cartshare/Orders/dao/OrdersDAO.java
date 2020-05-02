@@ -64,6 +64,11 @@ public class OrdersDAO {
 		return ordersRepository.findAllOrdersByPickupPoolerAndStatusAndUser(user, "Confirmed", user);
 	}
 
+	public List<Orders> findOrdersToBeDeliveredByUser(User user) {
+		// return ordersRepository.findAllOrdersByPickupPoolerAndStatus(user, "Confirmed");
+		return ordersRepository.findAllOrdersByPickupPoolerAndStatus(user, "PickedUp");
+	}
+
 	public Orders findOrdersById(Long id) {
 		return ordersRepository.findOrdersById(id);
 	}

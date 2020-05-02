@@ -163,7 +163,7 @@ public class OrdersController {
     }
 
     @GetMapping(value = "/pickUp/associatedOrders/{id}", produces = { "application/json", "application/xml" })
-    public ResponseEntity<?> pickUpOrder(@Valid @PathVariable(name = "id") String id) {
+    public ResponseEntity<?> pickUpAssociatedOrder(@Valid @PathVariable(name = "id") String id) {
         try {
             long l;
             try {
@@ -185,25 +185,59 @@ public class OrdersController {
 
     }
 
-    @GetMapping(value = "/pickUp/{orderId}/{userId}", produces = { "application/json", "application/xml" })
-    public ResponseEntity<?> pickUpOrder(@Valid @PathVariable(name = "orderId") String orderId,
-            @PathVariable(name = "userId") String userId) {
+    @GetMapping(value = "/pastOrders/{userId}", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> getPastOrdersOfUser(@Valid @PathVariable(name = "userId") String userId) {
+        try {
+            Long l;
+            try {
+                l = Long.parseLong(userId);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user id");
+            }
+            User u = userDAO.findById(l);
+            if(u == null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No user with given ID");
+            }
+            List<Orders> list = ordersDAO.findOrdersByUser(u);
+            if(list == null || list.size() == 0){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No past orders");
+            }
+            List<Set<OrderItems>> listOfProductsInOrders = new ArrayList<>();
+
+            for (Orders order : list) {
+                listOfProductsInOrders.add(order.getOrderItems());
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(listOfProductsInOrders);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+
+    @GetMapping(value = "/pickUp/{orderId}", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> pickUpOrder(@Valid @PathVariable(name = "orderId") String orderId) {
         try {
             ordersDAO.updateOrderStatus();
-            Long l, l1;
+            Long l;
             try {
                 l = Long.parseLong(orderId);
-                l1 = Long.parseLong(userId);
             } catch (NumberFormatException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid order id or user id");
             }
             Orders order = ordersDAO.findOrdersById(l);
-            User user = userDAO.findById(l1);
+            User user = order.getUser();
             if (order == null || user == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("order or user with the provided Id doesn't exist");
             }
-            order.setStatus("PickedUp");
+
+            if(order.getStatus().compareTo("Confirmed") != 0){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This order and all it's associated orders have already been picked up");
+            }
+
+            order.setStatus("Delivered");
 
             ordersDAO.saveOrderDetails(order);
             MailController mc = new MailController();
@@ -214,25 +248,62 @@ public class OrdersController {
             // send email to confirm order pick up to all associated poolers
             OrderDetails od = new OrderDetails();
             String message = "";
-            for (Orders o : associated) {
-                User u = o.getUser();
-                o.setPickupPooler(user);
-                o.setStatus("PickedUp");
-                ordersDAO.saveOrderDetails(o);
-                Address a = u.getAddress();
-                message += "<h1>User " + u.getScreenName() + "'s order:</h1></br>Address: " + a.getStreet() + ", "
-                        + a.getCity() + ", " + a.getState() + ", " + a.getZipcode() + "</br>Order details: </br>"
-                        + od.GenerateProductTableWithPrice(o.getOrderItems()) + "</br></br>";
-                // hs.add(o.getUser());
-                mc.send(u.getEmail(), "Order #" + o.getId() + " picked up",
-                        "Your cartshare order #" + o.getId() + " has been picked up by " + user.getScreenName());
+            if(associated != null){
+                for (Orders o : associated) {
+                    User u = o.getUser();
+                    o.setPickupPooler(user);
+                    o.setStatus("PickedUp");
+                    ordersDAO.saveOrderDetails(o);
+                    Address a = u.getAddress();
+                    message += "<h1>User " + u.getScreenName() + "'s order:</h1></br>Address: " + a.getStreet() + ", "
+                            + a.getCity() + ", " + a.getState() + ", " + a.getZipcode() + "</br>Order details: </br>"
+                            + od.GenerateProductTableWithPrice(o.getOrderItems()) + "</br></br>";
+                    // hs.add(o.getUser());
+                    mc.send(u.getEmail(), "Order #" + o.getId() + " picked up",
+                            "Your cartshare order #" + o.getId() + " has been picked up by " + user.getScreenName());
+                }
             }
 
             // semd email to provide delivery instructions
             mc.sendHTML(user.getEmail(), "Delivery Instructions for the associated orders", message);
 
-            return ResponseEntity.status(HttpStatus.OK).body("Order picked up");
+            return ResponseEntity.status(HttpStatus.OK).body("Orders picked up");
         } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/deliver/{userId}", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> ordersToDeliver(@Valid @PathVariable(name = "userId") String userId) {
+        try{
+            long l;
+            try{
+                l = Long.parseLong(userId);
+            } catch(NumberFormatException e){
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user id");
+            }
+
+            User user = userDAO.findById(l);
+            if(user == null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User with ID doesn't exist");
+            }
+
+            List<Orders> list = ordersDAO.findOrdersToBeDeliveredByUser(user);
+            if(list == null || list.size() == 0){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No orders to be delivered");
+            }
+            List<Set<OrderItems>> listOfProductsInOrders = new ArrayList<>();
+
+            for (Orders order : list) {
+                listOfProductsInOrders.add(order.getOrderItems());
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(listOfProductsInOrders);
+
+            // return ResponseEntity.status(HttpStatus.OK).body(list);
+
+        } catch(Exception e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -260,6 +331,31 @@ public class OrdersController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
+    }
+
+    @PutMapping(value = "/notDelivered/{id}", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> markAsNotDelivered(@Valid @PathVariable(name = "id") String id) {
+        try{
+            Long l;
+            try {
+                l = Long.parseLong(id);
+            } catch (NumberFormatException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Order ID");
+            }
+            Orders o = ordersDAO.findOrdersById(l);
+            if(o == null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Order ID");
+            }
+            o.setStatus("NotDelivered");
+            ordersDAO.saveOrderDetails(o);
+            User u = o.getUser();
+            MailController mc = new MailController();
+            mc.send(o.getPickupPooler().getEmail(), "Update about one of the orders you delivered", "User " + u.getScreenName() + " has marked order # " + o.getId() + " as Not Delivered");
+            return ResponseEntity.status(HttpStatus.OK).body("Order successfully marked as Not Delivered");
+        } catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @PostMapping(value = "/update/cart", produces = { "application/json", "application/xml" })

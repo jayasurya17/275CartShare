@@ -15,9 +15,14 @@ class PickupOrders extends Component {
 	}
 
 	componentDidMount() {
+		this.fetchAllOrders();
+	}
+
+	fetchAllOrders = () => {
 		axios
 			.get(`/orders/ordersToPickup?userId=${localStorage.getItem('275UserId')}`)
 			.then(response => {
+				console.log('pickup', response.data);
 				this.setState({
 					fetched: true,
 					allOrders: response.data
@@ -30,6 +35,7 @@ class PickupOrders extends Component {
 				})
 			})
 	}
+
 	generateQR = e => {
 		alert('testing ')
 	}
@@ -62,7 +68,7 @@ class PickupOrders extends Component {
 		for (let order of this.state.allOrders) {
 			temp.push(
 				<div className='col-md-4'>
-					<OrdersComponent slNo={slNo + 1} order={order} />
+					<OrdersComponent slNo={slNo + 1} order={order} update={this.fetchAllOrders}/>
 				</div>
 			)
 			slNo++
@@ -110,6 +116,20 @@ class OrdersComponent extends Component {
 			})
 	}
 
+	handleScanQR = () => {
+		var orderId = this.props.order[0].orders.id;
+		axios.get('/orders/pickUp/'.concat(orderId))
+		.then((res) => {
+			if(res.status === 200){
+				alert("The order and its associated orders have been marked as picked up, and an email has been sent to you regarding the delivery instructions");
+				this.props.update();
+			}
+		})
+		.catch((err) => {
+			alert(err.response.data);
+		})
+	}
+
 	render() {
 
 		let associatedOrders = []
@@ -122,6 +142,9 @@ class OrdersComponent extends Component {
 		} else if (this.state.associatedOrders.length === 0) {
 			showQRcode.push(
 				<QRCode value={`You are picking up order #${this.props.order[0].orders.id}`} />
+			)
+			scanQRcode.push(
+				<button className='btn btn-success' onClick={this.handleScanQR}>Scan QR code</button>
 			)
 			associatedOrders.push(
 				<h3 className="font-weight-light text-center">There are no associated orders</h3>
@@ -138,7 +161,7 @@ class OrdersComponent extends Component {
 				<QRCode value={text} />
 			)
 			scanQRcode.push(
-				<button className='btn btn-success'>Scan QR code</button>
+				<button className='btn btn-success' onClick={this.handleScanQR}>Scan QR code</button>
 			)
 		}
 

@@ -128,7 +128,7 @@ public class PoolController {
 			pool.setZipcode(zipcode);
 			pool.setId(poolId);
 			
-			Pool result = poolDAO.createPool(pool, pooler);
+			Pool result = poolDAO.editPool(pool, pooler);
 			if(result == null) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Pooler");
 			}

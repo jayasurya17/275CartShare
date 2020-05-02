@@ -68,4 +68,18 @@ public class PoolDAO {
 		return null;
 	}
 	
+	public Pool editPool(Pool pool, Long pooler_id) {
+		User pooler = userRepository.findById(pooler_id).orElse(null);
+		
+		if(pooler != null) {
+			System.out.println("Updating Pool");
+			pool.setPooler(pooler);
+			Pool result = poolRepository.save(pool);
+			System.out.println(result);
+			
+			return result;
+		}
+		return null;
+	}
+	
 }
