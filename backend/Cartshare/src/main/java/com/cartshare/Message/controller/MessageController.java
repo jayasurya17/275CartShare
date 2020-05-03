@@ -46,6 +46,9 @@ public class MessageController {
         if (!userDAO.screenNameExists(from) || !userDAO.screenNameExists(to)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid user ID");
         }
+        if(from.equals(to))
+        	 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cannot send messages to yourself");
+        	
         if(message == null || message.length() == 0)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid message");
 
