@@ -1,11 +1,51 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router'
+import axios from 'axios'
 import Header from '../../Common/header';
 import CreatePool from './createPool';
 import BrowsePools from './browsePools';
 
 class Home extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            userId : localStorage.getItem("275UserId"),
+            poolMember : false,
+            redURL : ''
+        }
+    }
 
+    componentWillMount = () => {
+        axios
+			.get("/poolMembers/getPoolByUser/" + this.state.userId)
+			.then((response) => {
+				if (response.status === 200) {
+					console.log(response.data);
+					this.setState({
+                        poolMember : true,
+                        redURL: '/pooler/view/pool'
+					});
+					
+				} else {
+					console.log(response.data);
+					this.setState({
+                        poolMember: false,
+                        redURL: ''
+					});
+				}
+			})
+			.catch((error) => {
+				alert(error.response.data);
+				this.setState({
+                    poolMember: false,
+                    redURL: ''
+				});
+			});
+    }
     render() {
+        if(this.state.poolMember === true){
+            return <Redirect to={this.state.redURL} />
+        }
 
         return (
             <div>
