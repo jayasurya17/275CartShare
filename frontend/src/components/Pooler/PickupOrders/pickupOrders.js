@@ -19,10 +19,8 @@ class PickupOrders extends Component {
 	}
 
 	fetchAllOrders = () => {
-		axios
-			.get(`/orders/ordersToPickup?userId=${localStorage.getItem('275UserId')}`)
+		axios.get(`/orders/ordersToPickup?userId=${localStorage.getItem('275UserId')}`)
 			.then(response => {
-				console.log('pickup', response.data);
 				this.setState({
 					fetched: true,
 					allOrders: response.data
@@ -36,9 +34,6 @@ class PickupOrders extends Component {
 			})
 	}
 
-	generateQR = e => {
-		alert('testing ')
-	}
 
 	render() {
 		if (this.state.fetched === false) {
@@ -46,6 +41,8 @@ class PickupOrders extends Component {
 				<div>
 					<Header />
 					<Navbar />
+
+					<p className='p-5 display-4 text-center'>Fetching...</p>
 				</div>
 			)
 		}
@@ -55,31 +52,36 @@ class PickupOrders extends Component {
 					<Header />
 					<Navbar />
 
-					<p className='p-5 display-4 text-center'>
-						You do not have any orders waiting to be picked up
-          </p>
+					<p className='p-5 display-4 text-center'>You do not have any orders waiting to be picked up</p>
 				</div>
 			)
 		}
 
-		let orders = [],
-			slNo = 0,
-			temp = []
-		for (let order of this.state.allOrders) {
-			temp.push(
-				<div className='col-md-4'>
-					<OrdersComponent slNo={slNo + 1} order={order} update={this.fetchAllOrders}/>
-				</div>
-			)
-			slNo++
-			if (slNo % 3 === 0) {
-				orders.push(<div className='row'>{temp}</div>)
-				temp = []
-			}
-		}
-		if (temp.length !== 0) {
-			orders.push(<div className='row'>{temp}</div>)
-		}
+        let orders = [],
+            slNo = 0,
+            row1 = [],
+            row2 = [],
+            row3 = [],
+            rowNumber,
+            orderObj
+        for (slNo in this.state.allOrders) {
+            rowNumber = slNo % 3
+            orderObj = this.state.allOrders[slNo]
+            if (rowNumber === 0) {
+                row1.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
+            } else if (rowNumber === 1) {
+                row2.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
+            } else {
+                row3.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
+            }
+        }
+        orders.push(
+            <div className="row m-2">
+                <div className="col-md-4">{row1}</div>
+                <div className="col-md-4">{row2}</div>
+                <div className="col-md-4">{row3}</div>
+            </div>
+        )
 
 		return (
 			<div>
@@ -98,36 +100,61 @@ class OrdersComponent extends Component {
 		super()
 		this.state = {
 			associatedOrders: [],
-			isFetched: false
+			isFetched: false,
+			isProcessing: false,
 		}
 	}
+
 	componentDidMount() {
 		axios.get(`/orders/associatedOrders?orderId=${this.props.order[0].orders.id}`)
 			.then((response) => {
 				this.setState({
 					associatedOrders: response.data,
-					isFetched: true
+					isFetched: true,
+					isProcessing: false,
 				})
 			})
 			.catch(() => {
 				this.setState({
-					isFetched: true
+					isFetched: true,
+					isProcessing: false,
+				})
+			})
+	}
+
+	componentWillReceiveProps = (props) => {
+		this.setState({
+			isProcessing: false,
+		})
+		axios.get(`/orders/associatedOrders?orderId=${props.order[0].orders.id}`)
+			.then((response) => {
+				this.setState({
+					associatedOrders: response.data,
+					isFetched: true,
+				})
+			})
+			.catch(() => {
+				this.setState({
+					isFetched: true,
 				})
 			})
 	}
 
 	handleScanQR = () => {
+		this.setState({
+			isProcessing: true
+		})
 		var orderId = this.props.order[0].orders.id;
 		axios.get('/orders/pickUp/'.concat(orderId))
-		.then((res) => {
-			if(res.status === 200){
-				alert("The order and its associated orders have been marked as picked up, and an email has been sent to you regarding the delivery instructions");
-				this.props.update();
-			}
-		})
-		.catch((err) => {
-			alert(err.response.data);
-		})
+			.then((res) => {
+				if (res.status === 200) {
+					alert("The order and its associated orders have been marked as picked up, and an email has been sent to you regarding the delivery instructions");
+					this.props.update();
+				}
+			})
+			.catch((err) => {
+				alert(err.response.data);
+			})
 	}
 
 	render() {
@@ -144,7 +171,7 @@ class OrdersComponent extends Component {
 				<QRCode value={`You are picking up order #${this.props.order[0].orders.id}`} />
 			)
 			scanQRcode.push(
-				<button className='btn btn-success' onClick={this.handleScanQR}>Scan QR code</button>
+				<button className='btn btn-success' onClick={this.handleScanQR} type='button' data-dismiss='modal'>Scan QR code</button>
 			)
 			associatedOrders.push(
 				<h3 className="font-weight-light text-center">There are no associated orders</h3>
@@ -161,10 +188,20 @@ class OrdersComponent extends Component {
 				<QRCode value={text} />
 			)
 			scanQRcode.push(
-				<button className='btn btn-success' onClick={this.handleScanQR}>Scan QR code</button>
+				<button className='btn btn-success' onClick={this.handleScanQR} type='button' data-dismiss='modal'>Scan QR code</button>
 			)
 		}
 
+		let checkoutButton = []
+		if (this.state.isProcessing === true) {
+			checkoutButton.push(
+				<p className="text-warning">Processing...</p>
+			)
+		} else {
+			checkoutButton.push(
+				<button key={this.props.order[0].orders.id} type='button' className='btn btn-warning w-100' data-target={'#modalCenter' + this.props.order[0].orders.id} data-toggle='modal' >Checkout</button>
+			)
+		}
 
 		let allProducts = []
 		let subTotal = 0
@@ -199,7 +236,7 @@ class OrdersComponent extends Component {
 						<h5>Store: {this.props.order[0].orders.store.storeName}</h5>
 					</div>
 					<div className='col-md-4'>
-						<button key={this.props.order[0].orders.id} type='button' className='btn btn-warning w-100' data-target={'#modalCenter' + this.props.order[0].orders.id} data-toggle='modal' >Checkout</button>
+						{checkoutButton}
 					</div>
 				</div>
 				<div className='row p-2 bg-secondary text-white'>

@@ -52,30 +52,29 @@ class PickupOrders extends Component {
 
         let orders = [],
             slNo = 0,
-            temp = []
-        for (let order of this.state.allOrders) {
-            temp.push(
-                <div className="col-md-4">
-                    <OrdersComponent slNo={slNo + 1} order={order} />
-                </div>
-            )
-            slNo++
-            if (slNo % 3 === 0) {
-                orders.push(
-                    <div className="row">
-                        {temp}
-                    </div>
-                )
-                temp = []
+            row1 = [],
+            row2 = [],
+            row3 = [],
+            rowNumber,
+            orderObj
+        for (slNo in this.state.allOrders) {
+            rowNumber = slNo % 3
+            orderObj = this.state.allOrders[slNo]
+            if (rowNumber === 0) {
+                row1.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
+            } else if (rowNumber === 1) {
+                row2.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
+            } else {
+                row3.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
             }
         }
-        if (temp.length !== 0) {
-            orders.push(
-                <div className="row">
-                    {temp}
-                </div>
-            )
-        }
+        orders.push(
+            <div className="row m-2">
+                <div className="col-md-4">{row1}</div>
+                <div className="col-md-4">{row2}</div>
+                <div className="col-md-4">{row3}</div>
+            </div>
+        )
 
         return (
             <div>

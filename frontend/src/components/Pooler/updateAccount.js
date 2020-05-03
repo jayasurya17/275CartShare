@@ -8,9 +8,7 @@ class Home extends Component {
     constructor() {
         super()
         this.state = {
-            user: {
-                contributionCredit: -10
-            }
+            contributionCredit: null
         }
     }
 
@@ -127,11 +125,13 @@ class Home extends Component {
     render() {
 
 
-        let background = "bg-success"
-        if (this.state.user.contributionCredit <= -6) {
+        let background
+        if (this.state.contributionCredit <= -6) {
             background = "bg-danger"
-        } else if (this.state.user.contributionCredit <= -4) {
+        } else if (this.state.contributionCredit <= -4) {
             background = "bg-warning"
+        } else if (this.state.contributionCredit != null) {
+            background = "bg-success"
         }
 
         return (
@@ -139,11 +139,11 @@ class Home extends Component {
                 <Header />
                 <Navigation />
                 <div className="pl-5 pr-5 row">
-                    <div className="col-md-4 offset-md-1 pt-5">
+                    <div className="col-md-4 offset-md-4 pt-5">
                         <div className="form-group">
                             <label>NickName</label>
                             <br/>
-                            <input type="text" value={this.state.nickName} onChange={this.nickNameChangeHandler} lassName="form-control" />
+                            <input type="text" value={this.state.nickName} onChange={this.nickNameChangeHandler} className="form-control" />
                         </div>
                         <div className="form-group">
                             <label>ScreenName</label>

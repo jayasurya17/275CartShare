@@ -64,30 +64,29 @@ class PastOrders extends Component {
 
         let orders = [],
             slNo = 0,
-            temp = []
-        for (let order of this.state.allOrders) {
-            temp.push(
-                <div className="col-md-4">
-                    <OrdersComponent order={order} update={this.fetchAllOrders}/>
-                </div>
-            )
-            slNo++
-            if (slNo % 3 === 0) {
-                orders.push(
-                    <div className="row m-2">
-                        {temp}
-                    </div>
-                )
-                temp = []
+            row1 = [],
+            row2 = [],
+            row3 = [],
+            rowNumber,
+            orderObj
+        for (slNo in this.state.allOrders) {
+            rowNumber = slNo % 3
+            orderObj = this.state.allOrders[slNo]
+            if (rowNumber === 0) {
+                row1.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
+            } else if (rowNumber === 1) {
+                row2.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
+            } else {
+                row3.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
             }
         }
-        if (temp.length !== 0) {
-            orders.push(
-                <div className="row m-2">
-                    {temp}
-                </div>
-            )
-        }
+        orders.push(
+            <div className="row m-2">
+                <div className="col-md-4">{row1}</div>
+                <div className="col-md-4">{row2}</div>
+                <div className="col-md-4">{row3}</div>
+            </div>
+        )
 
         return (
             <div>
@@ -101,11 +100,21 @@ class PastOrders extends Component {
 
 class OrdersComponent extends Component {
 
+    constructor() {
+        super()
+        this.state = {
+            isProcessing: false
+        }
+    }
+
     markAsNotDelivered = () => {
+        this.setState({
+            isProcessing: true
+        })
         axios.put('/orders/notDelivered/'.concat(this.props.order[0].orders.id), null, null)
         .then((res) => {
             if(res.status === 200){
-                alert(res.data);
+                // alert(res.data);
                 this.props.update();
             }
         })
@@ -135,7 +144,7 @@ class OrdersComponent extends Component {
         let status = []
         let statusOfOrder = this.props.order[0].orders.status;
         var myId = this.props.order[0].orders.user.id;
-        var pickUpPoolerId = 0;
+        var pickUpPoolerId = null;
         if (this.props.order[0].orders.pickupPooler !== null) {
             pickUpPoolerId = this.props.order[0].orders.pickupPooler.id;
         }
@@ -143,47 +152,47 @@ class OrdersComponent extends Component {
             pickUpPoolerId = null;
         }
         if (statusOfOrder === "Delivered" && pickUpPoolerId !== null && myId !== pickUpPoolerId) {
+            let notDeliveredButton = this.state.isProcessing === true? <p className="text-danger">Marking as not delivered...</p>:<button className="btn btn-success w-100" onClick={this.markAsNotDelivered}>Mark as not delivered</button>
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # {this.props.order[0].orders.id}</h5></div>
-                    <div className="col-md-6 offset-md-2"><button className="btn btn-success w-100" onClick={this.markAsNotDelivered}>Mark as not delivered</button></div>
+                    <div className="col-md-6 offset-md-2">{notDeliveredButton}</div>
                 </div>
             )
             status.push(
                 <div className="row p-2 bg-secondary text-white">
                     <div className="col-md-12">
                         <h5><span className="font-weight-light">Picked up from: </span>{this.props.order[0].orders.store.storeName}</h5>
-                        <h5><span className="font-weight-light">Deliver By: </span>{this.props.order[0].orders.pickupPooler.screenName}</h5>
+                        <h5><span className="font-weight-light">Delivered By: </span>{this.props.order[0].orders.pickupPooler.screenName}</h5>
                     </div>
                 </div>
             )
-        } else if (statusOfOrder === "Delivered" && pickUpPoolerId != null && myId === pickUpPoolerId) {
+        } else if (statusOfOrder === "Delivered" && pickUpPoolerId === myId) {
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # {this.props.order[0].orders.id}</h5></div>
-                    <div className="col-md-8"><h5 className="text-success">Picked up from {this.props.order[0].orders.store.storeName}</h5></div>
+                    <div className="col-md-8"><h5 className="text-success">You have picked up this order from {this.props.order[0].orders.store.storeName}</h5></div>
                 </div>
             )
-        } else if (statusOfOrder === "Ordered" || pickUpPoolerId == null) {
+        } else if (statusOfOrder === "Ordered" && pickUpPoolerId == null) {
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # {this.props.order[0].orders.id}</h5></div>
-                    <div className="col-md-8"><h5 className="text-warning">Waiting to be picked up by fellow pooler</h5></div>
+                    <div className="col-md-8"><h5 className="text-warning">Your order has been placed</h5></div>
                 </div>
             )
         } else if (statusOfOrder === "Confirmed" && pickUpPoolerId != null && myId !== pickUpPoolerId) {
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # {this.props.order[0].orders.id}</h5></div>
-                    <div className="col-md-8"><h5 className="text-info">A fellow pooler will be picking up this order soon</h5></div>
+                    <div className="col-md-8"><h5 className="text-info">A fellow pooler has requested to pick up this order from {this.props.order[0].orders.store.storeName}</h5></div>
                 </div>
             )
-        }
-        else if (statusOfOrder === "Confirmed" && pickUpPoolerId != null && myId === pickUpPoolerId) {
+        } else if (statusOfOrder === "Confirmed" && pickUpPoolerId === myId) {
             status.push(
                 <div className="row p-2 border">
                     <div className="col-md-4"><h5>Order # {this.props.order[0].orders.id}</h5></div>
-                    <div className="col-md-8"><h5 className="text-info">Order to be picked up from {this.props.order[0].orders.store.storeName}</h5></div>
+                    <div className="col-md-8"><h5 className="text-primary">Waiting for you to pick up the order from {this.props.order[0].orders.store.storeName}</h5></div>
                 </div>
             )
         } else if (statusOfOrder === "PickedUp") {

@@ -10,7 +10,7 @@ class DeliverOrders extends Component {
         super()
         this.state = {
             allOrders: [],
-            fetched: false
+            fetched: false,
         }
     }
 
@@ -64,30 +64,29 @@ class DeliverOrders extends Component {
 
         let orders = [],
             slNo = 0,
-            temp = []
-        for (let order of this.state.allOrders) {
-            temp.push(
-                <div className="col-md-4">
-                    <OrdersComponent slNo={slNo + 1} order={order} update={this.fetchAllOrders}/>
-                </div>
-            )
-            slNo++
-            if (slNo % 3 === 0) {
-                orders.push(
-                    <div className="row m-2">
-                        {temp}
-                    </div>
-                )
-                temp = []
+            row1 = [],
+            row2 = [],
+            row3 = [],
+            rowNumber,
+            orderObj
+        for (slNo in this.state.allOrders) {
+            rowNumber = slNo % 3
+            orderObj = this.state.allOrders[slNo]
+            if (rowNumber === 0) {
+                row1.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
+            } else if (rowNumber === 1) {
+                row2.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
+            } else {
+                row3.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
             }
         }
-        if (temp.length !== 0) {
-            orders.push(
-                <div className="row m-2">
-                    {temp}
-                </div>
-            )
-        }
+        orders.push(
+            <div className="row m-2">
+                <div className="col-md-4">{row1}</div>
+                <div className="col-md-4">{row2}</div>
+                <div className="col-md-4">{row3}</div>
+            </div>
+        )
 
         return (
             <div>
@@ -101,7 +100,23 @@ class DeliverOrders extends Component {
 
 class OrdersComponent extends Component {
 
+    constructor() {
+        super()
+        this.state = {
+            isProcessing: false,
+        }
+    }
+
+    componentDidMount() {
+        this.setState({
+            isProcessing: false,
+        })
+    }
+
     markDelivered = () => {
+        this.setState({
+            isProcessing: true,
+        })
         var orderId = this.props.order[0].orders.id;
         axios.put('/orders/deliver/'.concat(orderId), null, null)
             .then((res) => {
@@ -130,7 +145,7 @@ class OrdersComponent extends Component {
         }
 
         var addr = this.props.order[0].orders.user.address;
-
+        let deliverButton = this.state.isProcessing === true? <p className="text-warning">Processing...</p> : <button className="btn btn-success w-100" onClick={this.markDelivered}>Mark as delivered</button>
         return (
             <div className="p-3 border">
                 <div className="row p-2 bg-secondary text-white">
@@ -142,7 +157,7 @@ class OrdersComponent extends Component {
                 </div>
                 <div className="row p-2 bg-secondary text-white">
                     <div className="col-md-4"><h5>Order #{this.props.order[0].orders.id}</h5></div>
-                    <div className="col-md-6 offset-md-2"><button className="btn btn-success w-100" onClick={this.markDelivered}>Mark as delivered</button></div>
+                    <div className="col-md-6 offset-md-2">{deliverButton}</div>
                 </div>
                 <div className="row p-2 bg-secondary text-white">
                     {/* <div className="col-md-3"><h5>Order: {this.props.slNo}</h5></div> */}
