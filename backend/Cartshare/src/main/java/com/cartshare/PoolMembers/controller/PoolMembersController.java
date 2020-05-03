@@ -1,4 +1,4 @@
-package com.cartshare.PoolMembers.dao;
+package com.cartshare.PoolMembers.controller;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cartshare.PoolMembers.controller.PoolMembersDAO;
+import com.cartshare.PoolMembers.dao.PoolMembersDAO;
 import com.cartshare.models.PoolMembers;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")

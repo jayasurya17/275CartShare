@@ -1,4 +1,4 @@
-package com.cartshare.PoolMembers.controller;
+package com.cartshare.PoolMembers.dao;
 
 import java.util.List;
 
