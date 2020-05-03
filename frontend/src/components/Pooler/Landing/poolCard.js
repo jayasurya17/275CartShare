@@ -27,7 +27,7 @@ class PoolCard extends Component {
         this.setState({
             poolName: this.props.poolName ? this.props.poolName : "",
             description: this.props.description ? this.props.description : "",
-            leader: this.props.leader.screenName ? this.props.leader.screenName : "",
+            // leader: this.props.leader.screenName ? this.props.leader.screenName : "",
             zip: this.props.zip ? this.props.zip : "",
             leaderDetails: this.props.leader,
             poolId: this.props.poolId
@@ -122,9 +122,9 @@ class PoolCard extends Component {
         return (
             <div className="border rounded m-2 p-3 bg-white row">
                 <div className="col-md-9">
-                    <h2>{this.state.poolName}</h2>
+                    <h2>Name: {this.state.poolName}</h2>
                     <h4 className="font-weight-light">{this.state.description}</h4>
-                    <h4>Pool leader: <span className="font-weight-light">{this.state.leader}</span> </h4>
+                    {/* <h4>Pool leader: <span className="font-weight-light">{this.state.leader}</span> </h4> */}
                     <h4>San Jose <span className="font-weight-light">{this.state.zip}</span></h4>
                 </div>
                 <div className="col-md-3">

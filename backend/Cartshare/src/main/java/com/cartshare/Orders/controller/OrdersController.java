@@ -646,7 +646,16 @@ public class OrdersController {
     public ResponseEntity<?> getOrdersToPickup(@RequestParam(value = "userId", required = false) String reqUserId) {
         try {
             if (reqUserId == null) {
-                return ResponseEntity.status(HttpStatus.OK).body(ordersDAO.findAllOrdersToBePickedup());
+                List<Orders> listOfOrders = ordersDAO.findAllOrdersToBePickedup();
+                List<Set<OrderItems>> listOfProductsInOrders = new ArrayList<>();
+                if (listOfOrders == null) {
+                    return ResponseEntity.status(HttpStatus.OK).body(listOfProductsInOrders);
+                }
+    
+                for (Orders order : listOfOrders) {
+                    listOfProductsInOrders.add(order.getOrderItems());
+                }
+                return ResponseEntity.status(HttpStatus.OK).body(listOfProductsInOrders);
             }
             Long userId = null;
             try {
