@@ -66,6 +66,9 @@ class Home extends Component {
                 </button>
               </a>
             </div>
+            <a href='/pooler/message'>
+              <span class='fa fa-envelope'>Message</span>
+            </a>
           </div>
           <div className='row'>
             <div className='col-md-12 text-center'>
