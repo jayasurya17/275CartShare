@@ -70,6 +70,7 @@ class Home extends Component {
 					},
 				})
 				.then((response) => {
+                    localStorage.setItem('isMember', true)
 					this.setState({
 						user: response.data,
 						successMsg: "New Pool Created",

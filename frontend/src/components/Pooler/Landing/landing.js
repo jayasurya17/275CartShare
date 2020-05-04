@@ -11,7 +11,8 @@ class Home extends Component {
         this.state = {
             userId : localStorage.getItem("275UserId"),
             poolMember : false,
-            redURL : ''
+            redURL : '',
+            isFetched: false
         }
     }
 
@@ -20,31 +21,41 @@ class Home extends Component {
 			.get("/poolMembers/getPoolByUser/" + this.state.userId)
 			.then((response) => {
 				if (response.status === 200) {
-					console.log(response.data);
+                    localStorage.setItem('isMember', true)
 					this.setState({
                         poolMember : true,
-                        redURL: '/pooler/view/pool'
+                        redURL: '/pooler/view/pool',
+                        isFetched: true
 					});
 					
 				} else {
-					console.log(response.data);
+                    localStorage.setItem('isMember', false)
 					this.setState({
                         poolMember: false,
-                        redURL: ''
+                        redURL: '',
+                        isFetched: true
 					});
 				}
 			})
-			.catch((error) => {
-				alert(error.response.data);
+			.catch(() => {
+                localStorage.setItem('isMember', false)
 				this.setState({
                     poolMember: false,
-                    redURL: ''
+                    redURL: '',
+                    isFetched: true
 				});
 			});
     }
     render() {
         if(this.state.poolMember === true){
             return <Redirect to={this.state.redURL} />
+        } else if (this.state.isFetched === false) {
+            return (
+                <div>
+                    <Header isLanding={true} />
+
+                </div>
+            )
         }
 
         return (

@@ -40,11 +40,11 @@ public class MessageController {
                                         @RequestParam(name = "message") String message){
                                             
         if(from == null || to == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid user ID");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid screen name");
         if(from.length() == 0 || to.length() == 0)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid user ID");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid screen name");
         if (!userDAO.screenNameExists(from) || !userDAO.screenNameExists(to)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid user ID");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid screen name");
         }
         if(from.equals(to))
         	 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cannot send messages to yourself");

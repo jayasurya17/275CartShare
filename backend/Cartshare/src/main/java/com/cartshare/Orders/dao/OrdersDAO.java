@@ -91,8 +91,8 @@ public class OrdersDAO {
 		return r;
 	}
 
-	public List<Orders> findAllOrdersByStore(Store store) {
-		return ordersRepository.findAllOrdersByStore(store);
+	public List<Orders> findAllUnfulfilledOrdersByStore(Store store) {
+		return ordersRepository.findAllOrdersByStoreAndIsFulfilled(store, false);
 	}
 
 	public void updateOrderStatus() {
