@@ -99,6 +99,35 @@ class Home extends Component {
             alert("Please enter a valid zipcode");
             return;
         }
+
+        var response = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${this.state.street}, ${this.state.state}, ${this.state.city}, ${this.state.zipcode}.json?access_token=pk.eyJ1Ijoic2hpdmFuZGVzYWkiLCJhIjoiY2syaW0xaXllMGcydTNjb2hua3UzbHpyMSJ9.ZHxE6FAsU4GeDvz4WH9AhA`)
+        // .then((response) => {
+        console.log('features', response.data.features);
+        if(response.data.features.length === 0){
+            alert('Please enter a valid address!');
+            // q = 0
+            return;
+        }
+        var isFound = false;
+        for(var a of response.data.features){
+            console.log('relevance', a.properties.accuracy);
+            // var a = response.data.features[x];
+            if (a.properties.accuracy !== undefined && a.relevance > 0.95){
+                // alert('Pleasnnne enter a valid address!');
+                // q = 1
+                isFound = true
+            } 
+        }
+        // })
+        // .catch((err) => {
+        //     alert(err);
+        // })
+
+        if(isFound === false){
+            alert('Please aaaenter a valid address!');
+            return;
+        }
+
         axios.put('/user/'.concat(localStorage.getItem('275UserId')), null, {
             params: {
                 email: this.state.email,
