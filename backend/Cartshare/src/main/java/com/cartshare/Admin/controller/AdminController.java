@@ -57,8 +57,20 @@ public class AdminController {
             if (user == null || user.isAdmin() == false) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
             }
-            if (adminDAO.findByName(storeRequest.getStoreName()) != null) {
+//            if (adminDAO.findByName(storeRequest.getStoreName()) != null) {
+//                return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate store name");
+//            }
+            List<Store> s = storeDAO.findAllByStoreName(storeRequest.getStoreName());
+            if(s!=null)
+            {
+            for (Store st: s) 
+            {
+            
+            if (st.getStoreName().equals(storeRequest.getStoreName())) {
+            	
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate store name");
+            }
+            }
             }
             Store store = new Store();
             store.setStoreName(storeRequest.getStoreName());
@@ -97,6 +109,20 @@ public class AdminController {
             Store store = storeDAO.findById(reqStoreId);
             if (store == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
+            }
+            List<Store> s = storeDAO.findAllByStoreName(storeRequest.getStoreName());
+            if(s!=null)
+            {
+            for (Store st: s) 
+            {
+            
+            
+            
+            if ( st.getId()!=reqStoreId && st.getStoreName().equals(storeRequest.getStoreName())) {
+            	
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Cannot update as this is a Duplicate store name");
+            }
+            }
             }
             store.setStoreName(storeRequest.getStoreName());
             Address address = new Address();

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 // import firebase from 'firebase';
 import { Redirect } from 'react-router';
+// import mapbox from '../../utils/mapbox';
 
 class UserDetails extends Component {
     
@@ -19,7 +20,7 @@ class UserDetails extends Component {
         }
     }
 
-    componentWillMount = () => {
+    componentWillMount = async () => {
 
         var id = localStorage.getItem('275UserId');
         var screenName = localStorage.getItem('275NickName');
@@ -73,7 +74,7 @@ class UserDetails extends Component {
         })
     }
 
-    updateInformation = () => {
+    updateInformation = async () => {
         if(this.state.nickName.length === 0 || this.state.screenName.length === 0 || this.state.street.length === 0 || this.state.city.length === 0 || this.state.state.length === 0 || this.state.zipcode.length === 0){
             alert("None of the fields should be empty");
             return;
@@ -91,7 +92,35 @@ class UserDetails extends Component {
             alert("Please enter a valid zipcode");
             return;
         }
+        // var q = 0;
+        var response = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${this.state.street}, ${this.state.state}, ${this.state.city}, ${this.state.zipcode}.json?access_token=pk.eyJ1Ijoic2hpdmFuZGVzYWkiLCJhIjoiY2syaW0xaXllMGcydTNjb2hua3UzbHpyMSJ9.ZHxE6FAsU4GeDvz4WH9AhA`)
+        // .then((response) => {
+        console.log('features', response.data.features);
+        if(response.data.features.length === 0){
+            alert('Please enter a valid address!');
+            // q = 0
+            return;
+        }
+        var isFound = false;
+        for(var a of response.data.features){
+            console.log('relevance', a.properties.accuracy);
+            // var a = response.data.features[x];
+            if (a.properties.accuracy !== undefined && a.relevance > 0.95){
+                // alert('Pleasnnne enter a valid address!');
+                // q = 1
+                isFound = true
+            } 
+        }
+        // })
+        // .catch((err) => {
+        //     alert(err);
+        // })
 
+        if(isFound === false){
+            alert('Please aaaenter a valid address!');
+            return;
+        }
+        // await mapbox.checkRelevance(this.state.street, this.state.city, this.state.state, this.state.zipcode)
         var id = localStorage.getItem('275UserId');
         var uri = '/user/'.concat(id);
         var email = localStorage.getItem('275UserEmail');
@@ -114,6 +143,10 @@ class UserDetails extends Component {
         .then((res) => {
             if(res.status === 200){
                 localStorage.setItem('275NickName', res.data.nickName);
+                if(isadmin)
+                    localStorage.setItem('275UserType', "Admin");
+                else
+                    localStorage.setItem('275UserType', 'Pooler');
                 this.setState({redirect: true, redURL: "/pooler/landing"});
             }
         })
