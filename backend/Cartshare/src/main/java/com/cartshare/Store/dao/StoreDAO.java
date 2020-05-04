@@ -35,4 +35,10 @@ public class StoreDAO {
 		return storeRepository.findByUser(user);
 	}
 
+
+
+	public List<Store> findAllByStoreName(String storeName) {
+		// TODO Auto-generated method stub
+		 return storeRepository.findAllByStoreName(storeName);
+	}
 }
