@@ -45,10 +45,7 @@ class Main extends Component {
         <Route path='/pooler' component={PoolerCheck} />
         <Route path='/pooler/landing' component={PoolerLanding} />
         <Route path='/pooler/browse' component={PoolerBrowseStores} />
-        <Route
-          path='/pooler/store/:storeId'
-          component={PoolerViewStoreProducts}
-        />
+        <Route path='/pooler/store/:storeId' component={PoolerViewStoreProducts} />
         <Route path='/pooler/search' component={PoolerSearch} />
         <Route path='/pooler/update/account' component={PoolerUpdateAccount} />
         <Route path='/pooler/add/cart' component={PoolerAddCart} />
@@ -62,23 +59,11 @@ class Main extends Component {
         <Route path='/admin' component={AdminCheck} />
         <Route path='/admin/browse' component={AdminStores} />
         <Route path='/admin/store/add' component={AdminAddStore} />
-        <Route
-          path='/admin/store/view/:storeId'
-          component={AdminViewStoreProducts}
-        />
-        <Route
-          path='/admin/store/update/:storeId'
-          component={AdminUpdateStore}
-        />
+        <Route path='/admin/store/view/:storeId' component={AdminViewStoreProducts} />
+        <Route path='/admin/store/update/:storeId' component={AdminUpdateStore} />
         <Route path='/admin/product/add' component={AdminAddProduct} />
-        <Route
-          path='/admin/product/update/:productId'
-          component={AdminUpdateProduct}
-        />
-        <Route
-          path='/admin/pickup/orders'
-          component={AdminOrdersToBePickedUp}
-        />
+        <Route path='/admin/product/update/:productId' component={AdminUpdateProduct} />
+        <Route path='/admin/pickup/orders' component={AdminOrdersToBePickedUp} />
       </div>
     )
   }

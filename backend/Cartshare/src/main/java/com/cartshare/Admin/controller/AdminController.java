@@ -281,10 +281,68 @@ public class AdminController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
             }
             
-            List<Orders> allOrders = ordersDAO.findAllOrdersByStore(store);
-            
+            List<Orders> allOrders = ordersDAO.findAllUnfulfilledOrdersByStore(store);
+
+            for (Orders order: allOrders) {
+                if (order.getStatus().equals("Cart")) {
+                    for (OrderItems orderItems: order.getOrderItems()) {
+                        adminDAO.deleteOrderItem(orderItems.getId());
+                    }
+                    adminDAO.deleteOrder(order.getId());
+                } else {
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("There are unfulfilled orders in this store");
+                }
+            }
+
+            store.setActive(false);
+            storeDAO.save(store);
 
             return ResponseEntity.status(HttpStatus.OK).body(store);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
+    }
+
+    @DeleteMapping(value = "/delete/product", produces = { "application/json", "application/xml" })
+    public ResponseEntity<?> deleteProduct(@RequestParam("productId") String reqProductId) {
+
+        try {
+            
+            Long productId = null;
+            try {
+                productId = Long.parseLong(reqProductId);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid product ID");
+            }
+
+            Product product = productDAO.findById(productId);
+            if (product == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product with the given ID does not exist");
+            }
+            
+            List<Orders> allOrders = ordersDAO.findAllUnfulfilledOrdersByStore(product.getStore());
+
+            for (Orders order: allOrders) {
+                if (order.getStatus().equals("Cart")) {
+                    for (OrderItems orderItems: order.getOrderItems()) {
+                        if (orderItems.getProduct().getId() == productId) {
+                            adminDAO.deleteOrderItem(orderItems.getId());
+                        }
+                    }
+                    if (order.getOrderItems().isEmpty()) {
+                        adminDAO.deleteOrder(order.getId());
+                    }
+                } else {
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("There are unfulfilled orders in this store");
+                }
+            }
+
+            product.setActive(false);
+            productDAO.save(product);
+
+            return ResponseEntity.status(HttpStatus.OK).body(product);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

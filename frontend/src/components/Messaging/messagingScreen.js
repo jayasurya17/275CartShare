@@ -27,8 +27,6 @@ class Message extends Component {
     } else {
       console.log(this.state)
 
-      let message = this.state.message
-
       await axios
         .post(
           '/message/' +
@@ -58,8 +56,6 @@ class Message extends Component {
         .catch(error => {
           console.log(error.response.data)
           this.setState({
-            screenName: '',
-            message: '',
             found: false,
             result: error.response.data
           })
@@ -73,7 +69,9 @@ class Message extends Component {
       <div>
         <Header></Header>
         <Navbar></Navbar>
-        <div class='card w-50 p-5 text-center border-info mb-3'>
+        <div className="row">
+          
+        <div class='card col-md-6 offset-md-3 p-5 text-center border-info mb-3'>
           <div class='card-header form-control-lg '>
             Send a message to another user
           </div>
@@ -129,6 +127,8 @@ class Message extends Component {
               </button>
             </form>
           </div>
+        </div>
+      
         </div>
       </div>
     )
