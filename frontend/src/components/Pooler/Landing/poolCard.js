@@ -124,7 +124,7 @@ class PoolCard extends Component {
                 <div className="col-md-9">
                     <h2>Name: {this.state.poolName}</h2>
                     <h4 className="font-weight-light">{this.state.description}</h4>
-                    {/* <h4>Pool leader: <span className="font-weight-light">{this.state.leader}</span> </h4> */}
+                    <h4>Pool ID: <span className="font-weight-light">{this.props.alphaNumericId}</span> </h4>
                     <h4>San Jose <span className="font-weight-light">{this.state.zip}</span></h4>
                 </div>
                 <div className="col-md-3">

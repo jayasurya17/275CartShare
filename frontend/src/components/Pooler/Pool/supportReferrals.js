@@ -45,7 +45,8 @@ class SupportReferral extends Component {
         this.state = {
             userId : this.props.userId,
             screenName : this.props.screenName,
-            poolDetails : this.props.poolDetails
+            poolDetails : this.props.poolDetails,
+            requests: []
         }
     }
 
@@ -61,22 +62,14 @@ class SupportReferral extends Component {
             },
         })
         .then(response => {
-            if(response.status === 200){
-                console.log(response.data);
                 this.setState({
                     requests: response.data,
                     requestsReceived: true,
                 });
-            } else {
-                this.setState({
-                    requestsReceived: false,
-                });
-            }
         })
         .catch(error => {
-            console.log(error.response.data);
             this.setState({
-                requestsReceived: false,
+                requestsReceived: true,
             });
         })
     }

@@ -36,18 +36,18 @@ public class PoolDAO {
 				return null;
 			
 			pool.setPooler(pooler);
-			System.out.println("New Entry");
+			// System.out.println("New Entry");
 			Pool result = poolRepository.save(pool);
-			System.out.println(result);
+			// System.out.println(result);
 			
 			PoolMembers poolMembers = new PoolMembers();
 			poolMembers.setMember(pooler);
 			poolMembers.setReference(pooler);
 			poolMembers.setPool(result);
 			poolMembers.setStatus("Accepted");
-			System.out.println(poolMembers);
+			// System.out.println(poolMembers);
 			poolMembersRepository.save(poolMembers);
-			System.out.println(poolMembers);
+			// System.out.println(poolMembers);
 			return result;
 			
 		}
@@ -72,14 +72,18 @@ public class PoolDAO {
 		User pooler = userRepository.findById(pooler_id).orElse(null);
 		
 		if(pooler != null) {
-			System.out.println("Updating Pool");
+			// System.out.println("Updating Pool");
 			pool.setPooler(pooler);
 			Pool result = poolRepository.save(pool);
-			System.out.println(result);
+		// System.out.println(result);
 			
 			return result;
 		}
 		return null;
+	}
+	
+	public Pool save(Pool pool) {
+		return poolRepository.save(pool);
 	}
 	
 }

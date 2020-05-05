@@ -7,6 +7,7 @@ class Home extends Component {
 		super(props);
 		this.state = {
 			userId: localStorage.getItem("275UserId"),
+			poolId: "",
 			poolName: "",
 			neighborhood: "",
 			description: "",
@@ -41,7 +42,12 @@ class Home extends Component {
 		return true;
 	};
 
+	isAlphanumeric = (value) => {
+		return value !== null && value.match(/^[a-zA-Z0-9]+$/) !== null;
+	}
+
 	areValidValues = () => {
+		if (this.isEmpty(this.state.poolId)) return false;
 		if (this.isEmpty(this.state.poolName)) return false;
 		if (this.isEmpty(this.state.neighborhood)) return false;
 		if (this.isEmpty(this.state.description)) return false;
@@ -58,6 +64,11 @@ class Home extends Component {
 				successMsg: "",
 				errMsg: "Invalid zipcode",
 			});
+		} else if (this.isAlphanumeric(this.state.poolId) !== true) {
+			this.setState({
+				successMsg: "",
+				errMsg: "Pool ID must be alphanumeric"
+			})
 		} else if (this.areValidValues()) {
 			axios
 				.post("/pool/createPool", null, {
@@ -67,6 +78,7 @@ class Home extends Component {
 						description: this.state.description,
 						zipcode: this.state.zipcode,
 						poolerId: this.state.userId,
+						poolId: this.state.poolId
 					},
 				})
 				.then((response) => {
@@ -92,6 +104,10 @@ class Home extends Component {
 			<div>
 				{this.state.redirect}
 				<div className="form-group">
+					<label>Pool ID</label>
+					<input type="text" onChange={this.changeHandler} value={this.state.poolId} className="form-control" name="poolId" required />
+				</div>
+				<div className="form-group">
 					<label>Pool name</label>
 					<input type="text" onChange={this.changeHandler} value={this.state.poolName} className="form-control" name="poolName" required />
 				</div>
@@ -107,8 +123,8 @@ class Home extends Component {
 					<label>Zipcode</label>
 					<input type="text" onChange={this.changeHandler} value={this.state.zipcode} className="form-control" name="zipcode" required />
 				</div>
-				{this.state.successMsg ? <p className="text-success">{this.state.successMsg}</p> : null}
-				{this.state.errMsg ? <p className="text-danger">{this.state.errMsg}</p> : null}
+				{this.state.successMsg ? <p className="text-success text-center">{this.state.successMsg}</p> : null}
+				{this.state.errMsg ? <p className="text-danger text-center">{this.state.errMsg}</p> : null}
 				<button type="submit" onClick={this.onSubmit} className="btn btn-success w-100"> Create a new pool</button>
 			</div>
 		);

@@ -59,14 +59,10 @@ class ViewDetails extends Component {
 		this.setState({
 			[e.target.name]: e.target.value,
 		});
-		// console.log(this.state.editName);
-		// console.log(this.state.editNeighborhood);
-		// console.log(this.state.editDescription);
 	};
 
 	componentDidMount = () => {
-		axios
-			.get("/poolMembers/getPoolByUser/" + this.state.userId)
+		axios.get("/poolMembers/getPoolByUser/" + this.state.userId)
 			.then((response) => {
 				if (response.status === 200) {
 					console.log(response.data);
@@ -91,8 +87,7 @@ class ViewDetails extends Component {
 	};
 
 	fetchPoolMembers = () => {
-		axios
-			.get("/poolMembers/viewPoolMembers", {
+		axios.get("/poolMembers/viewPoolMembers", {
 				params: {
 					poolId: this.state.poolDetails.id,
 				},
@@ -170,50 +165,22 @@ class ViewDetails extends Component {
 		let requests = [];
 		if (this.state.membersReceived) {
 			for (var i = 0; i < this.state.members.length; i++) {
-				poolMembers.push(
-					<UserInfo
-						key={i + 1}
-						slNo={i + 1}
-						userObj={this.state.members[i]}
-					/>
-				);
+				poolMembers.push(<UserInfo key={i + 1} slNo={i + 1} userObj={this.state.members[i]} />);
 			}
 		}
 		if (this.state.poolReceived) {
-			if (
-				Number(localStorage.getItem("275UserId")) ===
-				Number(this.state.poolDetails.pooler.id)
-			) {
-				// if(false) {
+			if (Number(localStorage.getItem("275UserId")) === Number(this.state.poolDetails.pooler.id)) {
 				requests.push(
 					<div key="update" className="text-center pt-5">
-						<button
-							className="w-50 btn btn-warning"
-							data-toggle="modal"
-							data-target={"#ModalCenter"}
-						>
-							Update pool information
-						</button>
+						<button className="w-50 btn btn-warning" data-toggle="modal" data-target={"#ModalCenter"}>Update pool information</button>
 					</div>
 				);
 				requests.push(
-					<AcceptRequests
-						key={this.state.userId}
-						userId={this.state.userId}
-						screenName={this.state.userScreenName}
-						poolDetails={this.state.poolDetails}
-						update={this.fetchPoolMembers}
-					/>
+					<AcceptRequests key={this.state.userId} userId={this.state.userId} screenName={this.state.userScreenName} poolDetails={this.state.poolDetails} update={this.fetchPoolMembers} />
 				);
 			} else {
 				requests.push(
-					<SupportReferrals
-						key={this.state.userId}
-						userId={this.state.userId}
-						screenName={this.state.userScreenName}
-						poolDetails={this.state.poolDetails}
-						update={this.fetchPoolMembers}
-					/>
+					<SupportReferrals key={this.state.userId} userId={this.state.userId} screenName={this.state.userScreenName} poolDetails={this.state.poolDetails} update={this.fetchPoolMembers} />
 				);
 			}
 		}
@@ -226,46 +193,26 @@ class ViewDetails extends Component {
 					<div className="row">
 						{this.state.poolReceived ? (
 							<div className="col-md-6">
-								<p className="display-4 text-center">
-									{this.state.poolDetails.poolName}
-								</p>
+								<p className="display-4 text-center">{this.state.poolDetails.poolName}</p>
 								<h1>
-									Neighbourhood:{" "}
-									<span className="font-weight-light">
-										{
-											this.state.poolDetails
-												.neighborhoodName
-										}
-									</span>
+									Pool ID:{" "}<span className="font-weight-light">{this.state.poolDetails.poolId}</span>
+								</h1>								
+								<h1>
+									Neighbourhood:{" "}<span className="font-weight-light">{this.state.poolDetails.neighborhoodName}</span>
 								</h1>
 								<h1>
-									Description:{" "}
-									<span className="font-weight-light">
-										{this.state.poolDetails.description}
-									</span>
+									Description:{" "}<span className="font-weight-light">{this.state.poolDetails.description}</span>
 								</h1>
 								<h1>
-									Zipcode:{" "}
-									<span className="font-weight-light">
-										{this.state.poolDetails.zipcode}
-									</span>
+									Zipcode:{" "}<span className="font-weight-light">{this.state.poolDetails.zipcode}</span>
 								</h1>
 								<h1>
-									Coordinator:{" "}
-									<span className="font-weight-light">
-										{
-											this.state.poolDetails.pooler
-												.screenName
-										}
-									</span>
+									Coordinator:{" "}<span className="font-weight-light">{this.state.poolDetails.pooler.screenName}</span>
 								</h1>
-								{/* {updateInfo} */}
 							</div>
 						) : null}
 						<div className="col-md-6">
-							<p className="display-4 text-center">
-								Current members
-							</p>
+							<p className="display-4 text-center">Current members</p>
 							<div className="row p-2 bg-secondary text-white font-weight-bold">
 								<div className="col-md-2">ScreenName</div>
 								<div className="col-md-2">Nickname</div>
@@ -276,32 +223,12 @@ class ViewDetails extends Component {
 						</div>
 					</div>
 					{requests}
-					<div
-						className="modal fade"
-						id={"ModalCenter"}
-						tabIndex="-1"
-						role="dialog"
-						aria-labelledby="modalCenterTitle"
-						aria-hidden="true"
-					>
-						<div
-							className="modal-dialog modal-dialog-centered"
-							role="document"
-						>
+					<div className="modal fade" id={"ModalCenter"} tabIndex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true" >
+						<div className="modal-dialog modal-dialog-centered" role="document" >
 							<div className="modal-content">
 								<div className="modal-header">
-									<h5
-										className="modal-title"
-										id="modalCenterTitle"
-									>
-										Update Pool Information
-									</h5>
-									<button
-										type="button"
-										className="close"
-										data-dismiss="modal"
-										aria-label="Close"
-									>
+									<h5 className="modal-title" id="modalCenterTitle" >Update Pool Information</h5>
+									<button type="button" className="close" data-dismiss="modal" aria-label="Close" >
 										<span aria-hidden="true">&times;</span>
 									</button>
 								</div>
@@ -318,55 +245,20 @@ class ViewDetails extends Component {
 									) : null}
 									<div className="form-group">
 										<label>Name</label>
-										<input
-											type="text"
-											className="form-control"
-											placeholder="Name"
-											value={this.state.editName}
-											onChange={this.changeHandler}
-											name="editName"
-											required
-										/>
+										<input type="text" className="form-control" placeholder="Name" value={this.state.editName} onChange={this.changeHandler} name="editName" required />
 									</div>
 									<div className="form-group">
 										<label>Neighborhood</label>
-										<input
-											type="text"
-											className="form-control"
-											placeholder="Neighborhood"
-											value={this.state.editNeighborhood}
-											onChange={this.changeHandler}
-											name="editNeighborhood"
-											required
-										/>
+										<input type="text" className="form-control" placeholder="Neighborhood" value={this.state.editNeighborhood} onChange={this.changeHandler} name="editNeighborhood" required />
 									</div>
 									<div className="form-group">
 										<label>Description</label>
-										<input
-											type="text"
-											className="form-control"
-											placeholder="Description"
-											value={this.state.editDescription}
-											onChange={this.changeHandler}
-											name="editDescription"
-										/>
+										<input type="text" className="form-control" placeholder="Description" value={this.state.editDescription} onChange={this.changeHandler} name="editDescription" />
 									</div>
 								</div>
 								<div className="modal-footer">
-									<button
-										type="button"
-										className="btn btn-secondary"
-										data-dismiss="modal"
-									>
-										Close
-									</button>
-									<button
-										type="button"
-										className="btn btn-primary"
-										onClick={this.editPoolInformation}
-									>
-										Send request
-									</button>
+									<button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+									<button type="button" className="btn btn-primary" onClick={this.editPoolInformation}>Send request</button>
 								</div>
 							</div>
 						</div>

@@ -27,8 +27,8 @@ class UserInfo extends Component {
 				{this.props.userObj.address === null ? (
 					<div className="col-md-5">Address Not Available</div>
 				) : (
-					<div className="col-md-5">{`${this.props.userObj.address.street}, ${this.props.userObj.address.city}, ${this.props.userObj.address.state} - ${this.props.userObj.address.zipcode}`}</div>
-				)}
+						<div className="col-md-5">{`${this.props.userObj.address.street}, ${this.props.userObj.address.city}, ${this.props.userObj.address.state} - ${this.props.userObj.address.zipcode}`}</div>
+					)}
 
 				<div className="col-md-1">
 					<button className="btn btn-success w-100" onClick={this.acceptRequest}>Accept</button>
@@ -48,6 +48,7 @@ class SupportReferral extends Component {
 			userId: this.props.userId,
 			screenName: this.props.screenName,
 			poolDetails: this.props.poolDetails,
+			requests: []
 		};
 	}
 
@@ -56,56 +57,50 @@ class SupportReferral extends Component {
 	};
 
 	getDetails = () => {
-		
+
 		axios.get("/poolMembers/requestedRequests", {
-				params: {
-					screenName: this.state.screenName,
-					isLeader: "true",
-				},
-			})
+			params: {
+				screenName: this.state.screenName,
+				isLeader: "true",
+			},
+		})
 			.then((response) => {
-				if (response.status === 200) {
-					const data = response.data.filter((request) => {
-						return request.status !== "Accepted";
-					});
-					this.setState({
-						requests: data,
-						requestsReceived: true,
-					});
-				} else {
-					this.setState({
-						requestsReceived: false,
-					});
-				}
+				const data = response.data.filter((request) => {
+					return request.status !== "Accepted";
+				});
+				this.setState({
+					requests: data,
+					requestsReceived: true,
+				});
 			})
 			.catch((error) => {
 				console.log(error.response.data);
 				this.setState({
-					requestsReceived: false,
+					requestsReceived: true,
 				});
 			});
 	}
 
 	manageRequest = (reqParams) => {
 		axios.put(`/poolMembers/manageRequest?poolId=${this.state.poolDetails.id}&poolMemberId=${reqParams.poolMemberId}&status=${reqParams.status}`)
-		.then(() => {
-			this.props.update()
-			this.getDetails()
-		})
-		.catch((error) => {
-			console.log(error.response.data)
-		})
+			.then(() => {
+				this.props.update()
+				this.getDetails()
+			})
+			.catch((error) => {
+				console.log(error.response.data)
+			})
 	}
 
 	render() {
 
 		let allUsers = [];
 		if (this.state.requestsReceived) {
-            // console.log(this.state.requests);
+			// console.log(this.state.requests);
 			for (var i = 0; i < this.state.requests.length; i++) {
 				allUsers.push(
 					<UserInfo
-                        key={i+1}
+						key={i + 1}
 						slNo={i + 1}
 						userObj={this.state.requests[i].member}
 						manageRequest={this.manageRequest}
@@ -124,7 +119,7 @@ class SupportReferral extends Component {
 				<div className="p-5">
 					<p className="display-4 text-center">Fetching...</p>
 				</div>
-			);			
+			);
 		}
 
 		return (

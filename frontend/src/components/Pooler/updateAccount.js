@@ -114,7 +114,7 @@ class Home extends Component {
         }
 
         if(isFound === false){
-            alert('Please aaaenter a valid address!');
+            alert('Please enter a valid address!');
             return;
         }
 

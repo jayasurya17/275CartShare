@@ -41,6 +41,7 @@ class Home extends Component {
 						leader={pool.pooler}
 						zip={pool.zipcode}
 						poolId={pool.id}
+						alphaNumericId={pool.poolId}
 					/>
 				);
 			});
