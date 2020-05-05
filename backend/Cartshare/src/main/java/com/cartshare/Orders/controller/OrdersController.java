@@ -78,11 +78,16 @@ public class OrdersController {
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
             }
-            if (user.getPoolMembers().size() == 0) {
+
+            Pool pool = null;
+            for (PoolMembers temp: user.getPoolMembers()) {
+                if (temp.getStatus().equals("Accepted")) {
+                    pool = temp.getPool();
+                }
+            }
+            if (pool == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not part of any pools");
             }
-
-            Pool pool = user.getPoolMembers().iterator().next().getPool();
             Orders order = ordersDAO.findOrdersByUserAndStatus(user, "Cart");
             if (order == null) {
                 order = new Orders();
@@ -527,11 +532,16 @@ public class OrdersController {
             if (store == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
             }
-
-            if (user.getPoolMembers().size() == 0) {
+            
+            Pool pool = null;
+            for (PoolMembers temp: user.getPoolMembers()) {
+                if (temp.getStatus().equals("Accepted")) {
+                    pool = temp.getPool();
+                }
+            }
+            if (pool == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not part of any pools");
             }
-            Pool pool = user.getPoolMembers().iterator().next().getPool();
 
             List<Orders> listOfOrders = ordersDAO.findOrdersWithNoPickup(pool, "Ordered", null, store);
             Integer count = 0;
@@ -594,14 +604,21 @@ public class OrdersController {
             if (numberOfOrders < 1 || numberOfOrders > 10) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid number of orders");
             }
-
-            if (user.getPoolMembers().size() == 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not part of any pools");
-            }
+            
             MailController mc = new MailController();
             OrderDetails od = new OrderDetails();
 
-            Pool pool = user.getPoolMembers().iterator().next().getPool();
+
+            Pool pool = null;
+            for (PoolMembers temp: user.getPoolMembers()) {
+                if (temp.getStatus().equals("Accepted")) {
+                    pool = temp.getPool();
+                }
+            }
+            if (pool == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not part of any pools");
+            }
+
             List<Orders> listOfOrders = ordersDAO.findOrdersWithNoPickup(pool, "Ordered", null, store);
             int count = 0;
 

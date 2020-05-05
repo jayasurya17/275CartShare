@@ -51,11 +51,21 @@ public class PoolMembersDAO {
 				return request;
 			}
 		}
+		
 		Set<PoolMembers> pools = reference.getPoolMembers();
 		if (pools.size() == 0) {
 			return null;
-		} else if (reference.getPoolMembers().iterator().next().getPool().getId() != pool_id) {
-			return null;
+		} else {
+            Boolean isFound = false;
+            for (PoolMembers temp: pools) {
+                if (temp.getStatus().equals("Accepted") && temp.getPool().getId() == pool.getId()) {
+					isFound = true;
+					break;
+                }
+            }
+            if (isFound == false) {
+				return null;
+            }
 		}
 
 		MailController mailController = new MailController();
