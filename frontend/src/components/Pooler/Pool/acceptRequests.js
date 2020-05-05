@@ -5,7 +5,8 @@ class UserInfo extends Component {
 	acceptRequest = () => {
 		const reqParams = {
 			poolMemberId: this.props.userObj.id,
-			status: "Accepted"
+			status: "Accepted",
+			requestId: this.props.reqId
 		}
 		this.props.manageRequest(reqParams)
 	}
@@ -13,7 +14,8 @@ class UserInfo extends Component {
 	rejectRequest = () => {
 		const reqParams = {
 			poolMemberId: this.props.userObj.id,
-			status: "Rejected"
+			status: "Rejected",
+			requestId: this.props.reqId
 		}
 		this.props.manageRequest(reqParams)
 	}
@@ -77,19 +79,18 @@ class SupportReferral extends Component {
 				console.log(error.response.data);
 				this.setState({
 					requestsReceived: true,
+					requests: []
 				});
 			});
 	}
 
 	manageRequest = (reqParams) => {
-		axios.put(`/poolMembers/manageRequest?poolId=${this.state.poolDetails.id}&poolMemberId=${reqParams.poolMemberId}&status=${reqParams.status}`)
-			.then(() => {
-				this.props.update()
-				this.getDetails()
+		axios.put(`/poolMembers/manageRequest?poolId=${this.state.poolDetails.id}&poolMemberId=${reqParams.poolMemberId}&status=${reqParams.status}&requestId=${reqParams.requestId}`)
+			.catch(() => {
+				alert(`Error in changing the status to ${reqParams.status}`)
 			})
-			.catch((error) => {
-				console.log(error.response.data)
-			})
+		this.getDetails()
+		this.props.update()
 	}
 
 	render() {
@@ -103,6 +104,7 @@ class SupportReferral extends Component {
 						key={i + 1}
 						slNo={i + 1}
 						userObj={this.state.requests[i].member}
+						reqId={this.state.requests[i].id}
 						manageRequest={this.manageRequest}
 					/>
 				);

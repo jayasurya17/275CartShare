@@ -5,21 +5,23 @@ import axios from 'axios';
 
 class UserInfo extends Component {
 
-	supportReferral = () => {
-		const reqParams = {
-			poolMemberId: this.props.userObj.id,
-			status: "Accepted"
-		}
-		this.props.manageRequest(reqParams)
-	}
+    supportReferral = () => {
+        const reqParams = {
+            poolMemberId: this.props.userObj.id,
+            status: "Approved",
+            requestId: this.props.reqId
+        }
+        this.props.manageRequest(reqParams)
+    }
 
-	rejectReferral = () => {
-		const reqParams = {
-			poolMemberId: this.props.userObj.id,
-			status: "Rejected"
-		}
-		this.props.manageRequest(reqParams)
-	}
+    rejectReferral = () => {
+        const reqParams = {
+            poolMemberId: this.props.userObj.id,
+            status: "Rejected",
+            requestId: this.props.reqId
+        }
+        this.props.manageRequest(reqParams)
+    }
 
     render() {
         return (
@@ -28,10 +30,10 @@ class UserInfo extends Component {
                 <div className="col-md-2">{this.props.userObj.screenName}</div>
                 <div className="col-md-2">{this.props.userObj.nickName}</div>
                 {this.props.userObj.address === null ? (
-					<div className="col-md-5">Address Not Available</div>
-				) : (
-					<div className="col-md-5">{`${this.props.userObj.address.street}, ${this.props.userObj.address.city}, ${this.props.userObj.address.state} - ${this.props.userObj.address.zipcode}`}</div>
-				)}
+                    <div className="col-md-5">Address Not Available</div>
+                ) : (
+                        <div className="col-md-5">{`${this.props.userObj.address.street}, ${this.props.userObj.address.city}, ${this.props.userObj.address.state} - ${this.props.userObj.address.zipcode}`}</div>
+                    )}
                 <div className="col-md-1"><button className="btn btn-success w-100" onClick={this.supportReferral}>Support</button></div>
                 <div className="col-md-1"><button className="btn btn-danger w-100" onClick={this.rejectReferral}>Reject</button></div>
             </div>
@@ -40,12 +42,12 @@ class UserInfo extends Component {
 }
 
 class SupportReferral extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
-            userId : this.props.userId,
-            screenName : this.props.screenName,
-            poolDetails : this.props.poolDetails,
+            userId: this.props.userId,
+            screenName: this.props.screenName,
+            poolDetails: this.props.poolDetails,
             requests: []
         }
     }
@@ -61,58 +63,58 @@ class SupportReferral extends Component {
                 isLeader: "false"
             },
         })
-        .then(response => {
+            .then(response => {
                 this.setState({
                     requests: response.data,
                     requestsReceived: true,
                 });
-        })
-        .catch(error => {
-            this.setState({
-                requestsReceived: true,
-            });
-        })
+            })
+            .catch(error => {
+                this.setState({
+                    requestsReceived: true,
+                    requests: []
+                });
+            })
     }
 
-	manageRequest = (reqParams) => {
-		axios.put(`/poolMembers/manageRequest?poolId=${this.state.poolDetails.id}&poolMemberId=${reqParams.poolMemberId}&status=${reqParams.status}`)
-		.then(() => {
-			this.props.update()
-			this.getDetails()
-		})
-		.catch((error) => {
-			console.log(error.response.data)
-		})
-	}
+    manageRequest = (reqParams) => {
+        axios.put(`/poolMembers/manageRequest?poolId=${this.state.poolDetails.id}&poolMemberId=${reqParams.poolMemberId}&status=${reqParams.status}&requestId=${reqParams.requestId}`)
+            .catch(() => {
+                alert(`Error in changing the status to ${reqParams.status}`)
+            })
+        this.props.update()
+        this.getDetails()
+    }
 
     render() {
 
         let allUsers = []
         if (this.state.requestsReceived) {
             // console.log(this.state.requests);
-			for (var i = 0; i < this.state.requests.length; i++) {
-				allUsers.push(
-					<UserInfo
-						slNo={i + 1}
+            for (var i = 0; i < this.state.requests.length; i++) {
+                allUsers.push(
+                    <UserInfo
+                        slNo={i + 1}
                         userObj={this.state.requests[i].member}
+                        reqId={this.state.requests[i].id}
                         manageRequest={this.manageRequest}
-					/>
-				);
-			}
-			if (this.state.requests.length === 0) {
-				return (
-					<div className="p-5">
-						<p className="display-4 text-center">There are no active requests</p>
-					</div>
-				);
-			}
-		} else {
-			return (
-				<div className="p-5">
-					<p className="display-4 text-center">Fetching...</p>
-				</div>
-			);			
-		}
+                    />
+                );
+            }
+            if (this.state.requests.length === 0) {
+                return (
+                    <div className="p-5">
+                        <p className="display-4 text-center">There are no active requests</p>
+                    </div>
+                );
+            }
+        } else {
+            return (
+                <div className="p-5">
+                    <p className="display-4 text-center">Fetching...</p>
+                </div>
+            );
+        }
 
         return (
             <div>

@@ -1,6 +1,7 @@
 package com.cartshare.PoolMembers.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,6 +16,7 @@ import com.cartshare.models.User;
 import com.cartshare.repositories.PoolMembersRepository;
 import com.cartshare.repositories.PoolRepository;
 import com.cartshare.repositories.UserRepository;
+import com.cartshare.utils.MailController;
 
 @Repository
 public class PoolMembersDAO {
@@ -27,58 +29,99 @@ public class PoolMembersDAO {
 	
 	@PersistenceContext
 	EntityManager entityManager;
+
+	public PoolMembers save(PoolMembers member) {
+		return poolMembersRepository.save(member);
+	}
 	
 	public PoolMembers joinRequest(Long pool_id, Long member_id, Long reference_id) {
-		System.out.println(pool_id + " " + member_id + " " + reference_id);
 		User member = userRepository.findById(member_id).orElse(null);
 		User reference = userRepository.findById(reference_id).orElse(null);
 		Pool pool = poolRepository.findById(pool_id).orElse(null);
-		System.out.println(member);
-		System.out.println(reference);
-		System.out.println(pool);
 		
 		if(member == null || reference == null || pool == null) {
 			return null;
 		}
 		
-		/* Need to check whether member is already part of some other pool
-		*/
-		Query query = entityManager.createQuery("FROM PoolMembers WHERE member_id = :member_id");
-		query.setParameter("member_id", member_id);
-		List results = query.getResultList();
-		if(results.size() > 0)
+		List<PoolMembers> allRequests = poolMembersRepository.findAllByMember(member);
+		for (PoolMembers request: allRequests) {
+			if (request.getStatus().equals("Accepted")) {
+				return null;
+			} else if (request.getReference().getId() == reference_id) {
+				return request;
+			}
+		}
+		Set<PoolMembers> pools = reference.getPoolMembers();
+		if (pools.size() == 0) {
 			return null;
-		
-		String status = "Requested";
-		if(member_id == reference_id) {
-			status = "Accepted";
-		} else if(pool.getPooler().getId() == reference_id) {
+		} else if (reference.getPoolMembers().iterator().next().getPool().getId() != pool_id) {
+			return null;
+		}
+
+		MailController mailController = new MailController();
+		String status;
+		if(pool.getPooler().getId() == reference_id) {
 			status = "Approved";
+			mailController.send(reference.getEmail(), "A new request to join the pool", member.getScreenName() + " has given you as reference to join your pool. Please login to accept or reject the request");
+		} else {
+			status = "Requested";
+			mailController.send(reference.getEmail(), "A new request to join the pool", member.getScreenName() + " has given you as reference to join your pool. Please login to support or reject the request");
 		}
 		PoolMembers poolMembers = new PoolMembers();
 		poolMembers.setMember(member);
 		poolMembers.setReference(reference);
 		poolMembers.setPool(pool);
 		poolMembers.setStatus(status);
-		System.out.println(poolMembers.getStatus());
 		return poolMembersRepository.save(poolMembers);
 	}
 	
-	public PoolMembers manageRequest(Long pool_id, Long poolMember, String status) {
+	public PoolMembers manageRequest(Long pool_id, Long poolMember, String status, Long requestId) {
 		Pool pool = poolRepository.findById(pool_id).orElse(null);
-		if(pool == null)
+		if(pool == null) {
 			return null;
+		}
 		
 		User member = userRepository.findById(poolMember).orElse(null);
 		if (member == null) {
 			return null;
 		}
-		PoolMembers poolMembers = poolMembersRepository.findByMember(member);
-		if(poolMembers == null)
+
+		PoolMembers poolMembers = poolMembersRepository.findById(requestId).orElse(null);
+		if(poolMembers == null){
 			return null;
-		
-		poolMembers.setStatus(status);
-		return poolMembersRepository.save(poolMembers);
+		}
+
+		List<PoolMembers> requestList = poolMembersRepository.findAllByMemberAndStatus(member, "Accepted");
+		if (requestList != null && requestList.size() > 0) {
+			poolMembers.setStatus("Rejected");
+			poolMembersRepository.save(poolMembers);
+			return null;
+		}
+
+		if (status.compareTo("Rejected") == 0) {
+			poolMembers.setStatus(status);
+			poolMembers = poolMembersRepository.save(poolMembers);
+		} else if (status.compareTo("Approved") == 0) {
+			List<PoolMembers> allRequests = poolMembersRepository.findAllByPoolAndMemberAndStatus(pool, member, "Approved");
+			if (allRequests.size() > 0) {
+				poolMembers.setStatus("Rejected");
+			} else {
+				poolMembers.setStatus("Approved");
+			}
+			poolMembers = poolMembersRepository.save(poolMembers);
+		} else {
+			List<PoolMembers> allRequests = poolMembersRepository.findAllByMember(member);
+			for (PoolMembers memberObj: allRequests) {
+				if (poolMembers.getId() != memberObj.getId()) {
+					memberObj.setStatus("Rejected");
+					poolMembersRepository.save(memberObj);
+				}
+			}
+			poolMembers.setStatus("Accepted");
+			poolMembers = poolMembersRepository.save(poolMembers);
+		}
+
+		return poolMembers;	
 	}
 	
 	public List<PoolMembers> supportedRequests(Long user_id){

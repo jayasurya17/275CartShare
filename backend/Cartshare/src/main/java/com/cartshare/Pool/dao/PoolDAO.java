@@ -28,30 +28,28 @@ public class PoolDAO {
 		User pooler = userRepository.findById(pooler_id).orElse(null);
 		// User leader = userRepository.findById(leader_id).orElse(null);
 				
-		if(pooler != null) {
-			Query query = entityManager.createQuery("FROM PoolMembers WHERE member_id = :member_id");
-			query.setParameter("member_id", pooler.getId());
-			List results = query.getResultList();
-			if(results.size() > 0)
-				return null;
-			
-			pool.setPooler(pooler);
-			// System.out.println("New Entry");
-			Pool result = poolRepository.save(pool);
-			// System.out.println(result);
-			
-			PoolMembers poolMembers = new PoolMembers();
-			poolMembers.setMember(pooler);
-			poolMembers.setReference(pooler);
-			poolMembers.setPool(result);
-			poolMembers.setStatus("Accepted");
-			// System.out.println(poolMembers);
-			poolMembersRepository.save(poolMembers);
-			// System.out.println(poolMembers);
-			return result;
-			
+		if(pooler == null) {
+			return null;
 		}
-		return null;
+		List<PoolMembers> allRequests = poolMembersRepository.findAllByMember(pooler);
+		for (PoolMembers request: allRequests) {
+			if (request.getStatus().equals("Accepted")) {
+				return null;
+			}
+		}
+		
+		pool.setPooler(pooler);
+		// System.out.println("New Entry");
+		Pool result = poolRepository.save(pool);
+		// System.out.println(result);
+		
+		PoolMembers poolMembers = new PoolMembers();
+		poolMembers.setMember(pooler);
+		poolMembers.setReference(pooler);
+		poolMembers.setPool(result);
+		poolMembers.setStatus("Accepted");
+		poolMembersRepository.save(poolMembers);
+		return result;
 	}
 	
 	public Pool getPool(Long poolId) {

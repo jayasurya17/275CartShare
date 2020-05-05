@@ -78,8 +78,7 @@ class ViewDetails extends Component {
 					});
 				}
 			})
-			.catch((error) => {
-				alert(error.response.data);
+			.catch(() => {
 				this.setState({
 					poolReceived: false,
 				});
@@ -107,7 +106,7 @@ class ViewDetails extends Component {
 					});
 				}
 			})
-			.catch((error) => {
+			.catch(() => {
 				this.setState({
 					membersReceived: true,
 				});

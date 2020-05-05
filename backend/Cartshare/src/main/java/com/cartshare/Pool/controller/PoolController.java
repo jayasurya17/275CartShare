@@ -11,7 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
 import com.cartshare.Pool.dao.PoolDAO;
+import com.cartshare.PoolMembers.dao.PoolMembersDAO;
+import com.cartshare.User.dao.UserDAO;
 import com.cartshare.models.Pool;
+import com.cartshare.models.PoolMembers;
+import com.cartshare.models.User;
 import com.cartshare.utils.Alphanumeric;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -21,6 +25,12 @@ public class PoolController {
 	
 	@Autowired
 	PoolDAO poolDAO;
+
+	@Autowired
+	UserDAO userDAO;
+
+	@Autowired
+	PoolMembersDAO poolMembersDAO;
 
 	Alphanumeric alphanumeric = new Alphanumeric();
 	
@@ -63,7 +73,6 @@ public class PoolController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Pooler");
 			}
 			return ResponseEntity.status(HttpStatus.OK).body(result);
-			// return null;
 			
 		} catch(Exception e) {
 			e.printStackTrace();
