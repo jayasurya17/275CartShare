@@ -68,7 +68,7 @@ class Home extends Component {
             for (var index in this.state.allProducts) {
                 tempContainer.push(
                     <div className="col-md-6">
-                        <ItemCard isAdmin={true} storeId={this.props.match.params.storeId} productObj={this.state.allProducts[index]} />
+                        <ItemCard isAdmin={true} storeId={this.props.match.params.storeId} productObj={this.state.allProducts[index]} getAllProducts={this.getAllProducts} />
                     </div>
                 )
                 if ((index + 1) % 2 === 0) {
