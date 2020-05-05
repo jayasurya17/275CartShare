@@ -106,13 +106,37 @@ class StoreInfoComponent extends Component {
 
     }
 
-    createStore = () => {
+    createStore = async () => {
         if (this.isValidZipCode(this.state.zipcode) === false) {
             this.setState({
                 successMsg: "",
                 errMsg: "Invalid zipcode"
             })
         } else if (this.areValidValues()) {
+            var response
+            try {
+                response = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${this.state.street}, ${this.state.state}, ${this.state.city}, ${this.state.zipcode}.json?access_token=pk.eyJ1Ijoic2hpdmFuZGVzYWkiLCJhIjoiY2syaW0xaXllMGcydTNjb2hua3UzbHpyMSJ9.ZHxE6FAsU4GeDvz4WH9AhA`)
+            } catch (error) {
+                alert('Please enter a valid address!');
+                return;
+            }
+            if(response.data.features.length === 0){
+                alert('Please enter a valid address!');
+                return;
+            }
+            var isFound = false;
+            for(var a of response.data.features){
+                console.log('relevance', a.properties.accuracy);
+                if (a.properties.accuracy !== undefined && a.relevance > 0.95){
+                    isFound = true
+                } 
+            }
+
+            if(isFound === false){
+                alert('Please enter a valid address!');
+                return;
+            }
+
             const reqBody = {
                 userId: localStorage.getItem('275UserId'),
                 storeName: this.state.name,
@@ -150,13 +174,38 @@ class StoreInfoComponent extends Component {
         }
     }
 
-    updateStore = () => {
+    updateStore = async () => {
         if (this.isValidZipCode(this.state.zipcode) === false) {
             this.setState({
                 successMsg: "",
                 errMsg: "Invalid zipcode"
             })
         } else if (this.areValidValues()) {
+            var response
+            try {
+                response = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${this.state.street}, ${this.state.state}, ${this.state.city}, ${this.state.zipcode}.json?access_token=pk.eyJ1Ijoic2hpdmFuZGVzYWkiLCJhIjoiY2syaW0xaXllMGcydTNjb2hua3UzbHpyMSJ9.ZHxE6FAsU4GeDvz4WH9AhA`)
+            } catch (error) {
+                alert('Please enter a valid address!');
+                return;
+            }
+
+            if(response.data.features.length === 0){
+                alert('Please enter a valid address!');
+                return;
+            }
+            var isFound = false;
+            for(var a of response.data.features){
+                console.log('relevance', a.properties.accuracy);
+                if (a.properties.accuracy !== undefined && a.relevance > 0.95){
+                    isFound = true
+                } 
+            }
+
+            if(isFound === false){
+                alert('Please enter a valid address!');
+                return;
+            }
+            
             const reqBody = {
                 storeId: this.props.storeId,
                 userId: localStorage.getItem('275UserId'),
