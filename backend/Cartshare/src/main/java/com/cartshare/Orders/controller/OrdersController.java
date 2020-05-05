@@ -483,6 +483,12 @@ public class OrdersController {
             }
 
             for (OrderItems orderItem : order.getOrderItems()) {
+                if (orderItem.getProduct().isActive() == false) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("Could not place order. Product " + orderItem.getProduct().getProductName() + " with SKU " + orderItem.getProduct().getSku() + " has been deleted!");
+                }
+            }
+
+            for (OrderItems orderItem : order.getOrderItems()) {
                 orderItem.setProductName(orderItem.getProduct().getProductName());
                 orderItem.setProductPrice(orderItem.getProduct().getPrice());
                 orderItem.setProductImage(orderItem.getProduct().getImageURL());

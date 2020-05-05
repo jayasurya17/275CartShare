@@ -38,9 +38,21 @@ class Home extends Component {
         }
     }
 
-    deleteProduct = () => {
+    deleteProduct = (e) => {
+        e.preventDefault();
         this.setState({
-            errMsg: "Unable to delete this product"
+            errMsg: "",
+            successMsg: ""
+        })
+        axios.delete(`/admin/delete/product?productId=${this.props.productObj.id}`)
+        .then(() => {
+            this.props.getAllProducts()
+        })
+        .catch(() => {
+            this.setState({
+                errMsg: "There are unfulfilled orders for this product. It cannot be deleted at the moment!",
+                successMsg: ""
+            })
         })
     }
 
