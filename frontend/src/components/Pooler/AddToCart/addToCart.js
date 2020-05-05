@@ -17,6 +17,7 @@ class AddToCart extends Component {
             searchSKU: true,
             currentStoreID: null,
             searchResult: false,
+            isStoreActive: true
         }
     }
 
@@ -51,6 +52,11 @@ class AddToCart extends Component {
                         searchValue: "",
                         searchResult: false,
                     })
+                    if (response.status === 204) {
+                        this.setState({
+                            isStoreActive: false
+                        })
+                    }
                 })
                 .catch(() => {
                     this.setState({
@@ -103,34 +109,43 @@ class AddToCart extends Component {
             if (this.state.currentStoreID === null) {
                 allProducts.push(<BrowseStores updateStore={this.updateCurrentStore} refresh={this.viewAllProducts} />)
             } else if (this.state.isFetched === true) {
-                allProducts.push(
-                    <div className="row pt-5">
-                        <div className="col-md-2 offset-md-1">
-                            <select className="form-control" onChange={this.searchTypeChangeHandler} value={this.state.searchSKU} >
-                                <option value={true}>SKU</option>
-                                <option value={false}>Product Name</option>
-                            </select>
-                        </div>
-                        <div className="col-md-4">
-                            <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
-                        </div>
-                        <div className="col-md-2">
-                            <button className="btn btn-success w-100" onClick={this.searchProducts}>Search</button>
-                        </div>
-                        <div className="col-md-2">
-                            <button className="btn btn-warning w-100" onClick={this.clearSearch}>Clear Search</button>
-                        </div>
-                    </div>
-                )
-                if (this.state.searchResult === false) {
+                if (this.state.isStoreActive === false) {
                     allProducts.push(
-                        <h2 className="font-weight-light text-center mt-5">Oops! Looks like there are no products in this store at the moment</h2>
+                        <h2 className="font-weight-light text-center mt-5">The store you have been shopping from has been deleted.</h2>
+                    )
+                    allProducts.push(
+                        <h2 className="font-weight-light text-center mt-5">Please clear the cart to shop from a different store.</h2>
                     )
                 } else {
                     allProducts.push(
-                        <h2 className="font-weight-light text-center mt-5">Oops! There are no products matching your search</h2>
+                        <div className="row pt-5">
+                            <div className="col-md-2 offset-md-1">
+                                <select className="form-control" onChange={this.searchTypeChangeHandler} value={this.state.searchSKU} >
+                                    <option value={true}>SKU</option>
+                                    <option value={false}>Product Name</option>
+                                </select>
+                            </div>
+                            <div className="col-md-4">
+                                <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
+                            </div>
+                            <div className="col-md-2">
+                                <button className="btn btn-success w-100" onClick={this.searchProducts}>Search</button>
+                            </div>
+                            <div className="col-md-2">
+                                <button className="btn btn-warning w-100" onClick={this.clearSearch}>Clear Search</button>
+                            </div>
+                        </div>
                     )
-                }
+                    if (this.state.searchResult === false) {
+                        allProducts.push(
+                            <h2 className="font-weight-light text-center mt-5">Oops! Looks like there are no products in this store at the moment</h2>
+                        )
+                    } else {
+                        allProducts.push(
+                            <h2 className="font-weight-light text-center mt-5">Oops! There are no products matching your search</h2>
+                        )
+                    }
+                }   
 
             }
         } else {

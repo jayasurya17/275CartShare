@@ -17,6 +17,10 @@ class BrowseStores extends Component {
     }
 
     componentDidMount() {
+        this.getAllStores()
+    }
+
+    getAllStores = () => {
         axios.get(`/store/all`)
             .then((response) => {
                 this.setState({
@@ -50,7 +54,7 @@ class BrowseStores extends Component {
             for (var index in this.state.allStores) {
                 tempContainer.push(
                     <div className="col-md-6">
-                        <StoreCard isAdmin={true} storeObj={this.state.allStores[index]} />
+                        <StoreCard isAdmin={true} storeObj={this.state.allStores[index]} getAllStores={this.getAllStores} />
                     </div>
                 )
                 if ((index + 1) % 2 === 0) {

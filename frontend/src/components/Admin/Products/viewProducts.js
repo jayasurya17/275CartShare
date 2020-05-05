@@ -12,7 +12,8 @@ class Home extends Component {
         super()
         this.state = {
             allProducts: [],
-            isFetched: false
+            isFetched: false,
+            isStoreActive: true
         }
     }
 
@@ -23,14 +24,21 @@ class Home extends Component {
     getAllProducts = () => {
         axios.get(`/product/get/all?storeId=${this.props.match.params.storeId}`)
             .then((response) => {
+                console.log(response)
                 this.setState({
                     allProducts: response.data,
                     isFetched: true
                 })
+                if (response.status === 204) {
+                    this.setState({
+                        isStoreActive: false
+                    })
+                }
             })
             .catch(() => {
                 this.setState({
-                    isFetched: true
+                    isFetched: true,
+                    isStoreActive: false
                 })
             })
     }
@@ -40,14 +48,20 @@ class Home extends Component {
         let allProducts = []
         if (this.state.allProducts.length === 0) {
             if (this.state.isFetched === true) {
-                allProducts.push(
-                    <h2 className="font-weight-light text-center mt-5">Oops! Looks like you do not have any products in this store at the moment</h2>
-                )
-                allProducts.push(
-                    <div className="mb-5">
-                        <ProductInfoComponent storeId={this.props.match.params.storeId} getAllProducts={this.getAllProducts}/>
-                    </div>
-                )
+                if (this.state.isStoreActive === false) {
+                    allProducts.push(
+                        <h2 className="font-weight-light text-center mt-5">Oops! Looks like this store does not exist or has been deleted</h2>
+                    )
+                } else {
+                    allProducts.push(
+                        <h2 className="font-weight-light text-center mt-5">Oops! Looks like you do not have any products in this store at the moment</h2>
+                    )
+                    allProducts.push(
+                        <div className="mb-5">
+                            <ProductInfoComponent storeId={this.props.match.params.storeId} getAllProducts={this.getAllProducts}/>
+                        </div>
+                    )
+                }
             }
         } else {
             let tempContainer = []

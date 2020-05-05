@@ -57,20 +57,15 @@ public class AdminController {
             if (user == null || user.isAdmin() == false) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not an admin");
             }
-//            if (adminDAO.findByName(storeRequest.getStoreName()) != null) {
-//                return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate store name");
-//            }
-            List<Store> s = storeDAO.findAllByStoreName(storeRequest.getStoreName());
-            if(s!=null)
-            {
-            for (Store st: s) 
-            {
-            
-            if (st.getStoreName().equals(storeRequest.getStoreName())) {
-            	
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate store name");
-            }
-            }
+            List<Store> s = storeDAO.findAllByStoreNameAndIsActive(storeRequest.getStoreName());
+            if (s != null) {
+                for (Store st : s) {
+
+                    if (st.getStoreName().equals(storeRequest.getStoreName())) {
+
+                        return ResponseEntity.status(HttpStatus.CONFLICT).body("Duplicate store name");
+                    }
+                }
             }
             Store store = new Store();
             store.setStoreName(storeRequest.getStoreName());
@@ -110,19 +105,14 @@ public class AdminController {
             if (store == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
             }
-            List<Store> s = storeDAO.findAllByStoreName(storeRequest.getStoreName());
-            if(s!=null)
-            {
-            for (Store st: s) 
-            {
-            
-            
-            
-            if ( st.getId()!=reqStoreId && st.getStoreName().equals(storeRequest.getStoreName())) {
-            	
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Cannot update as this is a Duplicate store name");
-            }
-            }
+            List<Store> s = storeDAO.findAllByStoreNameAndIsActive(storeRequest.getStoreName());
+            if (s != null) {
+                for (Store st : s) {
+                    if (st.getId() != reqStoreId && st.getStoreName().equals(storeRequest.getStoreName())) {
+                        return ResponseEntity.status(HttpStatus.CONFLICT)
+                                .body("Cannot update as this is a Duplicate store name");
+                    }
+                }
             }
             store.setStoreName(storeRequest.getStoreName());
             Address address = new Address();
@@ -193,7 +183,7 @@ public class AdminController {
                 if (store == null) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
                 }
-                Product product = productDAO.findByStoreIdAndSKU(store, SKU);
+                Product product = productDAO.findByStoreIdAndSKUAndIsActive(store, SKU);
                 if (product != null) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate SKU");
                 }
@@ -273,6 +263,10 @@ public class AdminController {
             }
 
             Product product = productDAO.findById(productId);
+            if (product.isActive() == false) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product has been deleted");
+            }
+
             product.setProductName(productname);
             product.setDescription(productdescription);
             product.setBrand(productbrand);
@@ -294,7 +288,7 @@ public class AdminController {
     public ResponseEntity<?> deleteStore(@RequestParam("storeId") String reqStoreId) {
 
         try {
-            
+
             Long storeId = null;
             try {
                 storeId = Long.parseLong(reqStoreId);
@@ -306,18 +300,19 @@ public class AdminController {
             if (store == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
             }
-            
+
             List<Orders> allOrders = ordersDAO.findAllUnfulfilledOrdersByStore(store);
 
-            for (Orders order: allOrders) {
-                if (order.getStatus().equals("Cart")) {
-                    for (OrderItems orderItems: order.getOrderItems()) {
-                        adminDAO.deleteOrderItem(orderItems.getId());
-                    }
-                    adminDAO.deleteOrder(order.getId());
-                } else {
-                    return ResponseEntity.status(HttpStatus.CONFLICT).body("There are unfulfilled orders in this store");
+            for (Orders order : allOrders) {
+                if (order.getStatus().compareTo("Cart") != 0) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body("There are unfulfilled orders in this store");
                 }
+            }
+
+            for (Product product: store.getProducts()) {
+                product.setActive(false);
+                productDAO.save(product);
             }
 
             store.setActive(false);
@@ -335,7 +330,7 @@ public class AdminController {
     public ResponseEntity<?> deleteProduct(@RequestParam("productId") String reqProductId) {
 
         try {
-            
+
             Long productId = null;
             try {
                 productId = Long.parseLong(reqProductId);
@@ -347,21 +342,13 @@ public class AdminController {
             if (product == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product with the given ID does not exist");
             }
-            
+
             List<Orders> allOrders = ordersDAO.findAllUnfulfilledOrdersByStore(product.getStore());
 
-            for (Orders order: allOrders) {
-                if (order.getStatus().equals("Cart")) {
-                    for (OrderItems orderItems: order.getOrderItems()) {
-                        if (orderItems.getProduct().getId() == productId) {
-                            adminDAO.deleteOrderItem(orderItems.getId());
-                        }
-                    }
-                    if (order.getOrderItems().isEmpty()) {
-                        adminDAO.deleteOrder(order.getId());
-                    }
-                } else {
-                    return ResponseEntity.status(HttpStatus.CONFLICT).body("There are unfulfilled orders in this store");
+            for (Orders order : allOrders) {
+                if (order.getStatus().equals("Cart") == false) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT)
+                            .body("There are unfulfilled orders for this product");
                 }
             }
 
