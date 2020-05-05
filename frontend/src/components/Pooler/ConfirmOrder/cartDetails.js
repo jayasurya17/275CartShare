@@ -44,6 +44,9 @@ class ViewCart extends Component {
             .then(() => {
                 this.getAllProductsIncart()
             })
+            .catch(() => {
+                this.getAllProductsIncart()
+            })
     }
 
     deleteQuantity = (reqParam) => {
@@ -108,7 +111,7 @@ class ViewCart extends Component {
                     <div className="col-md-2">${cartTotal.toFixed(2)}</div>
                 </div>
                 <div className="mt-5 mb-5 text-center">
-                    <button className="btn btn-success w-50" onClick={this.props.confirmOrder}>Confirm order</button>
+                    <button className="btn btn-success w-50" onClick={this.props.confirmOrder}>Continue</button>
                 </div>
             </div>
         )

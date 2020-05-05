@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 class Home extends Component {
 
@@ -12,7 +13,16 @@ class Home extends Component {
     deleteStore = (e) => {
         e.preventDefault();
         this.setState({
-            errMsg: "This store has unfulfilled orders. It cannot be deleted at the moment!"
+            errMsg: ""
+        })
+        axios.delete(`/admin/delete/store?storeId=${this.props.storeObj.id}`)
+        .then(() => {
+            this.props.getAllStores()
+        })
+        .catch(() => {
+            this.setState({
+                errMsg: "This store has unfulfilled orders. It cannot be deleted at the moment!"
+            })
         })
     }
 

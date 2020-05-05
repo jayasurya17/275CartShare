@@ -14,6 +14,7 @@ class UserContribution extends Component {
             showOtherOrders: false,
             contributionCredit: null,
             warningMsg: "",
+            errMsg: "",
             storeId: null,
             redirect: null,
             pendingOrders: [],
@@ -44,6 +45,10 @@ class UserContribution extends Component {
     }
 
     submitOrder = () => {
+        this.setState({
+            warningMsg: "",
+            errMsg: ""
+        })
         if (this.state.contributionCredit === null) {
             this.setState({
                 warningMsg: "Please wait while we are fetching your contribution credit"
@@ -59,18 +64,27 @@ class UserContribution extends Component {
                 })
                 axios.post(`/orders/confirmOrder`, reqBody)
                     .then((response1) => {
-                        this.setState({
-                            storeId: response1.data.store.id,
-                            orderId: response1.data.id
-                        })
-                        axios.get(`/orders/pendingInPool?userId=${localStorage.getItem('275UserId')}&storeId=${response1.data.store.id}`)
-                            .then((response) => {
-                                this.setState({
-                                    pendingOrders: response.data,
-                                    showOtherOrders: true
-                                })
+                            this.setState({
+                                storeId: response1.data.store.id,
+                                orderId: response1.data.id
                             })
+                            axios.get(`/orders/pendingInPool?userId=${localStorage.getItem('275UserId')}&storeId=${response1.data.store.id}`)
+                                .then((response) => {
+                                    this.setState({
+                                        pendingOrders: response.data,
+                                        showOtherOrders: true
+                                    })
+                                })
                     })
+                    .catch((error) => {
+                        this.setState({
+                            errMsg: error.response.data,
+                            warningMsg: ""
+                        })
+                    })
+                        
+
+                    
             } else {
                 if (this.state.contributionCredit <= -4) {
                     var option = window.confirm(`Are you sure? Your contribution status is low (${this.state.contributionCredit} points)`)
@@ -136,6 +150,7 @@ class UserContribution extends Component {
             submitButton = [
                 <div className="mt-5 mb-5 text-center">
                     <p className="text-warning text-center">{this.state.warningMsg}</p>
+                    <p className="text-danger text-center">{this.state.errMsg}</p>
                     <button className="btn btn-success w-50" onClick={this.submitOrder}>Submit order</button>
                 </div>
             ]

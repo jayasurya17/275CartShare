@@ -45,6 +45,10 @@ class Home extends Component {
     }
 
     addToCart = () => {
+        this.setState({
+            successMsg: "",
+            errMsg: ""
+        })
         const reqBody = {
             userId: localStorage.getItem('275UserId'),
             storeId: this.props.productObj.store.id,

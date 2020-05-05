@@ -27,7 +27,7 @@ public class StoreController {
     @GetMapping(value = "/all",  produces = { "application/json", "application/xml" })
     public ResponseEntity<?> getAllStores() {
         try{
-            return ResponseEntity.status(HttpStatus.OK).body(storeDAO.findAll());
+            return ResponseEntity.status(HttpStatus.OK).body(storeDAO.findAllByIsActive());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -45,6 +45,8 @@ public class StoreController {
             Store store = storeDAO.findById(reqStoreId);
             if (store == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
+            } else if (store.isActive() == false) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store has been deleted");
             }
             return ResponseEntity.status(HttpStatus.OK).body(store);
         } catch (Exception e) {

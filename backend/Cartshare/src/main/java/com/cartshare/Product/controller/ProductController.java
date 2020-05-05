@@ -39,8 +39,11 @@ public class ProductController {
             if (store == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
             }
+            if (store.isActive() == false) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Store has been deleted");
+            }
 
-            return ResponseEntity.status(HttpStatus.OK).body(productDAO.findByStore(store));
+            return ResponseEntity.status(HttpStatus.OK).body(productDAO.findByStoreAndIsActive(store));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -58,7 +61,13 @@ public class ProductController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
             }
 
-            return ResponseEntity.status(HttpStatus.OK).body(productDAO.findById(reqProductId));
+            Product product = productDAO.findById(reqProductId);
+            if (product == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product does not exist");
+            } else if (product.isActive() == false) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product has been deleted");
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(product);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -117,7 +126,7 @@ public class ProductController {
                 filteredProducts = allProducts;
             } else {
                 for (Product product : allProducts) {
-                    if (product.getProductName().equals(name)) {
+                    if (product.getProductName().equals(name) && product.isActive() == true) {
                         filteredProducts.add(product);
                     }
                 }
@@ -181,7 +190,7 @@ public class ProductController {
                 }
             } else {
                 for (Product product : allProducts) {
-                    if (product.getProductName().equals(name) && product.getStore().getUser().getId() == adminId) {
+                    if (product.getProductName().equals(name) && product.getStore().getUser().getId() == adminId && product.isActive() == true){
                         filteredProducts.add(product);
                     }
                 }
