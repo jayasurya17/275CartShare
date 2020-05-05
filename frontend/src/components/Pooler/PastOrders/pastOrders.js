@@ -30,12 +30,11 @@ class PastOrders extends Component {
                 })
             }
         })
-        .catch((err) => {
+        .catch(() => {
             this.setState({
                 fetched: true,
                 allOrders: []
             })
-            alert(err.response.data);
         })
     }
 

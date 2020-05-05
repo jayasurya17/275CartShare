@@ -8,6 +8,7 @@ class Home extends Component {
 		super(props);
 		this.state = {
 			allPools: [],
+			isFetched: false
 		};
 	}
 
@@ -20,17 +21,30 @@ class Home extends Component {
 					this.setState({
 						allPools: response.data,
 						successMsg: "All Pool Fetched",
+						isFetched: true
 					});
 				}
 			})
 			.catch((error) => {
 				this.setState({
 					errMsg: "No Pools Fetched",
+					isFetched: true
 				});
 			});
 	};
 
 	render() {
+		if (this.state.isFetched === false) {
+			return (
+				<div>
+					<input className="form-control" placeholder="Search by pool name or neighborhood name or zipcode" />
+					<div className="scrollable">
+						<p>Fetching...</p>
+					</div>
+				</div>
+			);
+		}
+
 		let poolCards;
 		if (this.state.allPools.length > 0) {
 			poolCards = this.state.allPools.map((pool) => {
@@ -41,6 +55,8 @@ class Home extends Component {
 						leader={pool.pooler}
 						zip={pool.zipcode}
 						poolId={pool.id}
+						alphaNumericId={pool.poolId}
+						neighborhoodName = {pool.neighborhoodName}
 					/>
 				);
 			});
@@ -48,10 +64,7 @@ class Home extends Component {
 
 		return (
 			<div>
-				<input
-					className="form-control"
-					placeholder="Search by pool name or neighborhood name or zipcode"
-				/>
+				<input className="form-control" placeholder="Search by pool name or neighborhood name or zipcode" />
 				<div className="scrollable">
 					{poolCards ? poolCards : <p>No Pools Available</p>}
 				</div>

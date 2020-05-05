@@ -22,6 +22,10 @@ public class Pool {
 	@Column(name = "id")
 	private long id;
 	
+	@NotBlank
+	@Column(name = "pool_id")
+	private String poolId;
+	
 	@ManyToOne
 	@JoinColumn(name = "pooler_id")
 	private User pooler;
@@ -45,22 +49,11 @@ public class Pool {
 	@OneToMany(mappedBy="pool", fetch = FetchType.EAGER)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<PoolMembers> poolMembers = new HashSet<PoolMembers>();
+
+
 	public Pool() {
 		
 	}
-
-	public Pool(long id, User pooler, @NotBlank String poolName, @NotBlank String neighborhoodName, String description,
-			String zipcode, Set<PoolMembers> poolMembers) {
-		super();
-		this.id = id;
-		this.pooler = pooler;
-		this.poolName = poolName;
-		this.neighborhoodName = neighborhoodName;
-		this.description = description;
-		this.zipcode = zipcode;
-		this.poolMembers = poolMembers;
-	}
-
 
 	public long getId() {
 		return id;
@@ -126,6 +119,14 @@ public class Pool {
 
 	public void setPoolMembers(Set<PoolMembers> poolMembers) {
 		this.poolMembers = poolMembers;
+	}
+
+	public String getPoolId() {
+		return this.poolId;
+	}
+
+	public void setPoolId(String poolId) {
+		this.poolId = poolId;
 	}
 	
 }

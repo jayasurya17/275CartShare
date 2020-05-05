@@ -58,6 +58,10 @@ class PoolCard extends Component {
     }
 
     sendRequest = async () => {
+        this.setState({
+            errorMsg: "",
+            successMsg: ""
+        })
         if (this.state.referenceName === "" && this.state.knowsLeader === false) {
             alert("Please provide required details");
         } else {
@@ -73,9 +77,10 @@ class PoolCard extends Component {
                             })
                         }
                     })
-                    .catch(error => {
-                        console.log(error.response.data);
+                    .catch(() => {
                         this.setState({
+                            errorMsg: "Request failed",
+                            successMsg: "",
                             screenNameReference: false,
                             referenceId: ""
                         })
@@ -124,8 +129,8 @@ class PoolCard extends Component {
                 <div className="col-md-9">
                     <h2>Name: {this.state.poolName}</h2>
                     <h4 className="font-weight-light">{this.state.description}</h4>
-                    {/* <h4>Pool leader: <span className="font-weight-light">{this.state.leader}</span> </h4> */}
-                    <h4>San Jose <span className="font-weight-light">{this.state.zip}</span></h4>
+                    <h4>Pool ID: <span className="font-weight-light">{this.props.alphaNumericId}</span> </h4>
+                    <h4>{this.props.neighborhoodName} - <span className="font-weight-light">{this.state.zip}</span></h4>
                 </div>
                 <div className="col-md-3">
                     <button className="btn btn-warning" data-toggle="modal" data-target={"#ModalCenter" + this.state.poolId}>Join this pool</button>
