@@ -247,6 +247,7 @@ public class OrdersController {
             }
 
             order.setStatus("Delivered");
+            order.setFulfilled(true);
 
             ordersDAO.saveOrderDetails(order);
             MailController mc = new MailController();
@@ -260,6 +261,7 @@ public class OrdersController {
                     User u = o.getUser();
                     o.setPickupPooler(user);
                     o.setStatus("PickedUp");
+                    o.setFulfilled(true);
                     ordersDAO.saveOrderDetails(o);
                     Address a = u.getAddress();
                     message += "<h1>User " + u.getNickName() + "'s order:</h1></br>Address: " + a.getStreet() + ", "
