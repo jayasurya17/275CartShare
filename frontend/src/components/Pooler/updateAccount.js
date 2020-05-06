@@ -79,7 +79,7 @@ class Home extends Component {
         })
     }
 
-    updateInfo = () => {
+    updateInfo = async () => {
         if(this.state.nickName.length === 0 || this.state.screenName.length === 0 || this.state.street.length === 0 || this.state.city.length === 0 || this.state.state.length === 0 || this.state.zipcode.length === 0){
             alert("None of the fields should be empty");
             return;

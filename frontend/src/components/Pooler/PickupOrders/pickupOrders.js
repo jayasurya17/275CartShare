@@ -148,7 +148,10 @@ class OrdersComponent extends Component {
 		axios.get('/orders/pickUp/'.concat(orderId))
 			.then((res) => {
 				if (res.status === 200) {
-					alert("The order and its associated orders have been marked as picked up, and an email has been sent to you regarding the delivery instructions");
+					if(res.data === "Associated")
+						alert("The order and its associated orders have been marked as picked up, and an email has been sent to you regarding the delivery instructions");
+					else
+						alert("Your order has been marked as pickep up");
 					this.props.update();
 				}
 			})
