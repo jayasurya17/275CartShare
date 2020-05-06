@@ -251,7 +251,7 @@ public class OrdersController {
             ordersDAO.saveOrderDetails(order);
             MailController mc = new MailController();
             mc.send(user.getEmail(), "Order #" + order.getId() + " picked up",
-                    "Your cartshare order #" + order.getId() + " has been picked up by " + user.getScreenName());
+                    "You picked up your cartshare order #" + order.getId());
             List<Orders> associated = ordersDAO.findAssociatedOrders(order); // get all associated orders
             // Set<User> hs = new HashSet<User>(); // put users of ass orders in hash set
             // send email to confirm order pick up to all associated poolers
@@ -264,19 +264,18 @@ public class OrdersController {
                     o.setStatus("PickedUp");
                     ordersDAO.saveOrderDetails(o);
                     Address a = u.getAddress();
-                    message += "<h1>User " + u.getScreenName() + "'s order:</h1></br>Address: " + a.getStreet() + ", "
+                    message += "<h1>User " + u.getNickName() + "'s order:</h1></br>Address: " + a.getStreet() + ", "
                             + a.getCity() + ", " + a.getState() + ", " + a.getZipcode() + "</br>Order details: </br>"
                             + od.GenerateProductTableWithPrice(o.getOrderItems()) + "</br></br>";
                     // hs.add(o.getUser());
                     mc.send(u.getEmail(), "Order #" + o.getId() + " picked up",
                             "Your cartshare order #" + o.getId() + " has been picked up by " + user.getScreenName());
                 }
+                mc.sendHTML(user.getEmail(), "Delivery Instructions for the associated orders", message);
+                return ResponseEntity.status(HttpStatus.OK).body("Associated");
             }
 
-            // semd email to provide delivery instructions
-            mc.sendHTML(user.getEmail(), "Delivery Instructions for the associated orders", message);
-
-            return ResponseEntity.status(HttpStatus.OK).body("Orders picked up");
+            return ResponseEntity.status(HttpStatus.OK).body("NoAssociated");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -331,8 +330,14 @@ public class OrdersController {
             Orders order = ordersDAO.findOrdersById(l);
             order.setStatus("Delivered");
             ordersDAO.saveOrderDetails(order);
+            User u = order.getUser();
+            u.setContributionCredit(u.getContributionCredit()-1);
+            userDAO.save(u);
+            User u1 = order.getPickupPooler();
+            u1.setContributionCredit(u1.getContributionCredit()+1);
+            userDAO.save(u1);
             MailController mc = new MailController();
-            mc.send(order.getUser().getEmail(), "Update to your order status",
+            mc.send(u.getEmail(), "Update to your order status",
                     "Your order has been delivered by: " + order.getPickupPooler().getScreenName());
             return ResponseEntity.status(HttpStatus.OK).body("Order status set to delivered");
         } catch (Exception e) {
@@ -355,9 +360,14 @@ public class OrdersController {
             if(o == null){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Order ID");
             }
+            User u = o.getUser();
+            u.setContributionCredit(u.getContributionCredit()+1);
+            userDAO.save(u);
+            User u1 = o.getPickupPooler();
+            u1.setContributionCredit(u1.getContributionCredit()-1);
+            userDAO.save(u1);
             o.setStatus("NotDelivered");
             ordersDAO.saveOrderDetails(o);
-            User u = o.getUser();
             MailController mc = new MailController();
             mc.send(o.getPickupPooler().getEmail(), "Update about one of the orders you delivered", "User " + u.getScreenName() + " has marked order # " + o.getId() + " as Not Delivered");
             return ResponseEntity.status(HttpStatus.OK).body("Order successfully marked as Not Delivered");
