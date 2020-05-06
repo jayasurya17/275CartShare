@@ -74,6 +74,14 @@ class UserDetails extends Component {
         })
     }
 
+	isAlphanumeric = (value) => {
+		return value !== null && value.match(/^[a-zA-Z0-9]+$/) !== null;
+	}
+
+	isAlpha = (value) => {
+		return value !== null && value.match(/^[a-zA-Z]+$/) !== null;
+	}
+
     updateInformation = async () => {
         if(this.state.nickName.length === 0 || this.state.screenName.length === 0 || this.state.street.length === 0 || this.state.city.length === 0 || this.state.state.length === 0 || this.state.zipcode.length === 0){
             alert("None of the fields should be empty");
@@ -88,25 +96,14 @@ class UserDetails extends Component {
             return;
         }
 
-        var str = this.state.nickName;
-        for (i = 0, len = str.length; i < len; i++) {
-            code = str.charCodeAt(i);
-            if (!(code > 64 && code < 91) && // upper alpha (A-Z)
-                !(code > 96 && code < 123)) { // lower alpha (a-z)
-                alert('The nickname can only contain text');
-                return;
-            }
+        if (this.isAlphanumeric(this.state.screenName) !== true) {
+            alert('The screenname can only contain alphanumeric characters');
+            return;
         }
 
-        str = this.state.screenName;
-        for (var i = 0, len = str.length; i < len; i++) {
-            var code = str.charCodeAt(i);
-            if (!(code > 47 && code < 58) && // numeric (0-9)
-                !(code > 64 && code < 91) && // upper alpha (A-Z)
-                !(code > 96 && code < 123)) { // lower alpha (a-z)
-                alert('The screenname can only contain alphanumeric characters');
-                return;
-            }
+        if (this.isAlpha(this.state.nickName) !== true) {
+            alert('The nickname can only contain alphanumeric characters');
+            return;
         }
 
         if(this.state.zipcode.length !== 5){
@@ -230,11 +227,11 @@ class UserDetails extends Component {
                     <div className="col-md-4 offset-md-4">
                         <div className="form-group">
                             <label>Screen name</label>
-                            <input className="form-control" type="text" value={this.state.screenName} onChange={this.screenNameChangeHandler} placeholder="Screen name has to be numeric" />
+                            <input className="form-control" type="text" value={this.state.screenName} onChange={this.screenNameChangeHandler} placeholder="Screen name has to be alphanumeric" />
                         </div>
                         <div className="form-group">
                             <label>Nick name</label>
-                            <input className="form-control" type="text" value={this.state.nickName} onChange={this.nickNameChangeHandler} />
+                            <input className="form-control" type="text" value={this.state.nickName} onChange={this.nickNameChangeHandler} placeholder="Nick name has to be text only" />
                         </div>
                         <div className="form-group">
                             <label>Street</label>

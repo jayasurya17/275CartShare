@@ -113,9 +113,15 @@ class ViewDetails extends Component {
 			});
 	};
 
+	isAlpha = (value) => {
+		return value !== null && value.match(/^[a-zA-Z]+$/) !== null;
+	}
+
 	editPoolInformation = () => {
 		if(this.state.editName === "" || this.state.editNeighborhood === ""){
 			alert("Please provide require Name and Neighborhood Details")
+		} else if (this.isAlpha(this.state.editName) !== true) {
+			alert("Name can be text only")
 		} else {
 			console.log({
 				id : this.state.poolDetails.id,
@@ -148,6 +154,7 @@ class ViewDetails extends Component {
 						errorMsgModal : "Pool Details could not be updated. Try again!"
 					})
 				}
+				window.location.reload()
 			})
 			.catch(error => {
 				console.log(error.response.data);
