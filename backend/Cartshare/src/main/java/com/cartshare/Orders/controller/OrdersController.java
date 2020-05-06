@@ -252,9 +252,7 @@ public class OrdersController {
             MailController mc = new MailController();
             mc.send(user.getEmail(), "Order #" + order.getId() + " picked up",
                     "You picked up your cartshare order #" + order.getId());
-            List<Orders> associated = ordersDAO.findAssociatedOrders(order); // get all associated orders
-            // Set<User> hs = new HashSet<User>(); // put users of ass orders in hash set
-            // send email to confirm order pick up to all associated poolers
+            List<Orders> associated = ordersDAO.findAssociatedOrders(order); // 
             OrderDetails od = new OrderDetails();
             String message = "";
             if(associated != null){

@@ -172,7 +172,7 @@ class Home extends Component {
                         </div>
                         <div className="form-group">
                             <label>ScreenName</label>
-                            <input type="text" value={this.state.screenName} onChange={this.screenNameChangeHandler} className="form-control" />
+                            <input type="text" value={this.state.screenName} readonly onChange={this.screenNameChangeHandler} className="form-control" />
                         </div>
                         <div className="form-group">
                             <label>Street</label>
