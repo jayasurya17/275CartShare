@@ -93,6 +93,29 @@ class Home extends Component {
             return;
         }
 
+        var str = this.state.nickName;
+        for (i = 0, len = str.length; i < len; i++) {
+            code = str.charCodeAt(i);
+            if (!(code > 47 && code < 58) && // numeric (0-9)
+                !(code > 64 && code < 91) && // upper alpha (A-Z)
+                !(code > 96 && code < 123)) { // lower alpha (a-z)
+                alert('The nickname can only contain alphanumeric characters');
+                return;
+            }
+        }
+
+        str = this.state.screenName;
+        for (var i = 0, len = str.length; i < len; i++) {
+            var code = str.charCodeAt(i);
+            if (!(code > 47 && code < 58) && // numeric (0-9)
+                !(code > 64 && code < 91) && // upper alpha (A-Z)
+                !(code > 96 && code < 123)) { // lower alpha (a-z)
+                alert('The screenname can only contain alphanumeric characters');
+                return;
+            }
+        }
+
+
         if(this.state.zipcode.length !== 5){
             alert("Please enter a valid zipcode");
             return;
@@ -172,7 +195,7 @@ class Home extends Component {
                         </div>
                         <div className="form-group">
                             <label>ScreenName</label>
-                            <input type="text" value={this.state.screenName} readonly onChange={this.screenNameChangeHandler} className="form-control" />
+                            <input type="text" value={this.state.screenName} onChange={this.screenNameChangeHandler} className="form-control" />
                         </div>
                         <div className="form-group">
                             <label>Street</label>
