@@ -96,20 +96,9 @@ class UserDetails extends Component {
             return;
         }
 
-<<<<<<< HEAD
         if (this.isAlphanumeric(this.state.screenName) !== true) {
             alert('The screenname can only contain alphanumeric characters');
             return;
-=======
-        var str = this.state.nickName;
-        for (i = 0, len = str.length; i < len; i++) {
-            code = str.charCodeAt(i);
-            if (!(code > 64 && code < 91) && // upper alpha (A-Z)
-                !(code > 96 && code < 123)) { // lower alpha (a-z)
-                alert('The nickname can only contain text');
-                return;
-            }
->>>>>>> 041176466f6114bb997da318190cbfa1c7fd536f
         }
 
         if (this.isAlpha(this.state.nickName) !== true) {
