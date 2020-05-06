@@ -46,6 +46,10 @@ class Home extends Component {
 		return value !== null && value.match(/^[a-zA-Z0-9]+$/) !== null;
 	}
 
+	isAlpha = (value) => {
+		return value !== null && value.match(/^[a-zA-Z]+$/) !== null;
+	}
+
 	areValidValues = () => {
 		if (this.isEmpty(this.state.poolId)) return false;
 		if (this.isEmpty(this.state.poolName)) return false;
@@ -68,6 +72,11 @@ class Home extends Component {
 			this.setState({
 				successMsg: "",
 				errMsg: "Pool ID must be alphanumeric"
+			})
+		} else if (this.isAlpha(this.state.poolName) !== true) {
+			this.setState({
+				successMsg: "",
+				errMsg: "Pool name can be text only"
 			})
 		} else if (this.areValidValues()) {
 			axios
