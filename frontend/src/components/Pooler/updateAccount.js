@@ -88,7 +88,7 @@ class Home extends Component {
         }
 
         if (this.isAlpha(this.state.nickName) !== true) {
-            alert('The nickname can only contain alphanumeric characters');
+            alert('The nickname can contain only text');
             return;
         }
 
