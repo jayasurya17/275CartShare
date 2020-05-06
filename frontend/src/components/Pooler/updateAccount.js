@@ -98,7 +98,7 @@ class Home extends Component {
             code = str.charCodeAt(i);
             if (!(code > 64 && code < 91) && // upper alpha (A-Z)
                 !(code > 96 && code < 123)) { // lower alpha (a-z)
-                alert('The nickname can only contain alphanumeric characters');
+                alert('The nickname can only contain text');
                 return;
             }
         }
