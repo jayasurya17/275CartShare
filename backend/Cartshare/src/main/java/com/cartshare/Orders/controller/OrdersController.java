@@ -266,7 +266,7 @@ public class OrdersController {
                     Address a = u.getAddress();
                     message += "<h1>User " + u.getNickName() + "'s order:</h1></br>Address: " + a.getStreet() + ", "
                             + a.getCity() + ", " + a.getState() + ", " + a.getZipcode() + "</br>Order details: </br>"
-                            + od.GenerateProductTableWithPrice(o.getOrderItems()) + "</br></br>";
+                            + od.GenerateProductTableWithoutPrice(o.getOrderItems()) + "</br></br>";
                     // hs.add(o.getUser());
                     mc.send(u.getEmail(), "Order #" + o.getId() + " picked up",
                             "Your cartshare order #" + o.getId() + " has been picked up by " + user.getScreenName());

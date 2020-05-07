@@ -11,21 +11,18 @@ class Home extends Component {
         super()
         this.state = {
             allProducts: [],
+            resetProducts: [],
             isFetched: false,
-            searchValue: "",
-            searchSKU: true,
+            searchResult: false
         }
     }
 
     componentDidMount() {
-        this.getAllProducts();
-    }
-
-    getAllProducts = () => {
         axios.get(`/product/get/all?storeId=${this.props.match.params.storeId}`)
             .then((response) => {
                 this.setState({
                     allProducts: response.data,
+                    resetProducts: response.data,
                     isFetched: true
                 })
             })
@@ -37,51 +34,42 @@ class Home extends Component {
     }
 
     clearSearch = () => {
-        this.getAllProducts()
         this.setState({
-            searchValue: ""
+            searchValue: "",
+            allProducts: this.state.resetProducts,
+            searchResult: false
         })
     }
 
-    searchValueChangeHandler = (e) => {
-        this.setState({
-            searchValue: e.target.value
-        })
-    }
-
-    searchTypeChangeHandler = (e) => {
-        this.setState({
-            searchSKU: e.target.value
-        })
-    }
-
-    searchProducts = () => {
-        if (this.state.searchSKU === true) {
-            axios.get(`/product/search/all/?storeId=${this.props.match.params.storeId}&SKU=${this.state.searchValue}`)
-                .then((response) => {
-                    this.setState({
-                        allProducts: response.data,
-                        searchResult: true,
-                    })
-                })
-        } else {
-            axios.get(`/product/search/all/?storeId=${this.props.match.params.storeId}&name=${this.state.searchValue}`)
-                .then((response) => {
-                    this.setState({
-                        allProducts: response.data,
-                        searchResult: true,
-                    })
-                })
+    searchProducts = (e) => {
+        var filer = []
+        for (var product of this.state.resetProducts) {
+            if (String(product.sku).startsWith(e.target.value) || product.productName.startsWith(e.target.value)) {
+                filer.push(product)
+            }
         }
+        this.setState({
+            allProducts: filer,
+            searchValue: e.target.value,
+            searchResult: true
+        })
     }
 
     render() {
 
         let allProducts = []
         if (this.state.allProducts.length === 0) {
-            if (this.state.isFetched === true) {
+            if (this.state.searchResult === true) {
+                allProducts.push(
+                    <h2 className="font-weight-light text-center mt-5">There are no products matching your search</h2>
+                )
+            } else if (this.state.isFetched === true) {
                 allProducts.push(
                     <h2 className="font-weight-light text-center mt-5">Oops! Looks like there are no products in this store at the moment</h2>
+                )
+            } else {
+                allProducts.push(
+                    <h2 className="font-weight-light text-center mt-5">Fetching...</h2>
                 )
             }
         } else {
@@ -115,17 +103,8 @@ class Home extends Component {
                 <div className="pl-5 pr-5">
 
                     <div className="row pt-5">
-                        <div className="col-md-2 offset-md-1">
-                            <select className="form-control" onChange={this.searchTypeChangeHandler} value={this.state.searchSKU} >
-                                <option value={true}>SKU</option>
-                                <option value={false}>Product Name</option>
-                            </select>
-                        </div>
-                        <div className="col-md-4">
-                            <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
-                        </div>
-                        <div className="col-md-2">
-                            <button className="btn btn-success w-100" onClick={this.searchProducts}>Search</button>
+                        <div className="col-md-6 offset-md-2">
+                            <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchProducts} placeholder="Search by SKU or name" />
                         </div>
                         <div className="col-md-2">
                             <button className="btn btn-warning w-100" onClick={this.clearSearch}>Clear Search</button>

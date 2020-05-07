@@ -12,6 +12,7 @@ class AddToCart extends Component {
         super()
         this.state = {
             allProducts: [],
+            resetProducts: [],
             isFetched: false,
             searchValue: "",
             searchSKU: true,
@@ -39,7 +40,11 @@ class AddToCart extends Component {
     }
 
     clearSearch = () => {
-        this.viewAllProducts(this.state.currentStoreID)
+        this.setState({
+            allProducts: this.state.resetProducts,
+            searchValue: "",
+            searchResult: false
+        })
     }
 
     viewAllProducts = (storeId) => {
@@ -48,6 +53,7 @@ class AddToCart extends Component {
                 .then((response) => {
                     this.setState({
                         allProducts: response.data,
+                        resetProducts: response.data,
                         isFetched: true,
                         searchValue: "",
                         searchResult: false,
@@ -68,38 +74,18 @@ class AddToCart extends Component {
         }
     }
 
-    searchValueChangeHandler = (e) => {
-        this.setState({
-            searchValue: e.target.value
-        })
-    }
-
-    searchTypeChangeHandler = (e) => {
-        this.setState({
-            searchSKU: e.target.value
-        })
-    }
-
-    searchProducts = () => {
-        if (this.state.currentStoreID) {
-            if (this.state.searchSKU === true) {
-                axios.get(`/product/search/all/?storeId=${this.state.currentStoreID}&SKU=${this.state.searchValue}`)
-                    .then((response) => {
-                        this.setState({
-                            allProducts: response.data,
-                            searchResult: true,
-                        })
-                    })
-            } else {
-                axios.get(`/product/search/all/?storeId=${this.state.currentStoreID}&name=${this.state.searchValue}`)
-                    .then((response) => {
-                        this.setState({
-                            allProducts: response.data,
-                            searchResult: true,
-                        })
-                    })
+    searchProducts = (e) => {
+        var filer = []
+        for (var product of this.state.resetProducts) {
+            if (String(product.sku).startsWith(e.target.value) || product.productName.startsWith(e.target.value)) {
+                filer.push(product)
             }
         }
+        this.setState({
+            allProducts: filer,
+            searchValue: e.target.value,
+            searchResult: true
+        })
     }
 
     render() {
@@ -119,17 +105,8 @@ class AddToCart extends Component {
                 } else {
                     allProducts.push(
                         <div className="row pt-5">
-                            <div className="col-md-2 offset-md-1">
-                                <select className="form-control" onChange={this.searchTypeChangeHandler} value={this.state.searchSKU} >
-                                    <option value={true}>SKU</option>
-                                    <option value={false}>Product Name</option>
-                                </select>
-                            </div>
-                            <div className="col-md-4">
-                                <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
-                            </div>
-                            <div className="col-md-2">
-                                <button className="btn btn-success w-100" onClick={this.searchProducts}>Search</button>
+                            <div className="col-md-6 offset-md-2">
+                                <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchProducts} placeholder="Search by SKU or name" />
                             </div>
                             <div className="col-md-2">
                                 <button className="btn btn-warning w-100" onClick={this.clearSearch}>Clear Search</button>
@@ -151,17 +128,8 @@ class AddToCart extends Component {
         } else {
             allProducts.push(
                 <div className="row pt-5">
-                    <div className="col-md-2 offset-md-1">
-                        <select className="form-control" onChange={this.searchTypeChangeHandler} value={this.state.searchSKU} >
-                            <option value={true}>SKU</option>
-                            <option value={false}>Product Name</option>
-                        </select>
-                    </div>
-                    <div className="col-md-4">
-                        <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchValueChangeHandler} />
-                    </div>
-                    <div className="col-md-2">
-                        <button className="btn btn-success w-100" onClick={this.searchProducts}>Search</button>
+                    <div className="col-md-6 offset-md-2">
+                        <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchProducts} placeholder="Search by SKU or name" />
                     </div>
                     <div className="col-md-2">
                         <button className="btn btn-warning w-100" onClick={this.clearSearch}>Clear Search</button>

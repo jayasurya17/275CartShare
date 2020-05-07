@@ -113,6 +113,12 @@ class OrdersComponent extends Component {
         })
     }
 
+    componentWillReceiveProps(props) {
+        this.setState({
+            isProcessing: false,
+        })
+    }
+
     markDelivered = () => {
         this.setState({
             isProcessing: true,

@@ -157,6 +157,7 @@ class UserDetails extends Component {
         .then((res) => {
             if(res.status === 200){
                 localStorage.setItem('275NickName', res.data.nickName);
+                localStorage.setItem('275UserName', res.data.screenName);
                 if(isadmin)
                     localStorage.setItem('275UserType', "Admin");
                 else
@@ -167,48 +168,6 @@ class UserDetails extends Component {
         .catch((error) => {
             alert(error.response.data);
         })
-        // var user = firebase.auth().currentUser;
-        // var isadmin = user.email.includes("@sjsu.edu");
-        // axios.post('/user', null, { // create user in backend
-        //     params: {
-        //         uid: user.uid,
-        //         email: user.email,
-        //         nickName: this.state.nickName,
-        //         screenName: this.state.screenName,
-        //         isAdmin: isadmin,
-        //         isVerified: true,
-        //         isActive: true,
-        //         isProfileComplete: true
-        //     }
-        // })
-        // .then((response) => {
-        //     localStorage.setItem('275UserId', response.data.id)
-        //     localStorage.setItem('275UserName', response.data.screenName)
-        //     if (response.data.isAdmin) {
-        //         localStorage.setItem('275UserType', "Admin")
-        //     } else {
-        //         localStorage.setItem('275UserType', "Pooler")
-        //     }
-        //     if(response.status === 200){
-        //         // route to landing
-        //         alert("user created in backend");
-        //         this.setState({
-        //             redURL: "/pooler/landing",
-        //             redirect: true
-        //         })
-        //         return;
-        //     }
-        // })
-        // .catch((error) => {
-        //     alert(error);
-        // });
-
-        // route to 
-
-
-        // console.log("current email", firebase.auth().currentUser.email);
-        
-
     }
 
     render() {

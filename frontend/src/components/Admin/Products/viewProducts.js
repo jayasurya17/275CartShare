@@ -12,8 +12,11 @@ class Home extends Component {
         super()
         this.state = {
             allProducts: [],
+            resetProducts: [],
             isFetched: false,
-            isStoreActive: true
+            isStoreActive: true,
+            searchValue: "",
+            searchResult: false
         }
     }
 
@@ -27,6 +30,7 @@ class Home extends Component {
                 console.log(response)
                 this.setState({
                     allProducts: response.data,
+                    resetProducts: response.data,
                     isFetched: true
                 })
                 if (response.status === 204) {
@@ -43,11 +47,37 @@ class Home extends Component {
             })
     }
 
+    clearSearch = () => {
+        this.setState({
+            searchValue: "",
+            allProducts: this.state.resetProducts,
+            searchResult: false
+        })
+    }
+
+    searchProducts = (e) => {
+        var filer = []
+        for (var product of this.state.resetProducts) {
+            if (String(product.sku).startsWith(e.target.value) || product.productName.startsWith(e.target.value)) {
+                filer.push(product)
+            }
+        }
+        this.setState({
+            allProducts: filer,
+            searchValue: e.target.value,
+            searchResult: true
+        })
+    }
+
     render() {
 
         let allProducts = []
         if (this.state.allProducts.length === 0) {
-            if (this.state.isFetched === true) {
+            if (this.state.searchResult === true) {
+                allProducts.push(
+                    <h2 className="font-weight-light text-center mt-5">There are no products matching your search</h2>
+                )
+            } else if (this.state.isFetched === true) {
                 if (this.state.isStoreActive === false) {
                     allProducts.push(
                         <h2 className="font-weight-light text-center mt-5">Oops! Looks like this store does not exist or has been deleted</h2>
@@ -62,6 +92,10 @@ class Home extends Component {
                         </div>
                     )
                 }
+            } else {
+                allProducts.push(
+                    <h2 className="font-weight-light text-center mt-5">Fetching products in the store...</h2>
+                )
             }
         } else {
             let tempContainer = []
@@ -92,6 +126,15 @@ class Home extends Component {
                 <Header isAdmin={true} />
                 <Navigation isAdmin={true} />
                 <div className="pl-5 pr-5">
+
+                    <div className="row pt-5">
+                        <div className="col-md-6 offset-md-2">
+                            <input type="text" className="form-control" value={this.state.searchValue} onChange={this.searchProducts} placeholder="Search by SKU or name" />
+                        </div>
+                        <div className="col-md-2">
+                            <button className="btn btn-warning w-100" onClick={this.clearSearch}>Clear Search</button>
+                        </div>
+                    </div>
 
                     {allProducts}
 

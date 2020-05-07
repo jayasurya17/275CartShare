@@ -89,11 +89,11 @@ class PickupOrders extends Component {
 class OrdersComponent extends Component {
 
     render() {
-        console.log(this.props.order)
+
         let allProducts = []
         for (let product of this.props.order) {
             allProducts.push(
-                <div className="row p-2">
+                <div className="row p-2 border">
                     <div className="col-md-3"><img src={product.productImage} alt="..." class="img-thumbnail" /></div>
                     <div className="col-md-4">{product.productName}</div>
                     <div className="col-md-2">{product.productBrand}</div>
