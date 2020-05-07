@@ -26,9 +26,12 @@ public class ProductController {
     StoreDAO storeDAO;
 
     @GetMapping(value = "/get/all", produces = { "application/json", "application/xml" })
-    public ResponseEntity<?> getAllProducts(@Valid @RequestParam(name = "storeId") String storeId) {
+    public ResponseEntity<?> getAllProducts(@Valid @RequestParam(name = "storeId", required = false) String storeId) {
 
         try {
+            if (storeId == null) {
+                return ResponseEntity.status(HttpStatus.OK).body(productDAO.findAllByIsActive());
+            }
             Long reqStoreId = null;
             try{
                 reqStoreId = Long.parseLong(storeId);

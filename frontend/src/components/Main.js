@@ -21,6 +21,7 @@ import PoolerPastOrders from './Pooler/PastOrders/pastOrders'
 
 import AdminCheck from './Admin/adminCheck'
 import AdminStores from './Admin/Stores/browseStores'
+import AdminProducts from './Admin/AllProducts/viewAllProducts'
 import AdminAddStore from './Admin/Stores/addStores'
 import AdminViewStoreProducts from './Admin/Products/viewProducts'
 import AdminUpdateStore from './Admin/Stores/updateStores'
@@ -61,7 +62,8 @@ class Main extends Component {
 					<Route path='/pooler/past/orders' exact component={PoolerPastOrders} />
 					<Route path='/pooler/message' exact component={Messaging} />
 
-					<Route path='/admin/browse' exact component={AdminStores} />
+					<Route path='/admin/browse/stores' exact component={AdminStores} />
+					<Route path='/admin/browse/products' exact component={AdminProducts} />
 					<Route path='/admin/store/add' exact component={AdminAddStore} />
 					<Route path='/admin/store/view/:storeId' exact component={AdminViewStoreProducts} />
 					<Route path='/admin/store/update/:storeId' exact component={AdminUpdateStore} />
