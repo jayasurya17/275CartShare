@@ -167,13 +167,13 @@ public class PoolMembersController {
 			
 			id = id.trim();
 			Long userId = Long.parseLong(id);
-			PoolMembers poolMembers = poolMembersDAO.getPoolByUserId(userId);
+			List<PoolMembers> poolMembers = poolMembersDAO.getPoolByUserId(userId);
 			
-			if(poolMembers == null) {
+			if(poolMembers == null || poolMembers.size() == 0) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User Does not belong to any pool");
 			}
 			// System.out.println(poolMembers);
-			return ResponseEntity.status(HttpStatus.OK).body(poolMembers);
+			return ResponseEntity.status(HttpStatus.OK).body(poolMembers.get(0));
 		} catch(Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
