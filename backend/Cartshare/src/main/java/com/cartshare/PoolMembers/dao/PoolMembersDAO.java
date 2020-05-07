@@ -192,12 +192,12 @@ public class PoolMembersDAO {
 		return results;
 	}
 	
-	public PoolMembers getPoolByUserId(Long userId) {
+	public List<PoolMembers> getPoolByUserId(Long userId) {
 		Query query = entityManager.createQuery("FROM PoolMembers WHERE member_id = :userid AND status = 'Accepted'");
 		query.setParameter("userid", userId);
 		
-		PoolMembers results = (PoolMembers) query.getSingleResult();
-		if(results != null)
+		List results = query.getResultList();
+		if(results.size() > 0)
 			return results;
 		return null;
 	}
