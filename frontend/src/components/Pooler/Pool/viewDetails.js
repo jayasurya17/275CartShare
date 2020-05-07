@@ -216,7 +216,10 @@ class ViewDetails extends Component {
 									Coordinator:{" "}<span className="font-weight-light">{this.state.poolDetails.pooler.screenName}</span>
 								</h1>
 							</div>
-						) : null}
+						) : (
+							<p className="p-5 display-4">Fetching pool details...</p>
+						)}
+						{this.state.membersReceived? (
 						<div className="col-md-6">
 							<p className="display-4 text-center">Current members</p>
 							<div className="row p-2 bg-secondary text-white font-weight-bold">
@@ -227,6 +230,9 @@ class ViewDetails extends Component {
 							</div>
 							{poolMembers.length > 0 ? poolMembers : null}
 						</div>
+						) : this.state.poolReceived ? (
+							<p className="p-5 display-4">Fetching pool members...</p>
+						) : null}
 					</div>
 					{requests}
 					<div className="modal fade" id={"ModalCenter"} tabIndex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true" >

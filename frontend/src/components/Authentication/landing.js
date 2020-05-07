@@ -3,15 +3,10 @@ import { Redirect } from 'react-router';
 
 class Root extends Component {
 	render() {
-		let RedirectVar = '';
 		if (this.props.location.pathname === '/') {
-			RedirectVar = <Redirect to="/login" />;
+			return(<Redirect to="/login" />)
 		}
-		return (
-			<div>
-				{RedirectVar}
-			</div>
-		);
+		return (null);
 	}
 }
 // export Root Component
