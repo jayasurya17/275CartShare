@@ -25,7 +25,9 @@ class Message extends Component {
     if (this.state.screenName === '' && this.state.message === '') {
       alert('Please provide required details')
     } else {
-      console.log(this.state)
+      this.setState({
+        result: "Sending message"
+      })
 
       await axios
         .post(
@@ -54,12 +56,12 @@ class Message extends Component {
         })
 
         .catch(error => {
-          console.log(error.response.data)
-          this.setState({
-            found: false,
-            result: error.response.data
-          })
-          console.log(this.state)
+          if (error.response) {
+            this.setState({
+              found: false,
+              result: error.response.data,
+            })
+          }
         })
     }
   }
