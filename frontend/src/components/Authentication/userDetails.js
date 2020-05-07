@@ -168,7 +168,7 @@ class UserDetails extends Component {
             }
         })
         .catch((error) => {
-            alert(error.response);
+            alert(error.response.data);
         })
         // var user = firebase.auth().currentUser;
         // var isadmin = user.email.includes("@sjsu.edu");
