@@ -37,9 +37,14 @@ public class OrderDetails {
             subTotal += price;
         }
         
-        Float tax = (float) (subTotal * 0.0925);
-        Float convenienceFee = (float) (subTotal * 0.005);
-        Float total = subTotal + tax + convenienceFee;
+        Float floatTax = (float) (subTotal * 0.0925);
+        Float floatConvenienceFee = (float) (subTotal * 0.005);
+        Float floatTotal = subTotal + floatTax + floatConvenienceFee;
+        
+        String subT = String.format("%.2f", subTotal);
+        String tax = String.format("%.2f", floatTax);
+        String convenienceFee = String.format("%.2f", floatConvenienceFee);
+        String total = String.format("%.2f", floatTotal);
         
         HTMLContent += "<tr>";
         HTMLContent += "<th></th>";
@@ -48,7 +53,7 @@ public class OrderDetails {
         HTMLContent += "<th></th>";
         HTMLContent += "<th></th>";
         HTMLContent += "<th>Sub Total</th>";
-        HTMLContent += "<th>" + subTotal + "</th>";
+        HTMLContent += "<th>" + subT + "</th>";
         HTMLContent += "</tr>";
         HTMLContent += "<tr>";
         HTMLContent += "<th></th>";
