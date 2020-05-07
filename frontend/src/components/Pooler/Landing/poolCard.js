@@ -55,38 +55,46 @@ class PoolCard extends Component {
                 axios
                     .get('/user/getUserByScreenName/' + this.state.referenceName)
                     .then(response => {
-                        if (response.status === 200) {
-                            this.setState({
-                                referenceId: response.data.id,
-                                screenNameReference: true
+                        axios
+                            .post('/poolMembers/joinPool', null, {
+                                params: {
+                                    poolId: this.props.poolId,
+                                    userId: localStorage.getItem('275UserId'),
+                                    referenceId: response.data.id
+                                }
                             })
-                        }
+                            .then(response => {
+                                this.setState({
+                                    joinRequest: true,
+                                    successMsg: 'You have successfully requested to join the pool',
+                                    errorMsg: '',
+                                    knowsLeader: false,
+                                    referenceName: ''
+                                })
+                            })
+                            .catch(error => {
+                                this.setState({
+                                    joinRequest: false,
+                                    errorMsg: 'User is not part of the pool',
+                                    successMsg: ''
+                                })
+                            })
                     })
                     .catch(() => {
                         this.setState({
-                            errorMsg: 'Request failed',
+                            errorMsg: 'User is not part of the pool',
                             successMsg: '',
                             screenNameReference: false,
                             referenceId: ''
                         })
                     })
-            }
-
-            if (this.state.referenceId === '' && this.state.knowsLeader && this.state.screenNameReference === false) {
-                alert('Please provide valid screen name')
             } else {
-                let reference
-                if (this.state.screenNameReference) {
-                    reference = this.state.referenceId
-                } else {
-                    reference = this.props.leader.id
-                }
                 axios
                     .post('/poolMembers/joinPool', null, {
                         params: {
                             poolId: this.props.poolId,
                             userId: localStorage.getItem('275UserId'),
-                            referenceId: reference
+                            referenceId: this.props.leader.id
                         }
                     })
                     .then(response => {
@@ -127,13 +135,7 @@ class PoolCard extends Component {
                     </h4>
                 </div>
                 <div className='col-md-3'>
-                    <button
-                        className='btn btn-warning'
-                        data-toggle='modal'
-                        data-target={'#ModalCenter' + this.props.poolId}
-                    >
-                        Join this pool
-          </button>
+                    <button className='btn btn-warning' data-toggle='modal' data-target={'#ModalCenter' + this.props.poolId}>Join this pool</button>
                 </div>
 
                 {/* <!-- Modal --> */}
@@ -148,9 +150,7 @@ class PoolCard extends Component {
                     <div className='modal-dialog modal-dialog-centered' role='document'>
                         <div className='modal-content'>
                             <div className='modal-header'>
-                                <h5 className='modal-title' id='modalCenterTitle'>
-                                    Request to join poolname
-                </h5>
+                                <h5 className='modal-title' id='modalCenterTitle'>Request to join poolname</h5>
                                 <button
                                     type='button'
                                     className='close'
@@ -186,20 +186,8 @@ class PoolCard extends Component {
                                 <label> I know the pool leader</label>
                             </div>
                             <div className='modal-footer'>
-                                <button
-                                    type='button'
-                                    className='btn btn-secondary'
-                                    data-dismiss='modal'
-                                >
-                                    Close
-                </button>
-                                <button
-                                    type='button'
-                                    className='btn btn-primary'
-                                    onClick={this.sendRequest}
-                                >
-                                    Send request
-                </button>
+                                <button type='button' className='btn btn-secondary' data-dismiss='modal'>Close</button>
+                                <button type='button' className='btn btn-primary' onClick={this.sendRequest}>Send request</button>
                             </div>
                         </div>
                     </div>
