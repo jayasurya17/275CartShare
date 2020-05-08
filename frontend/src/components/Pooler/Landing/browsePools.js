@@ -41,28 +41,22 @@ class Home extends Component {
 		})
 	}
 
-	search = e => {
+	search = (e) => {
 		e.preventDefault()
-
-		if (this.state.searchPool !== "") {
-			let filteredPools = []
-			for (var pool of this.state.refreshSearch) {
-				if (
-					pool.zipcode.startsWith(this.state.searchPool) || 
-					pool.neighborhoodName.startsWith(this.state.searchPool) || 
-					pool.poolName.startsWith(this.state.searchPool)
-				) {
-					filteredPools.push(pool)
-				}
+		let filteredPools = []
+		for (var pool of this.state.refreshSearch) {
+			if (
+				pool.zipcode.startsWith(e.target.value) || 
+				pool.neighborhoodName.startsWith(e.target.value) || 
+				pool.poolName.startsWith(e.target.value)
+			) {
+				filteredPools.push(pool)
 			}
-			this.setState({
-				allPools: filteredPools
-			})
-		} else {
-			this.setState({
-				allPools: this.state.refreshSearch
-			})
 		}
+		this.setState({
+			allPools: filteredPools,
+			searchPool: e.target.value
+		})
 	}
 
 	clearSearch = e => {
@@ -77,13 +71,13 @@ class Home extends Component {
 			return (
 				<div>
 					<div className="row">
-						<div className="col-md-8">
-							<input className='form-control' onChange={this.searchTextChangeHandler} value={this.state.searchPool} placeholder='Search by pool name or neighborhood name or zipcode' />
+						<div className="col-md-9">
+							<input className='form-control' onChange={this.search} value={this.state.searchPool} placeholder='Search by pool name or neighborhood name or zipcode' />
 						</div>
-						<div className="col-md-2">
+						{/* <div className="col-md-2">
 							<button className='form-control btn btn-warning w-100' onClick={this.search}>Search </button>
-						</div>
-						<div className="col-md-2">
+						</div> */}
+						<div className="col-md-3">
 							<button className='form-control btn btn-info w-100' onClick={this.clearSearch}>Clear </button>
 						</div>
 					</div>
@@ -114,13 +108,13 @@ class Home extends Component {
 		return (
 			<div>
 				<div className="row">
-					<div className="col-md-8">
-						<input className='form-control' onChange={this.searchTextChangeHandler} value={this.state.searchPool} placeholder='Search by pool name or neighborhood name or zipcode' />
+					<div className="col-md-9">
+						<input className='form-control' onChange={this.search} value={this.state.searchPool} placeholder='Search by pool name or neighborhood name or zipcode' />
 					</div>
-					<div className="col-md-2">
+					{/* <div className="col-md-2">
 						<button className='form-control btn btn-warning w-100' onClick={this.search}>Search </button>
-					</div>
-					<div className="col-md-2">
+					</div> */}
+					<div className="col-md-3">
 						<button className='form-control btn btn-info w-100' onClick={this.clearSearch}>Clear </button>
 					</div>
 				</div>
