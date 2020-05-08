@@ -155,7 +155,7 @@ public class UserController {
             if(userDAO.isDuplicateNickName(nickName, l) && nickName.compareTo("notSet") != 0 && user.getNickName().compareTo(nickName) != 0){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nick Name already exists. Please chose a unique Nick Name");
             }
-            System.out.println("something " + user.getScreenName() + " " + screenName);
+            // System.out.println("something " + user.getScreenName() + " " + screenName);
             if(userDAO.isDuplicateScreenName(screenName, l) && screenName.compareTo("notSet") != 0 && user.getScreenName().compareTo(screenName) != 0){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Screen Name already exists. Please chose a unique Screen Name");
             }

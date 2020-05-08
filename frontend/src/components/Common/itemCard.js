@@ -135,6 +135,11 @@ class Home extends Component {
                 <div className="col-md-8">
                     <h1 className="font-weight-lighter">{this.props.productObj.productName}</h1>
                     <h6 className="font-weight-lighter">{this.props.productObj.description}</h6>
+                    { 
+                        this.props.showStore === true?
+                        <h6>Store: <span className="font-weight-lighter">{this.props.productObj.store.storeName} (ID : {this.props.productObj.store.id})</span></h6>
+                        : null
+                    }
                     <h6>Brand: <span className="font-weight-lighter">{this.props.productObj.brand}</span></h6>
                     <h6>SKU: <span className="font-weight-lighter">{this.props.productObj.sku}</span></h6>
                     <h6>${this.props.productObj.price} / {this.props.productObj.unit}</h6>

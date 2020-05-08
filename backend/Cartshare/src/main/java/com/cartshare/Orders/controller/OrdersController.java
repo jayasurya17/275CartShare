@@ -520,7 +520,7 @@ public class OrdersController {
             OrderDetails od = new OrderDetails();
             String heading = "Your order has been placed (#" + order.getId() + ")";
             String message = od.GenerateProductTableWithPrice(order.getOrderItems());
-            System.out.println(message);
+            // System.out.println(message);
             mc.sendHTML(user.getEmail(), heading, message);
 
             return ResponseEntity.status(HttpStatus.OK).body(order);

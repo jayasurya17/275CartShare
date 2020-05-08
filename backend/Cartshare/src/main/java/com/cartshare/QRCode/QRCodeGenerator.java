@@ -17,8 +17,8 @@ public class QRCodeGenerator {
 
 	    public static byte[] generateQRCodeImage(String text, int width, int height, String filePath)
 	            throws WriterException, IOException {
-	    	System.out.println("text"+ text);
-	    	System.out.println("file path"+filePath);
+	    	// System.out.println("text"+ text);
+	    	// System.out.println("file path"+filePath);
 	        QRCodeWriter qrCodeWriter = new QRCodeWriter();
 	        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
 

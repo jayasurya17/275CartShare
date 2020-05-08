@@ -125,14 +125,14 @@ class OrdersComponent extends Component {
         let subTotal = 0
         let price
         for (let product of this.props.order) {
-            price = product.productPrice
+            price = product.productPrice * product.quantity
             subTotal += price
             allProducts.push(
                 <div className="row p-2 border-left border-right">
                     <div className="col-md-3"><img src={product.productImage} alt="..." class="img-thumbnail" /></div>
                     <div className="col-md-3">{product.productName}</div>
                     <div className="col-md-1">{product.quantity}</div>
-                    <div className="col-md-3">3.2 / KG</div>
+                    <div className="col-md-3">{product.productPrice.toFixed(2)} / KG</div>
                     <div className="col-md-2">{price.toFixed(2)}</div>
                 </div>
             )

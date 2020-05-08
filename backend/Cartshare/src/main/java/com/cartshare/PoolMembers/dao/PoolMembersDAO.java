@@ -156,8 +156,8 @@ public class PoolMembersDAO {
 		User user = (User) users.get(0);
 		
 		Long reference_id = user.getId();
-		System.out.println(reference_id);
-		System.out.println(user.getPools());
+		// System.out.println(reference_id);
+		// System.out.println(user.getPools());
 		
 		Query query1;
 		if(isLeader) {
@@ -200,5 +200,9 @@ public class PoolMembersDAO {
 		if(results.size() > 0)
 			return results;
 		return null;
+	}
+
+	public void deleteById(Long id) {
+		poolMembersRepository.deleteById(id);
 	}
 }

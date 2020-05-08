@@ -103,9 +103,9 @@ public class OrdersDAO {
 
 			long twoDays = (long) 172800000;
 			long diffInMillies = Math.abs(now.getTime() - orderTime.getTime());
-			System.out.println(order.getStatus());
+			// System.out.println(order.getStatus());
 			if (diffInMillies >= twoDays && order.getStatus().compareTo("Ordered") == 0 && order.getPickupPooler() == null) {
-				System.out.println("Need to mark as cancelled");
+				// System.out.println("Need to mark as cancelled");
 				order.setStatus("Cancelled");
 				ordersRepository.save(order);
 				// associatedOrdersRepository.deleteByOrderAndAssociated(order, associated)

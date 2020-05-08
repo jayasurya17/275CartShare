@@ -113,11 +113,7 @@ class SupportReferral extends Component {
                 );
             }
         } else {
-            return (
-                <div className="p-5">
-                    <p className="display-4 text-center">Fetching...</p>
-                </div>
-            );
+            return (null);
         }
 
         return (

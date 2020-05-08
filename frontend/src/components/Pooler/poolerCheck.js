@@ -8,7 +8,7 @@ class PoolerCheck extends Component {
         if (localStorage.getItem('275UserId') === null || localStorage.getItem('275NickName') === null) {
             redirectTo = <Redirect to="/login" />
         } else if (localStorage.getItem('275UserType') === "Admin") {
-            redirectTo = <Redirect to="/admin/browse" />
+            redirectTo = <Redirect to="/admin/browse/stores" />
         } else if (localStorage.getItem('isMember') === "true") {
             if (this.props.location.pathname === "/pooler/landing") {
                 redirectTo = <Redirect to="/pooler/view/pool" />
