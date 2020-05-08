@@ -44,7 +44,7 @@ public class s3Service {
     }
 
     public String uploadFile(MultipartFile uploadedFile) {
-    	System.out.println("Inside upload file");
+    	// System.out.println("Inside upload file");
         String fileUrlInS3 = "";
         try {
             File file = convertMultiPartToFile(uploadedFile);
@@ -78,7 +78,7 @@ public class s3Service {
     }
 
     private void uploadTos3Bucket(String fileName, File file) {
-    	System.out.println("filename"+fileName);
+    	// System.out.println("filename"+fileName);
     	
         s3client.putObject(new PutObjectRequest(S3bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
                
@@ -87,13 +87,13 @@ public class s3Service {
     public String removeFromS3Bucket(String UrlOfFile) {
         String fileName = UrlOfFile.substring(UrlOfFile.lastIndexOf("/") + 1);
        
-        System.out.println("before in the remove part");
-        System.out.println(s3client.doesObjectExist(S3bucketName,fileName));
+        // System.out.println("before in the remove part");
+        // System.out.println(s3client.doesObjectExist(S3bucketName,fileName));
         s3client.getObject(S3bucketName, fileName);
         s3client.deleteObject(new DeleteObjectRequest(S3bucketName, fileName));
         
-        System.out.println("after in the remove part");
-        System.out.println(s3client.doesObjectExist(S3bucketName, fileName));
+        // System.out.println("after in the remove part");
+        // System.out.println(s3client.doesObjectExist(S3bucketName, fileName));
         return "Successfully deleted from s3 bucket";
     }
 	

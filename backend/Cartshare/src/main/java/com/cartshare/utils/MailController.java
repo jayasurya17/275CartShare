@@ -46,7 +46,7 @@ public class MailController {
 			// send
             t.sendMessage(msg, msg.getAllRecipients());
 
-            System.out.println("Response: " + t.getLastServerResponse());
+            // System.out.println("Response: " + t.getLastServerResponse());
 
             t.close();
 
@@ -95,7 +95,7 @@ public class MailController {
 			// send
             t.sendMessage(msg, msg.getAllRecipients());
 
-            System.out.println("Response: " + t.getLastServerResponse());
+            // System.out.println("Response: " + t.getLastServerResponse());
 
             t.close();
 

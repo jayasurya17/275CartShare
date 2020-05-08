@@ -37,20 +37,20 @@ public class S3Controller {
 	 @PostMapping("/decodeQRCode")
 	    public String decodeQRCode(@RequestParam("File") MultipartFile orderQR)
 	 {
-	    	System.out.println("Inside QR decoder");
-	    	System.out.println();
+	    	// System.out.println("Inside QR decoder");
+	    	// System.out.println();
 	    	String decodedText=null;
 	    	
 	    	 try {
 	             
 	            decodedText = QRReader.decodeQRCode(orderQR);
 	             if(decodedText == null) {
-	                 System.out.println("No QR Code found in the image");
+	                 // System.out.println("No QR Code found in the image");
 	             } else {
-	                 System.out.println("Decoded text = " + decodedText);
+	                 // System.out.println("Decoded text = " + decodedText);
 	             }
 	         } catch (IOException e) {
-	             System.out.println("Could not decode QR Code, IOException :: " + e.getMessage());
+	             // System.out.println("Could not decode QR Code, IOException :: " + e.getMessage());
 	         }
 		
 	    	return decodedText;
@@ -58,8 +58,8 @@ public class S3Controller {
 	 
     @GetMapping("/generateQRCode")
     public byte[] generateQRCode(@RequestHeader("orderid") String orderid) {
-    	System.out.println("Inside QR generator file");
-    	System.out.println("Header"+orderid);
+    	// System.out.println("Inside QR generator file");
+    	// System.out.println("Header"+orderid);
     	StringBuilder sb=new StringBuilder("./");
     		sb.append(orderid);
     		sb.append(".png");
@@ -67,9 +67,9 @@ public class S3Controller {
     	 try {
             img =  QR.generateQRCodeImage(orderid, 350, 350, sb.toString());
          } catch (WriterException e) {
-             System.out.println("Could not generate QR Code, WriterException :: " + e.getMessage());
+             // System.out.println("Could not generate QR Code, WriterException :: " + e.getMessage());
          } catch (IOException e) {
-             System.out.println("Could not generate QR Code, IOException :: " + e.getMessage());
+             // System.out.println("Could not generate QR Code, IOException :: " + e.getMessage());
          }
 		return img;
     }
@@ -79,9 +79,9 @@ public class S3Controller {
     
     @PostMapping("/uploadFiletoS3")
     public String uploadFile( @RequestParam("File") MultipartFile file) {
-    	System.out.println("Inside upload file");
-    	System.out.println("Content" +file.getContentType());
-    	System.out.println("Name"  + file.getName());
+    	// System.out.println("Inside upload file");
+    	// System.out.println("Content" +file.getContentType());
+    	// System.out.println("Name"  + file.getName());
     	return s3Client.uploadFile(file);
     }
 

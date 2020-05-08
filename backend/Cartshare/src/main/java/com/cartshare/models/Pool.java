@@ -31,11 +31,11 @@ public class Pool {
 	private User pooler;
 	
 	@NotBlank
-	@Column(name = "pool_name", unique = true)
+	@Column(name = "pool_name")
 	private String poolName;
 	
 	@NotBlank
-	@Column(name = "neighborhood_name", unique = true)
+	@Column(name = "neighborhood_name")
 	private String neighborhoodName;
 	
 	@Column(name = "description")
@@ -43,6 +43,9 @@ public class Pool {
 	
 	@Column(name = "zipcode")
 	private String zipcode;	
+	
+	@Column(name = "isActive")
+	private Boolean isActive;	
 
 
 	@JsonIgnore
@@ -52,7 +55,7 @@ public class Pool {
 
 
 	public Pool() {
-		
+		this.isActive = true;
 	}
 
 	public long getId() {
@@ -127,6 +130,14 @@ public class Pool {
 
 	public void setPoolId(String poolId) {
 		this.poolId = poolId;
+	}
+
+	public Boolean getIsActive() {
+		return this.isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 	
 }

@@ -59,7 +59,7 @@ public class PoolDAO {
 	}
 	
 	public List<Pool> getAllPools(){
-		List<Pool> pools = poolRepository.findAll();
+		List<Pool> pools = poolRepository.findAllByIsActive(true);
 		if(pools.size() > 0) {
 			return pools;
 		}
@@ -82,6 +82,10 @@ public class PoolDAO {
 	
 	public Pool save(Pool pool) {
 		return poolRepository.save(pool);
+	}
+
+	public Pool findById(Long id) {
+		return poolRepository.findById(id).orElse(null);
 	}
 	
 }
