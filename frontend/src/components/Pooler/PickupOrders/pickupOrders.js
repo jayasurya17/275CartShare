@@ -180,7 +180,7 @@ class OrdersComponent extends Component {
 				<h3 className="font-weight-light text-center">There are no associated orders</h3>
 			)
 		} else {
-			var text = `You are picking up order #${this.props.order[0].orders.id} and associated orders`
+			var text = `You are picking up order #${this.props.order[0].orders.id} and associated order(s)`
 			for (var order of this.state.associatedOrders) {
 				associatedOrders.push(
 					<AssociatedOrders order={order} />

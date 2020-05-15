@@ -41,6 +41,7 @@ public class PoolMembersDAO {
 		User member = userRepository.findById(member_id).orElse(null);
 		User reference = userRepository.findById(reference_id).orElse(null);
 		Pool pool = poolRepository.findById(pool_id).orElse(null);
+		String status;
 		
 		if(member == null || reference == null || pool == null) {
 			return null;
@@ -51,7 +52,21 @@ public class PoolMembersDAO {
 			if (request.getStatus().equals("Accepted")) {
 				return null;
 			} else if (request.getReference().getId() == reference_id) {
-				return request;
+				if (request.getStatus().equals("Rejected")) {
+
+					if(pool.getPooler().getId() == reference_id) {
+						status = "Approved";
+						mailController.send(reference.getEmail(), "A new request to join the pool", member.getScreenName() + " has given you as reference to join your pool. Please login to accept or reject the request");
+					} else {
+						status = "Requested";
+						mailController.send(reference.getEmail(), "A new request to join the pool", member.getScreenName() + " has given you as reference to join your pool. Please login to support or reject the request");
+					}
+					request.setStatus(status);
+					return poolMembersRepository.save(request);
+
+				} else {
+					return request;
+				}
 			}
 		}
 		
@@ -64,14 +79,14 @@ public class PoolMembersDAO {
                 if (temp.getStatus().equals("Accepted") && temp.getPool().getId() == pool.getId()) {
 					isFound = true;
 					break;
-                }
+				} else if (temp.getMember().getId() == member.getId() && temp.getPool().getId() == pool.getId() && temp.getReference().getId() == reference.getId()) {
+					return null;
+				}
             }
             if (isFound == false) {
 				return null;
             }
 		}
-
-		// MailController mailController = new MailController();
 		String status;
 		if(pool.getPooler().getId() == reference_id) {
 			status = "Approved";
@@ -158,30 +173,28 @@ public class PoolMembersDAO {
 		
 		User user = (User) users.get(0);
 		
-		Long reference_id = user.getId();
-		// System.out.println(reference_id);
-		// System.out.println(user.getPools());
-		
+		Long reference_id = user.getId();		
+		Pool poolDetails = null;
+		for (PoolMembers poolMembers: user.getPoolMembers()) {
+			if (poolMembers.getStatus().equals("Accepted")) {
+				poolDetails = poolMembers.getPool();
+				break;
+			}
+		}
+		if (poolDetails == null) {
+			return null;
+		} 
 		Query query1;
-		if(isLeader) {
-			//AND pool_id = :poolid)
-			
-			Query pool = entityManager.createQuery("FROM Pool WHERE pooler_id = :poolerId");
-			pool.setParameter("poolerId", reference_id);
-			
-			List res = pool.getResultList();
-			if(!(res.size() > 0))
-				return null;
-			Pool poolDetails = (Pool) res.get(0);
-			
-			query1 = entityManager.createQuery("FROM PoolMembers WHERE reference_id = :reference OR (status = :status AND pool_id = :poolid)");
-			query1.setParameter("reference", reference_id);
+		if(isLeader) {			
+			query1 = entityManager.createQuery("FROM PoolMembers WHERE status = :status AND pool_id = :poolid");
 			query1.setParameter("status", "Approved");
 			query1.setParameter("poolid", poolDetails.getId());
 		} else {
-			query1 = entityManager.createQuery("FROM PoolMembers WHERE reference_id = :reference AND status = :status ");
+			query1 = entityManager.createQuery("FROM PoolMembers WHERE reference_id = :reference AND status = :status AND pool_id = :poolid");
 			query1.setParameter("reference", reference_id);
 			query1.setParameter("status", "Requested");
+			query1.setParameter("poolid", poolDetails.getId());
+
 		}
 		List results = query1.getResultList();
 		return results;

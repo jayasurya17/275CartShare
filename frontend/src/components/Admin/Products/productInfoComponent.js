@@ -178,7 +178,7 @@ class StoreInfoComponent extends Component {
 					} else {
 						this.setState({
 							successMsg: "",
-							errMsg: "An error occured"
+							errMsg: "An error occured. File size maybe too big (512 KB limit)."
 						})
 					}
 				})

@@ -95,12 +95,12 @@ public class User {
 	private Set<PoolMembers> refernces = new HashSet<PoolMembers>();
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<Orders> orders = new HashSet<Orders>();
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "pickupPooler", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "pickupPooler", fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<Orders> ordersToPickUp = new HashSet<Orders>();
 

@@ -49,7 +49,7 @@ public class Pool {
 
 
 	@JsonIgnore
-	@OneToMany(mappedBy="pool", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="pool", fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<PoolMembers> poolMembers = new HashSet<PoolMembers>();
 
