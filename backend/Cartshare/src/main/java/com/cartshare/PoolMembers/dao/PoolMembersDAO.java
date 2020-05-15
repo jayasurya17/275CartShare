@@ -26,6 +26,9 @@ public class PoolMembersDAO {
 	PoolRepository poolRepository;
 	@Autowired
 	PoolMembersRepository poolMembersRepository;
+
+	@Autowired
+	MailController mailController;
 	
 	@PersistenceContext
 	EntityManager entityManager;
@@ -38,7 +41,6 @@ public class PoolMembersDAO {
 		User member = userRepository.findById(member_id).orElse(null);
 		User reference = userRepository.findById(reference_id).orElse(null);
 		Pool pool = poolRepository.findById(pool_id).orElse(null);
-		MailController mailController = new MailController();
 		String status;
 		
 		if(member == null || reference == null || pool == null) {
@@ -85,7 +87,7 @@ public class PoolMembersDAO {
 				return null;
             }
 		}
-
+		String status;
 		if(pool.getPooler().getId() == reference_id) {
 			status = "Approved";
 			mailController.send(reference.getEmail(), "A new request to join the pool", member.getScreenName() + " has given you as reference to join your pool. Please login to accept or reject the request");
