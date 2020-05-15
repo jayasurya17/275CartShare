@@ -91,7 +91,7 @@ class BrowseProducts extends Component {
                 )
                 allProducts.push(
                     <div className="mb-5">
-                        <ProductInfoComponent />
+                        <ProductInfoComponent getAllProducts={this.getallProducts}/>
                     </div>
                 )
             } else {

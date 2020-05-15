@@ -55,17 +55,21 @@ public class OrdersDAO {
 	}
 
 	public List<Orders> findOrdersWithNoPickup(Pool pool, String status, User pickupUser, Store store) {
-		// return ordersRepository.findAllOrdersByPoolAndStatusAndPickupPoolerAndStore(pool, status, pickupUser, store);
+		// return
+		// ordersRepository.findAllOrdersByPoolAndStatusAndPickupPoolerAndStore(pool,
+		// status, pickupUser, store);
 		return ordersRepository.findAllOrdersByPoolAndStoreAndPickupPooler(pool, store, pickupUser);
 	}
 
 	public List<Orders> findOrdersToBePickedUpByUser(User user) {
-		// return ordersRepository.findAllOrdersByPickupPoolerAndStatus(user, "Confirmed");
+		// return ordersRepository.findAllOrdersByPickupPoolerAndStatus(user,
+		// "Confirmed");
 		return ordersRepository.findAllOrdersByPickupPoolerAndStatusAndUser(user, "Confirmed", user);
 	}
 
 	public List<Orders> findOrdersToBeDeliveredByUser(User user) {
-		// return ordersRepository.findAllOrdersByPickupPoolerAndStatus(user, "Confirmed");
+		// return ordersRepository.findAllOrdersByPickupPoolerAndStatus(user,
+		// "Confirmed");
 		return ordersRepository.findAllOrdersByPickupPoolerAndStatus(user, "PickedUp");
 	}
 
@@ -80,12 +84,13 @@ public class OrdersDAO {
 	public List<Orders> findAllOrdersToBePickedup() {
 		return ordersRepository.findAllOrdersByStatus("Confirmed");
 	}
-	
-	public List<Orders> findAssociatedOrders(Orders o){
+
+	public List<Orders> findAssociatedOrders(Orders o) {
 		List<AssociatedOrders> l = associatedOrdersRepository.findByOrder(o);
-		if(l == null || l.size() == 0)	return null;
+		if (l == null || l.size() == 0)
+			return null;
 		List<Orders> r = new ArrayList<Orders>();
-		for(AssociatedOrders order : l){
+		for (AssociatedOrders order : l) {
 			r.add(order.getAssociated());
 		}
 		return r;
@@ -97,20 +102,21 @@ public class OrdersDAO {
 
 	public void updateOrderStatus() {
 		List<Orders> allOrders = ordersRepository.findAll();
-		for (Orders order: allOrders) {
+		for (Orders order : allOrders) {
 			Date orderTime = order.getTimestamp();
 			Date now = new Date();
 
 			long twoDays = (long) 172800000;
 			long diffInMillies = Math.abs(now.getTime() - orderTime.getTime());
 			// System.out.println(order.getStatus());
-			if (diffInMillies >= twoDays && order.getStatus().compareTo("Ordered") == 0 && order.getPickupPooler() == null) {
-				// System.out.println("Need to mark as cancelled");
-				order.setStatus("Cancelled");
-				ordersRepository.save(order);
-				// associatedOrdersRepository.deleteByOrderAndAssociated(order, associated)
+			if (diffInMillies >= twoDays && order.getStatus().compareTo("Delivered") != 0) {
+				if (order.getPickupPooler() == null || order.getPickupPooler().getId() != order.getUser().getId()) {
+					// System.out.println("Need to mark as cancelled");
+					order.setStatus("Cancelled");
+					ordersRepository.save(order);
+					// associatedOrdersRepository.deleteByOrderAndAssociated(order, associated)
+				}
 			}
-			
 		}
 	}
 }

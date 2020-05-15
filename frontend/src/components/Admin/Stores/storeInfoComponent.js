@@ -158,6 +158,9 @@ class StoreInfoComponent extends Component {
                         selectedFile: "",
                         filename: "",
                     })
+                    if (this.props.getAllStores) {
+                        this.props.getAllStores()
+                    }
                 })
                 .catch((error) => {
                     this.setState({

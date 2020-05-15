@@ -45,7 +45,7 @@ class BrowseStores extends Component {
                 )
                 allStores.push(
                     <div className="mb-5">
-                        <AddStoreComponent />
+                        <AddStoreComponent getAllStores={this.getAllStores}/>
                     </div>
                 )
             }

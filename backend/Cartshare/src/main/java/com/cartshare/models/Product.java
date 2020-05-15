@@ -57,7 +57,7 @@ public class Product {
 	private Boolean isActive;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy="product", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="product", fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<OrderItems> orderItems = new ArrayList<OrderItems>();
 	

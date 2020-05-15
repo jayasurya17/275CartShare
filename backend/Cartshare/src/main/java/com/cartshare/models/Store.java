@@ -45,12 +45,12 @@ public class Store {
 	private User user;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy="store", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="store", fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<Orders> orders = new HashSet<Orders>();
 	
 	@JsonIgnore
-	@OneToMany(mappedBy="store", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="store", fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<Product> products = new HashSet<Product>();
 	

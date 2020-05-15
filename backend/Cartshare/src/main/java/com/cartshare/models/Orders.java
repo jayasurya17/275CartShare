@@ -53,7 +53,7 @@ public class Orders {
 	private User pickupPooler;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy="orders", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="orders", fetch = FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Set<OrderItems> orderItems = new HashSet<OrderItems>();
 
