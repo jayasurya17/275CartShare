@@ -18,7 +18,8 @@ class UserContribution extends Component {
             storeId: null,
             redirect: null,
             pendingOrders: [],
-            orderId: null
+            orderId: null,
+            showButton: true
         }
     }
 
@@ -47,7 +48,8 @@ class UserContribution extends Component {
     submitOrder = () => {
         this.setState({
             warningMsg: "",
-            errMsg: ""
+            errMsg: "",
+            showButton: false
         })
         if (this.state.contributionCredit === null) {
             this.setState({
@@ -72,14 +74,16 @@ class UserContribution extends Component {
                                 .then((response) => {
                                     this.setState({
                                         pendingOrders: response.data,
-                                        showOtherOrders: true
+                                        showOtherOrders: true,
+                                        showButton: true
                                     })
                                 })
                     })
                     .catch((error) => {
                         this.setState({
                             errMsg: error.response.data,
-                            warningMsg: ""
+                            warningMsg: "",
+                            showButton: true
                         })
                     })
                         
@@ -151,7 +155,7 @@ class UserContribution extends Component {
                 <div className="mt-5 mb-5 text-center">
                     <p className="text-warning text-center">{this.state.warningMsg}</p>
                     <p className="text-danger text-center">{this.state.errMsg}</p>
-                    <button className="btn btn-success w-50" onClick={this.submitOrder}>Submit order</button>
+                    {this.state.showButton?<button className="btn btn-success w-50" onClick={this.submitOrder}>Submit order</button>:null}
                 </div>
             ]
         }

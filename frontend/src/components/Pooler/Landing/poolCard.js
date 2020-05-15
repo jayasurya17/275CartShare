@@ -13,7 +13,8 @@ class PoolCard extends Component {
             leader: null,
             zip: null,
             leaderDetails: this.props.leader,
-            referenceId: ''
+            referenceId: '',
+            showButton: true
         }
         this.sendRequest = this.sendRequest.bind(this)
         this.knowsLeader = this.knowsLeader.bind(this)
@@ -46,11 +47,18 @@ class PoolCard extends Component {
     sendRequest = () => {
         this.setState({
             errorMsg: '',
-            successMsg: ''
+            successMsg: '',
+            showButton: false
         })
         if (this.state.referenceName === '' && this.state.knowsLeader === false) {
             alert('Please provide required details')
+            this.setState({
+                showButton: true
+            })
         } else {
+            this.setState({
+                warningMsg: 'Sending request'
+            })
             if (this.state.knowsLeader === false) {
                 axios
                     .get('/user/getUserByScreenName/' + this.state.referenceName)
@@ -68,15 +76,18 @@ class PoolCard extends Component {
                                     joinRequest: true,
                                     successMsg: 'You have successfully requested to join the pool',
                                     errorMsg: '',
-                                    knowsLeader: false,
-                                    referenceName: ''
+                                    referenceName: '',
+                                    warningMsg: '',
+                                    showButton: true
                                 })
                             })
                             .catch(error => {
                                 this.setState({
                                     joinRequest: false,
-                                    errorMsg: 'User is not part of the pool',
-                                    successMsg: ''
+                                    errorMsg: 'User may not be part of the pool or you have requested earlier',
+                                    successMsg: '',
+                                    warningMsg: '',
+                                    showButton: true
                                 })
                             })
                     })
@@ -85,7 +96,9 @@ class PoolCard extends Component {
                             errorMsg: 'User is not part of the pool',
                             successMsg: '',
                             screenNameReference: false,
-                            referenceId: ''
+                            referenceId: '',
+                            warningMsg: '',
+                            showButton: true
                         })
                     })
             } else {
@@ -102,7 +115,8 @@ class PoolCard extends Component {
                             joinRequest: true,
                             successMsg: 'You have successfully requested to join the pool',
                             errorMsg: '',
-                            knowsLeader: false
+                            warningMsg: '',
+                            showButton: true
                         })
                     })
                     .catch(error => {
@@ -110,7 +124,9 @@ class PoolCard extends Component {
                         this.setState({
                             joinRequest: false,
                             errorMsg: 'Request failed',
-                            successMsg: ''
+                            successMsg: '',
+                            warningMsg: '',
+                            showButton: true
                         })
                     })
             }
@@ -171,6 +187,11 @@ class PoolCard extends Component {
                                         {this.state.successMsg}
                                     </p>
                                 ) : null}
+                                {this.state.warningMsg ? (
+                                    <p className='text-warning text-center'>
+                                        {this.state.warningMsg}
+                                    </p>
+                                ) : null}
                                 <div className='form-group'>
                                     <label>Referred by</label>
                                     <input
@@ -187,7 +208,11 @@ class PoolCard extends Component {
                             </div>
                             <div className='modal-footer'>
                                 <button type='button' className='btn btn-secondary' data-dismiss='modal'>Close</button>
-                                <button type='button' className='btn btn-primary' onClick={this.sendRequest}>Send request</button>
+                                {
+                                    this.state.showButton ?
+                                        <button type='button' className='btn btn-primary' onClick={this.sendRequest}>Send request</button> :
+                                        null
+                                }
                             </div>
                         </div>
                     </div>
