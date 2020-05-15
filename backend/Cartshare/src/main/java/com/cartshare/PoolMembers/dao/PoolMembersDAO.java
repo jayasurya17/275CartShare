@@ -26,6 +26,9 @@ public class PoolMembersDAO {
 	PoolRepository poolRepository;
 	@Autowired
 	PoolMembersRepository poolMembersRepository;
+
+	@Autowired
+	MailController mailController;
 	
 	@PersistenceContext
 	EntityManager entityManager;
@@ -68,7 +71,7 @@ public class PoolMembersDAO {
             }
 		}
 
-		MailController mailController = new MailController();
+		// MailController mailController = new MailController();
 		String status;
 		if(pool.getPooler().getId() == reference_id) {
 			status = "Approved";

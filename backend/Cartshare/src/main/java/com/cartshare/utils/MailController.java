@@ -1,110 +1,158 @@
 package com.cartshare.utils;
 
 import com.sun.mail.smtp.SMTPTransport;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import java.util.Properties;
 
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class MailController {
+@Component
+public class MailController{
+
+    @Autowired
+    public JavaMailSender emailSender;
 
     public boolean send(String toEmail, String subject, String message){
-        Properties prop = System.getProperties();
-        prop.put("mail.smtp.host", "smtp.gmail.com"); //optional, defined in SMTPTransport
-        prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.port", "587"); // default port 25
-        prop.put("mail.smtp.starttls.enable", "true");
-
-        Session session = Session.getInstance(prop, null);
-        Message msg = new MimeMessage(session);
-
         String myEmail = "cmpe275.cartshare@gmail.com";
-        String myPass = "cartsharePass@123";
+        MimeMessage msg = emailSender.createMimeMessage();
 
-        try {
-		
-			// from
+        try{
             msg.setFrom(new InternetAddress(myEmail));
-
-			// to 
             msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-
-			// subject
             msg.setSubject(subject);
-			
-			// content 
             msg.setText(message);
-
-			// Get SMTPTransport
-            SMTPTransport t = (SMTPTransport) session.getTransport("smtp");
-			
-			// connect
-            t.connect("smtp.gmail.com", myEmail, myPass);
-			
-			// send
-            t.sendMessage(msg, msg.getAllRecipients());
-
-            // System.out.println("Response: " + t.getLastServerResponse());
-
-            t.close();
-
+            emailSender.send(msg);
             return true;
-
-        } catch (Exception e) {
+        } catch(MessagingException e){
             e.printStackTrace();
             return false;
         }
-
     }
 
     public boolean sendHTML(String toEmail, String subject, String message){
-        Properties prop = System.getProperties();
-        prop.put("mail.smtp.host", "smtp.gmail.com"); //optional, defined in SMTPTransport
-        prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.port", "587"); // default port 25
-        prop.put("mail.smtp.starttls.enable", "true");
-
-        Session session = Session.getInstance(prop, null);
-        Message msg = new MimeMessage(session);
-
         String myEmail = "cmpe275.cartshare@gmail.com";
-        String myPass = "cartsharePass@123";
+        MimeMessage msg = emailSender.createMimeMessage();
 
-        try {
-		
-			// from
+        try{
             msg.setFrom(new InternetAddress(myEmail));
-
-			// to 
             msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-
-			// subject
             msg.setSubject(subject);
-			
-			// content 
             msg.setContent(message, "text/html");
-
-			// Get SMTPTransport
-            SMTPTransport t = (SMTPTransport) session.getTransport("smtp");
-			
-			// connect
-            t.connect("smtp.gmail.com", myEmail, myPass);
-			
-			// send
-            t.sendMessage(msg, msg.getAllRecipients());
-
-            // System.out.println("Response: " + t.getLastServerResponse());
-
-            t.close();
-
+            emailSender.send(msg);
             return true;
-
-        } catch (Exception e) {
+        } catch(MessagingException e){
             e.printStackTrace();
             return false;
         }
-
     }
+
+
+
+    // public boolean send(String toEmail, String subject, String message){
+    //     Properties prop = System.getProperties();
+    //     prop.put("mail.smtp.host", "smtp.gmail.com"); //optional, defined in SMTPTransport
+    //     prop.put("mail.smtp.auth", "true");
+    //     prop.put("mail.smtp.port", "587"); // default port 25
+    //     prop.put("mail.smtp.starttls.enable", "true");
+
+    //     Session session = Session.getInstance(prop, null);
+        // Message msg = new MimeMessage(session);
+
+    //     String myEmail = "cmpe275.cartshare@gmail.com";
+    //     String myPass = "cartsharePass@123";
+
+    //     try {
+		
+	// 		// from
+    //         msg.setFrom(new InternetAddress(myEmail));
+
+	// 		// to 
+    //         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
+
+	// 		// subject
+    //         msg.setSubject(subject);
+			
+	// 		// content 
+    //         msg.setText(message);
+
+	// 		// Get SMTPTransport
+    //         SMTPTransport t = (SMTPTransport) session.getTransport("smtp");
+			
+	// 		// connect
+    //         t.connect("smtp.gmail.com", myEmail, myPass);
+			
+	// 		// send
+    //         t.sendMessage(msg, msg.getAllRecipients());
+
+    //         // System.out.println("Response: " + t.getLastServerResponse());
+
+    //         t.close();
+
+    //         return true;
+
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         return false;
+    //     }
+
+    // }
+
+    // public boolean sendHTML(String toEmail, String subject, String message){
+    //     Properties prop = System.getProperties();
+    //     prop.put("mail.smtp.host", "smtp.gmail.com"); //optional, defined in SMTPTransport
+    //     prop.put("mail.smtp.auth", "true");
+    //     prop.put("mail.smtp.port", "587"); // default port 25
+    //     prop.put("mail.smtp.starttls.enable", "true");
+
+    //     Session session = Session.getInstance(prop, null);
+    //     Message msg = new MimeMessage(session);
+
+    //     String myEmail = "cmpe275.cartshare@gmail.com";
+    //     String myPass = "cartsharePass@123";
+
+    //     try {
+		
+	// 		// from
+    //         msg.setFrom(new InternetAddress(myEmail));
+
+	// 		// to 
+    //         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
+
+	// 		// subject
+    //         msg.setSubject(subject);
+			
+	// 		// content 
+    //         msg.setContent(message, "text/html");
+
+	// 		// Get SMTPTransport
+    //         SMTPTransport t = (SMTPTransport) session.getTransport("smtp");
+			
+	// 		// connect
+    //         t.connect("smtp.gmail.com", myEmail, myPass);
+			
+	// 		// send
+    //         t.sendMessage(msg, msg.getAllRecipients());
+
+    //         // System.out.println("Response: " + t.getLastServerResponse());
+
+    //         t.close();
+
+    //         return true;
+
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         return false;
+    //     }
+
+    // }
 }
