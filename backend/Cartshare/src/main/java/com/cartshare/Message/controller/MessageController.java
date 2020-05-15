@@ -58,7 +58,6 @@ public class MessageController {
         User userFrom = userDAO.findByScreenName(from);
         User userTo = userDAO.findByScreenName(to);
         
-        // MailController mc = new MailController();
 
         String subject = "A message from " + from + " via CartShare!";
 
