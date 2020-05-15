@@ -45,9 +45,6 @@ public class UserController {
         boolean isactive = (isActive.compareTo("true") == 0) ? true : false;
         boolean isprofilecomplete = (isProfileComplete.compareTo("true") == 0) ? true : false;
         User user = new User(uid, email, nickName, screenName, isadmin, isverified, isactive, isprofilecomplete, "0000", null, null, null, null);
-        
-        // MailController mc = new MailController();
-
         Random random = new Random();
         String code = String.format("%04d", random.nextInt(10000));
         String message = "Your 4-digit verification code is: " + code + "\n";
@@ -78,7 +75,6 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid user ID");
         }
-        // MailController mc = new MailController();
 
         Random random = new Random();
         String code = String.format("%04d", random.nextInt(10000));

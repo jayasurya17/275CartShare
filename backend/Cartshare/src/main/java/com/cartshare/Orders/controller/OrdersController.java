@@ -253,7 +253,6 @@ public class OrdersController {
             order.setFulfilled(true);
 
             ordersDAO.saveOrderDetails(order);
-            // MailController mc = new MailController();
             mc.send(user.getEmail(), "Order #" + order.getId() + " picked up",
                     "You picked up your cartshare order #" + order.getId());
             List<Orders> associated = ordersDAO.findAssociatedOrders(order); // 
@@ -339,7 +338,6 @@ public class OrdersController {
             User u1 = order.getPickupPooler();
             u1.setContributionCredit(u1.getContributionCredit()+1);
             userDAO.save(u1);
-            // MailController mc = new MailController();
             mc.send(u.getEmail(), "Update to your order status",
                     "Your order has been delivered by: " + order.getPickupPooler().getScreenName());
             return ResponseEntity.status(HttpStatus.OK).body("Order status set to delivered");
@@ -371,7 +369,6 @@ public class OrdersController {
             userDAO.save(u1);
             o.setStatus("NotDelivered");
             ordersDAO.saveOrderDetails(o);
-            // MailController mc = new MailController();
             mc.send(o.getPickupPooler().getEmail(), "Update about one of the orders you delivered", "User " + u.getScreenName() + " has marked order # " + o.getId() + " as Not Delivered");
             return ResponseEntity.status(HttpStatus.OK).body("Order successfully marked as Not Delivered");
         } catch(Exception e){
@@ -518,8 +515,6 @@ public class OrdersController {
             }
             order.setTimestamp(new Date());
             order = ordersDAO.saveOrderDetails(order);
-
-            // MailController mc = new MailController();
             OrderDetails od = new OrderDetails();
             String heading = "Your order has been placed (#" + order.getId() + ")";
             String message = od.GenerateProductTableWithPrice(order.getOrderItems());
@@ -631,8 +626,6 @@ public class OrdersController {
             if (numberOfOrders < 1 || numberOfOrders > 10) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid number of orders");
             }
-
-            // MailController mc = new MailController();
             OrderDetails od = new OrderDetails();
 
 
