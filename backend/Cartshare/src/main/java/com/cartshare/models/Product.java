@@ -27,7 +27,7 @@ public class Product {
 	
 	@NotNull
 	@Column(name = "sku")
-	private long sku;
+	private String sku;
 	
 	@NotBlank
 	@Column(name = "product_name")
@@ -62,7 +62,7 @@ public class Product {
 	private List<OrderItems> orderItems = new ArrayList<OrderItems>();
 	
 	public Product(long id, @NotBlank String productName, @NotBlank String description,
-			@NotBlank String imageURL, @NotBlank String brand, @NotBlank long sku, String unit,
+			@NotBlank String imageURL, @NotBlank String brand, @NotBlank String sku, String unit,
 			@NotBlank Double price, List<OrderItems> orderItems, Store store) {
 		super();
 		this.id = id;
@@ -111,10 +111,10 @@ public class Product {
 	public void setBrand(String brand) {
 		this.brand = brand;
 	}
-	public long getSku() {
+	public String getSku() {
 		return sku;
 	}
-	public void setSku(long sku) {
+	public void setSku(String sku) {
 		this.sku = sku;
 	}
 	public String getUnit() {

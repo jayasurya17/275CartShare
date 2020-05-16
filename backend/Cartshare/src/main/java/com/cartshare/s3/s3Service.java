@@ -47,6 +47,9 @@ public class s3Service {
     	// System.out.println("Inside upload file");
         String fileUrlInS3 = "";
         try {
+            if (uploadedFile == null) {
+                return "https://toppng.com/uploads/preview/clipart-free-seaweed-clipart-draw-food-placeholder-11562968708qhzooxrjly.png";
+            }
             File file = convertMultiPartToFile(uploadedFile);
             
             

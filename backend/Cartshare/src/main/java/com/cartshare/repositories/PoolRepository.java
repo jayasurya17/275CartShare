@@ -8,4 +8,6 @@ import com.cartshare.models.Pool;
 
 public interface PoolRepository extends JpaRepository<Pool, Long> {
 	public List<Pool> findAllByIsActive(Boolean isActive);
+	public List<Pool> findAllByPoolName(String poolName);
+	public List<Pool> findAllByPoolId(String poolId);
 }

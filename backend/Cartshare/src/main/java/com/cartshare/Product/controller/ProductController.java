@@ -107,20 +107,19 @@ public class ProductController {
                     }
                     List<Product> tempList = new ArrayList<>();
                     for (Product temp: allProducts) {
-                        if (temp.getSku() == reqSku) {
+                        if (temp.getSku().equals(reqSku)) {
                             tempList.add(temp);
                         }
                     }
                     allProducts = tempList;
                 }
             } else if (SKU != null) {
-                Long reqSku;
                 try {
-                    reqSku = Long.parseLong(SKU);
+                    Long.parseLong(SKU);
                 } catch(Exception e) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid SKU");
                 }
-                allProducts = productDAO.findBySKU(reqSku);
+                allProducts = productDAO.findBySKU(SKU);
             } else {
                 allProducts = productDAO.findAll();
             }
@@ -174,13 +173,12 @@ public class ProductController {
                 }
                 allProducts = productDAO.findByStore(store);
             } else if (SKU != null) {
-                Long reqSku;
                 try {
-                    reqSku = Long.parseLong(SKU);
+                    Long.parseLong(SKU);
                 } catch(Exception e) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid SKU");
                 }
-                allProducts = productDAO.findBySKU(reqSku);
+                allProducts = productDAO.findBySKU(SKU);
             } else {
                 allProducts = productDAO.findAll();
             }

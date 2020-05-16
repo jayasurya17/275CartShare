@@ -1,19 +1,9 @@
 package com.cartshare.utils;
 
-import com.sun.mail.smtp.SMTPTransport;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
-import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 @Component
@@ -22,39 +12,70 @@ public class MailController{
     @Autowired
     public JavaMailSender emailSender;
 
-    public boolean send(String toEmail, String subject, String message){
-        String myEmail = "cmpe275.cartshare@gmail.com";
-        MimeMessage msg = emailSender.createMimeMessage();
-
+    public boolean send(String toEmail, String subject, String body){
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
         try{
-            msg.setFrom(new InternetAddress(myEmail));
-            msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-            msg.setSubject(subject);
-            msg.setText(message);
-            emailSender.send(msg);
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(body, true);
+            emailSender.send(mimeMessage);
             return true;
-        } catch(MessagingException e){
+        } catch(Exception e){
             e.printStackTrace();
             return false;
         }
     }
 
-    public boolean sendHTML(String toEmail, String subject, String message){
-        String myEmail = "cmpe275.cartshare@gmail.com";
-        MimeMessage msg = emailSender.createMimeMessage();
-
+    public boolean sendHTML(String toEmail, String subject, String body){
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
         try{
-            msg.setFrom(new InternetAddress(myEmail));
-            msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-            msg.setSubject(subject);
-            msg.setContent(message, "text/html");
-            emailSender.send(msg);
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(body, true);
+            emailSender.send(mimeMessage);
             return true;
-        } catch(MessagingException e){
+        } catch(Exception e){
             e.printStackTrace();
             return false;
         }
     }
+    
+    // MimeMessage msg = emailSender.createMimeMessage();
+    // public boolean send(String toEmail, String subject, String message){
+    //     String myEmail = "cmpe275.cartshare@gmail.com";
+    //     MimeMessage msg = emailSender.createMimeMessage();
+
+    //     try{
+    //         msg.setFrom(new InternetAddress(myEmail));
+    //         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
+    //         msg.setSubject(subject);
+    //         msg.setText(message);
+    //         emailSender.send(msg);
+    //         return true;
+    //     } catch(MessagingException e){
+    //         e.printStackTrace();
+    //         return false;
+    //     }
+    // }
+
+    // public boolean sendHTML(String toEmail, String subject, String message){
+    //     String myEmail = "cmpe275.cartshare@gmail.com";
+    //     MimeMessage msg = emailSender.createMimeMessage();
+
+    //     try{
+    //         msg.setFrom(new InternetAddress(myEmail));
+    //         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
+    //         msg.setSubject(subject);
+    //         msg.setContent(message, "text/html");
+    //         emailSender.send(msg);
+    //         return true;
+    //     } catch(MessagingException e){
+    //         e.printStackTrace();
+    //         return false;
+    //     }
+    // }
 
 
 

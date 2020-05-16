@@ -87,7 +87,6 @@ public class PoolMembersDAO {
 				return null;
             }
 		}
-		String status;
 		if(pool.getPooler().getId() == reference_id) {
 			status = "Approved";
 			mailController.send(reference.getEmail(), "A new request to join the pool", member.getScreenName() + " has given you as reference to join your pool. Please login to accept or reject the request");

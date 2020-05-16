@@ -165,9 +165,8 @@ public class AdminController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid price");
             }
 
-            Long SKU = null;
             try {
-                SKU = Long.parseLong(sku);
+                Long.parseLong(sku);
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid product SKU");
             }
@@ -183,7 +182,7 @@ public class AdminController {
                 if (store == null) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Store with the given ID does not exist");
                 }
-                Product product = productDAO.findByStoreIdAndSKUAndIsActive(store, SKU);
+                Product product = productDAO.findByStoreIdAndSKUAndIsActive(store, sku);
                 if (product != null) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate SKU");
                 }
@@ -200,7 +199,7 @@ public class AdminController {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid store ID");
                 }
                 product.setStore(storeDAO.findById(reqStoreId));
-                product.setSku(SKU);
+                product.setSku(sku);
                 product.setProductName(productname);
                 product.setDescription(productdescription);
                 product.setBrand(productbrand);
@@ -343,10 +342,11 @@ public class AdminController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Product with the given ID does not exist");
             }
 
-            List<Orders> allOrders = ordersDAO.findAllUnfulfilledOrdersByStore(product.getStore());
+            Set<Orders> allOrders = ordersDAO.getUnfulfilledOrdersForAProduct(product);
 
             for (Orders order : allOrders) {
                 if (order.getStatus().equals("Cart") == false) {
+                    System.out.println(order.getId());
                     return ResponseEntity.status(HttpStatus.CONFLICT)
                             .body("There are unfulfilled orders for this product");
                 }

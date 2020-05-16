@@ -87,5 +87,38 @@ public class PoolDAO {
 	public Pool findById(Long id) {
 		return poolRepository.findById(id).orElse(null);
 	}
+
+	public boolean isDuplicate(String poolName, String poolId) {
+
+		List<Pool> allPools = null;
+		allPools = poolRepository.findAllByPoolName(poolName);
+		for (Pool pool: allPools) {
+			if (pool.getPoolName().equals(poolName)) {
+				return true;
+			}
+		}
+
+		allPools = poolRepository.findAllByPoolId(poolId);
+		for (Pool pool: allPools) {
+			if (pool.getPoolId().equals(poolId)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isDuplicateName(String poolName, Long poolId) {
+
+		List<Pool> allPools = null;
+		allPools = poolRepository.findAllByPoolName(poolName);
+		for (Pool pool: allPools) {
+			if (pool.getPoolName().equals(poolName) && pool.getId() != poolId) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 	
 }

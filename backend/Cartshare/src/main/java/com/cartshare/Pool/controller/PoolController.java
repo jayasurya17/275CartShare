@@ -63,6 +63,10 @@ public class PoolController {
 			} catch (Exception e) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Pooler ID");
 			}
+
+			if (poolDAO.isDuplicate(poolName, poolId)) {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("Pool name and ID must be unique");
+			}
 			
 			Pool pool = new Pool();
 			pool.setPoolId(poolId);
@@ -132,6 +136,10 @@ public class PoolController {
 			
 			Long pooler = Long.parseLong(poolerId);
 			Long poolId = Long.parseLong(id);
+
+			if (poolDAO.isDuplicateName(poolName, poolId)) {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("Pool name must be unique");
+			}
 			
 			Pool pool = poolDAO.getPool(poolId);
 			if(pool == null) {
