@@ -33,6 +33,9 @@ public class MessageController {
     @Autowired
     UserDAO userDAO;
 
+    @Autowired
+    MailController mc;
+
     @PostMapping(value="/{from}/{to}", produces = { "application/json", "application/xml" })
     public ResponseEntity<?> createMessage(@Valid
                                         @PathVariable(name = "from") String from,
@@ -55,7 +58,6 @@ public class MessageController {
         User userFrom = userDAO.findByScreenName(from);
         User userTo = userDAO.findByScreenName(to);
         
-        MailController mc = new MailController();
 
         String subject = "A message from " + from + " via CartShare!";
 
