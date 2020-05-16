@@ -79,6 +79,10 @@ class Home extends Component {
 				errMsg: "Pool name can be text only"
 			})
 		} else if (this.areValidValues()) {
+			this.setState({
+				successMsg: "",
+				errMsg: ""
+			})
 			axios
 				.post("/pool/createPool", null, {
 					params: {
@@ -99,10 +103,10 @@ class Home extends Component {
 						redirect: <Redirect to="/pooler/view/pool" />,
 					});
 				})
-				.catch(() => {
+				.catch((error) => {
 					this.setState({
 						successMsg: "",
-						errMsg: "Failed to create pool",
+						errMsg: error.response.data,
 					});
 				});
 		}

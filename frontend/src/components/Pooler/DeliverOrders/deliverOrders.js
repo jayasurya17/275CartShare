@@ -73,11 +73,11 @@ class DeliverOrders extends Component {
             rowNumber = slNo % 3
             orderObj = this.state.allOrders[slNo]
             if (rowNumber === 0) {
-                row1.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
+                row1.push(<OrdersComponent order={orderObj} />)
             } else if (rowNumber === 1) {
-                row2.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
+                row2.push(<OrdersComponent order={orderObj} />)
             } else {
-                row3.push(<OrdersComponent order={orderObj} update={this.fetchAllOrders}/>)
+                row3.push(<OrdersComponent order={orderObj} />)
             }
         }
         orders.push(
@@ -104,6 +104,7 @@ class OrdersComponent extends Component {
         super()
         this.state = {
             isProcessing: false,
+            isDelivered: false
         }
     }
 
@@ -128,7 +129,9 @@ class OrdersComponent extends Component {
             .then((res) => {
                 if (res.status === 200) {
                     alert('The order has been marked as delivered');
-                    this.props.update();
+                    this.setState({
+                        isDelivered: true
+                    })
                 }
             })
             .catch((err) => {
@@ -137,6 +140,10 @@ class OrdersComponent extends Component {
     }
 
     render() {
+
+        if (this.state.isDelivered === true) {
+            return (null)
+        }
 
         let allProducts = []
         for (let product of this.props.order) {
@@ -151,7 +158,7 @@ class OrdersComponent extends Component {
         }
 
         var addr = this.props.order[0].orders.user.address;
-        let deliverButton = this.state.isProcessing === true? <p className="text-warning">Processing...</p> : <button className="btn btn-success w-100" onClick={this.markDelivered}>Mark as delivered</button>
+        let deliverButton = this.state.isProcessing === true ? <p className="text-warning">Processing...</p> : <button className="btn btn-success w-100" onClick={this.markDelivered}>Mark as delivered</button>
         return (
             <div className="p-3 border">
                 <div className="row p-2 bg-secondary text-white">

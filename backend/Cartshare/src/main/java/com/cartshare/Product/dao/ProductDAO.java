@@ -31,7 +31,7 @@ public class ProductDAO {
 		return productRepository.findByStoreAndIsActive(store, true);
 	}
 
-	public List<Product> findBySKU(Long SKU) {
+	public List<Product> findBySKU(String SKU) {
 		return productRepository.findBySku(SKU);
 	}
 
@@ -43,11 +43,11 @@ public class ProductDAO {
 		return productRepository.findAllByIsActive(true);
 	}
 
-	public Product findByStoreIdAndSKU(Store store, Long SKU) {
+	public Product findByStoreIdAndSKU(Store store, String SKU) {
 		return productRepository.findProductByStoreAndSku(store, SKU);
 	}
 
-	public Product findByStoreIdAndSKUAndIsActive(Store store, Long SKU) {
+	public Product findByStoreIdAndSKUAndIsActive(Store store, String SKU) {
 		return productRepository.findProductByStoreAndSkuAndIsActive(store, SKU, true);
 	}
 

@@ -70,6 +70,13 @@ class ViewDetails extends Component {
 						poolDetails: response.data.pool,
 						poolReceived: true,
 					});
+					if (response.data.pool) {
+						this.setState({
+							editName: response.data.pool.poolName,
+							editDescription: response.data.pool.description,
+							editNeighborhood: response.data.pool.neighborhoodName
+						})
+					}
 					this.fetchPoolMembers();
 				} else {
 					console.log(response.data);
@@ -157,10 +164,9 @@ class ViewDetails extends Component {
 					window.location.reload()
 				})
 				.catch(error => {
-					console.log(error.response.data);
 					this.setState({
 						successMsgModal: "",
-						errorMsgModal: "Pool Details could not be updated. Try again!"
+						errorMsgModal: error.response.data
 					})
 				})
 		}

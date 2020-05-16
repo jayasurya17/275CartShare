@@ -119,4 +119,16 @@ public class OrdersDAO {
 			}
 		}
 	}
+
+	public Set<Orders> getUnfulfilledOrdersForAProduct(Product product) {
+		Set<Orders> orders = new HashSet<Orders>();
+		List<OrderItems> allArderItems = orderItemsRepository.findByProduct(product);
+		for (OrderItems orderItems: allArderItems) {
+			if (orderItems.getOrders().isFulfilled() == false) {
+				orders.add(orderItems.getOrders());
+			}
+		}
+		return orders;
+	}
+
 }
