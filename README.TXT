@@ -11,7 +11,7 @@ Member 4
 Shivan Desai | 010279646 | shivan.desai@sjsu.edu
 
 URL to access the app
-ec2-54-151-37-229.us-west-1.compute.amazonaws.com:3000
+ec2-54-215-137-144.us-west-1.compute.amazonaws.com:3000
 
 
 Instructions for TA
