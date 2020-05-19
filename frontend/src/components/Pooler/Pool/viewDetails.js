@@ -164,10 +164,17 @@ class ViewDetails extends Component {
 					window.location.reload()
 				})
 				.catch(error => {
-					this.setState({
-						successMsgModal: "",
-						errorMsgModal: error.response.data
-					})
+					if (error.response) {
+						this.setState({
+							successMsgModal: "",
+							errorMsgModal: error.response.data
+						})
+					} else {
+						this.setState({
+							successMsgModal: "",
+							errorMsgModal: "An error occoured. Invalid data"
+						})
+					}
 				})
 		}
 	}

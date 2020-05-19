@@ -80,11 +80,19 @@ class UserContribution extends Component {
                                 })
                     })
                     .catch((error) => {
-                        this.setState({
-                            errMsg: error.response.data,
-                            warningMsg: "",
-                            showButton: true
-                        })
+                        if (error.response) {
+                            this.setState({
+                                errMsg: error.response.data,
+                                warningMsg: "",
+                                showButton: true
+                            })
+                        } else {
+                            this.setState({
+                                errMsg: "An error occoured. Invalid data",
+                                warningMsg: "",
+                                showButton: true
+                            })
+                        }
                     })
                         
 
