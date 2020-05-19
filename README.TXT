@@ -11,7 +11,7 @@ Member 4
 Shivan Desai | 010279646 | shivan.desai@sjsu.edu
 
 URL to access the app
-ec2-54-215-137-144.us-west-1.compute.amazonaws.com:3000
+http://ec2-54-193-67-231.us-west-1.compute.amazonaws.com:3000/
 
 
 Instructions for TA
@@ -29,3 +29,9 @@ Assumptions
 
 
 Build Instructions
+1) Copy the code in a folder
+2) Import /backend folder in STS or Eclipse as a Maven Project and run the Spring Boot Application
+3) Navite to /frontend folder in terminal and run following commands:
+	npm install
+	npm start
+4) Use the application!
