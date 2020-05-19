@@ -10,7 +10,8 @@ firebase.initializeApp({
   authDomain: 'cartshare-29f90.firebaseapp.com'
 })
 
-axios.defaults.baseURL = 'http://localhost:5000';
+// axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL = 'http://Cartsharebackend-env.eba-yapjdser.us-west-1.elasticbeanstalk.com';
 
 //App Component
 class App extends Component {
