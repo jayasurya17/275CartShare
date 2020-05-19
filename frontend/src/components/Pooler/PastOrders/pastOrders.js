@@ -127,15 +127,17 @@ class OrdersComponent extends Component {
         for (let product of this.props.order) {
             price = product.productPrice * product.quantity
             subTotal += price
-            allProducts.push(
-                <div className="row p-2 border-left border-right">
-                    <div className="col-md-3"><img src={product.productImage} alt="..." class="img-thumbnail" /></div>
-                    <div className="col-md-3">{product.productName}</div>
-                    <div className="col-md-1">{product.quantity}</div>
-                    <div className="col-md-3">{product.productPrice.toFixed(2)} / KG</div>
-                    <div className="col-md-2">{price.toFixed(2)}</div>
-                </div>
-            )
+            if (product.productPrice) {
+                allProducts.push(
+                    <div className="row p-2 border-left border-right">
+                        <div className="col-md-3"><img src={product.productImage} alt="..." class="img-thumbnail" /></div>
+                        <div className="col-md-3">{product.productName}</div>
+                        <div className="col-md-1">{product.quantity}</div>
+                        <div className="col-md-3">{product.productPrice.toFixed(2)} / KG</div>
+                        <div className="col-md-2">{price.toFixed(2)}</div>
+                    </div>
+                )
+            }
         }
         let tax = subTotal * 0.0925,
             convenienceFee = subTotal * 0.005,
