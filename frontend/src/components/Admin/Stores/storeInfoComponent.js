@@ -163,10 +163,17 @@ class StoreInfoComponent extends Component {
                     }
                 })
                 .catch((error) => {
-                    this.setState({
-                        errMsg: error.response.data,
-                        successMsg: ""
-                    })
+                    if (error.response) {
+                        this.setState({
+                            errMsg: error.response.data,
+                            successMsg: ""
+                        })
+                    } else {
+                        this.setState({
+                            errMsg: "An error occured",
+                            successMsg: ""
+                        })
+                    }
                 })
 
         } else {

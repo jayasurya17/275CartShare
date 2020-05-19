@@ -119,8 +119,7 @@ class PoolCard extends Component {
                             showButton: true
                         })
                     })
-                    .catch(error => {
-                        console.log(error.response.data)
+                    .catch(() => {
                         this.setState({
                             joinRequest: false,
                             errorMsg: 'Request failed',

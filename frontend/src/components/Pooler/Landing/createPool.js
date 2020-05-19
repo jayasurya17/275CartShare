@@ -104,10 +104,17 @@ class Home extends Component {
 					});
 				})
 				.catch((error) => {
-					this.setState({
-						successMsg: "",
-						errMsg: error.response.data,
-					});
+					if (error.response) {
+						this.setState({
+							successMsg: "",
+							errMsg: error.response.data,
+						});
+					} else {
+						this.setState({
+							successMsg: "",
+							errMsg: "An error occoured. Invalid data",
+						});
+					}
 				});
 		}
 	};

@@ -76,7 +76,6 @@ class SupportReferral extends Component {
 				});
 			})
 			.catch((error) => {
-				console.log(error.response.data);
 				this.setState({
 					requestsReceived: true,
 					requests: []

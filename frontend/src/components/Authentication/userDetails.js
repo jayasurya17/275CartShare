@@ -166,7 +166,11 @@ class UserDetails extends Component {
             }
         })
         .catch((error) => {
-            alert(error.response.data);
+            if (error.response) {
+              alert(error.response.data)
+            } else {
+              alert("An error occoured. Invalid data")
+            }
         })
     }
 

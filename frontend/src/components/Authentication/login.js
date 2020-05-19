@@ -59,7 +59,11 @@ class Login extends Component {
               }
             })
             .catch(error => {
-              alert(error.response.data)
+              if (error.response) {
+                alert(error.response.data)
+              } else {
+                alert("An error occoured. Invalid data")
+              }
             })
         } else {
           var uri = '/user/uid/'.concat(user.uid)
@@ -96,7 +100,11 @@ class Login extends Component {
               }
             })
             .catch(error => {
-              alert(error.response.data)
+              if (error.response) {
+                alert(error.response.data)
+              } else {
+                alert("An error occoured. Invalid data")
+              }
             })
         }
 
